@@ -6,3 +6,12 @@ Click here: [Github link](https://github.com/rmit-fsd-2026-s1/a2-fsdpra01-07tue2
 ER Diagram: [Here](https://lucid.app/lucidchart/1a83b8c0-cbd1-4331-a1d0-6c9d3a8d1767/edit?beaconFlowId=6008D67B83EE8E45&page=0_0&invitationId=inv_0daf918d-d3b0-49ab-9d0e-26c9e19aff96#)
 
 Shared Notion (DELETE B4 SUBMITTING): [Here](https://www.notion.so/assignment-2-react-ts-node-express-mysql-314281c6814b80afb9a9d34ee77fa850?source=copy_link)
+
+## References for TypeOrm/Database Stuff
+- lab 7 and 8
+- MatsT (2010). Creation date column in SQL table. [online] Stack Overflow. Available at: https://stackoverflow.com/questions/2737763/creation-date-column-in-sql-table [Accessed 1 May 2026].
+- Typeorm.io. (2025). Entities | TypeORM. [online] Available at: https://typeorm.io/docs/entity/entities/ [Accessed 1 May 2026].
+‌- Typeorm.io. (2026). Decorator reference | TypeORM. [online] Available at: https://typeorm.io/docs/help/decorator-reference/ [Accessed 1 May 2026].
+‌
+‌
+‌
