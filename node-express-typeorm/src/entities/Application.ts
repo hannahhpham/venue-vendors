@@ -10,10 +10,10 @@ import {Venue} from './Venue'
 @Entity({name: "applications"})
 
 export class Application {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({type: "int"})
     id: number;
 
-    @Column()
+    @Column({type: "varchar", length: 50})
     eventName: string;
 
     @Column({type: "time"}) //this will affect our frontend i think fahh
@@ -22,35 +22,35 @@ export class Application {
     @Column({type: "time"})
     endTime: string; 
    
-    @Column() //this too :(
+    @Column({type: "date"}) //this too :(
     date: Date;
 
-    @Column()
+    @Column({type: "int"})
     guests: number;
 
-    @Column()
+    @Column({type: "text"})
     description: string;
 
-    @Column({nullable: true})
+    @Column({type: "varchar", length: 20, nullable: true})
     abn?: string;
 
-    @Column({nullable: true})
+    @Column({type: "text", nullable: true})
     registrationCert?: string;
 
-    @Column({nullable: true})
+    @Column({type: "bit", nullable: true})
     accepted?: boolean;
 
-    @Column({nullable: true})
+    @Column({type: "text", nullable: true})
     notes?: string;
 
-    @Column({nullable: true})
+    @Column({type: "int", nullable: true})
     vendorRating?: number;
 
-    @Column({nullable: true})
+    @Column({type: "int", nullable: true})
     rank?: number;
 
    
-    //IMPORTANT!!! check over this. might need @JoinColumn for both
+    //IMPORTANT!!! check over this.
     //this will add a new column
     //logic: each application is owned by 1 user. 
     //       each application references 1 venue

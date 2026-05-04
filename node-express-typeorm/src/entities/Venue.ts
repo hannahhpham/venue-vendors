@@ -7,42 +7,42 @@ import { User } from './User'
 import {Application} from './Application'
 import {ShortlistedVenue} from './ShortlistedVenue'
 import {Unavailable} from './Unavailable'
+//there are lots of decorators like IsString() IsNotEmpty()
+import {IsEmail} from 'class-validator'
 
 //can say what table this entity is based on
 @Entity({name: "venues"})
 
 export class Venue {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({type: "int"})
     id: number;
 
     @Column({ unique: true }) //talk to ananya abt this
     name: string;
 
-    @Column()
+    @Column({type: "varchar", length: 15})
     phone: string;
 
-    @Column({unique: true})
+    @Column({type: "varchar", length: 15, unique: true})
+    @IsEmail() //first test with class-validator. NEED TO LEARN MORE
     email: string;
 
-    @Column()
+    @Column({type: "varchar", length: 30})
     suburb: string;
 
-    @Column()
+    @Column({type: "varchar", length: 3})
     state: "VIC" | "TAS" | "ACT" | "SA" | "WA" | "NSW" | "QLD" | "NT" ;
 
-    @Column({
-        type: "int",
-        length: 4
-    })
+    @Column({type: "int", length: 4})
     postcode: number;
 
-    @Column()
+    @Column({type: "int", length: 5})
     capacity: number;
 
-    @Column()
+    @Column({type: "int", length: 5})
     rate: number;
 
-    @Column()
+    @Column({type: "text"})
     description: string;
 
     //IMPORTANT!!! check over this. 

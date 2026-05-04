@@ -6,7 +6,7 @@ import {Venue} from './Venue'
 
 export class Unavailable {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({type: "int"})
     id: number;
 
     @Column({type: "time"}) //this will affect our frontend i think fahh
@@ -15,7 +15,7 @@ export class Unavailable {
     @Column({type: "time"})
     endTime: string; 
 
-    @Column() //this too :(
+    @Column({type: "date"}) //this too :(
     date: Date;
 
     @ManyToOne(() => Venue, (venue) => venue.unavailable)

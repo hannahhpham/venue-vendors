@@ -7,15 +7,13 @@ import {Venue} from './Venue'
 export class ShortlistedVenue {
 
     //2 primary keys
-    @PrimaryColumn() 
+    @PrimaryColumn({type: "int"}) 
     hirerID: number;
     
-    @PrimaryColumn() 
+    @PrimaryColumn({type: "int"}) 
     venueID: number;
 
-    @Column({type: "int",
-            length: 4,
-    })
+    @Column({type: "int"})
     rank: number;
 
     //REALLY NEED TO CHECK OVER THESE

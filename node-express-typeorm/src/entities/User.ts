@@ -9,43 +9,43 @@ import {ShortlistedVenue} from './ShortlistedVenue'
 @Entity({name: "users"})
 
 export class User {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({type: "int"})
     id: number;
 
-    @Column({ unique: true })
+    @Column({type: "varchar", length: 50, unique: true })
     email: string;
 
-    @Column()
+    @Column({type: "varchar", length: 50})
     password: string;
 
-    @Column()
+    @Column({type: "varchar", length: 20})
     firstName: string;
 
-    @Column()
+    @Column({type: "varchar", length: 20})
     lastName: string;
 
-    @Column()
+    @Column({type: "varchar", length: 10})
     phone: string;
 
-    @Column()
+    @Column({type: "varchar"})
     type: "hirer" | "vendor" ;
 
-    @Column({nullable: true})
+    @Column({type: "int", nullable: true})
     reputation?: number;
 
-    @Column({nullable: true})
+    @Column({type: "int", nullable: true})
     credibility?: number;
 
-    @Column({nullable: true})
+    @Column({type: "varchar", length: 15, nullable: true})
     abn?: string;
 
-    @Column({nullable: true})
+    @Column({type: "text", nullable: true})
     license?: string;
 
-    @Column({nullable: true})
+    @Column({type: "text", nullable: true})
     insurance?: string;
 
-    @Column({nullable: true})
+    @Column({type: "text", nullable: true})
     registrationCert?: string;
 
     //dont need to do anything here? already set the createdAt in the table itself
