@@ -38,7 +38,7 @@ export class Application {
     registrationCert?: string;
 
     @Column({type: "bit", nullable: true})
-    accepted?: boolean;
+    isAccepted?: boolean;
 
     @Column({type: "text", nullable: true})
     notes?: string;
@@ -56,7 +56,9 @@ export class Application {
     //       each application references 1 venue
     
     //get the hirerID
-    @ManyToOne(() => User, (user) => user.applications)
+    @ManyToOne(() => User, (user) => user.applications, {
+        nullable: false
+    })
     @JoinColumn({
             name: "hirerID", //name in apps table
             referencedColumnName: "id", //name in users table
@@ -65,7 +67,7 @@ export class Application {
     user: User;
 
     //get the venueID
-    @ManyToOne(() => Venue, (venue) => venue.applications)
+    @ManyToOne(() => Venue, (venue) => venue.applications, {nullable: false})
     @JoinColumn({
             name: "venueID", //name in apps table
             referencedColumnName: "id", //name in venue table

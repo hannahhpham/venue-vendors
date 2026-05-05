@@ -33,13 +33,13 @@ export class Venue {
     @Column({type: "varchar", length: 3})
     state: "VIC" | "TAS" | "ACT" | "SA" | "WA" | "NSW" | "QLD" | "NT" ;
 
-    @Column({type: "int", length: 4})
+    @Column({type: "int"})
     postcode: number;
 
-    @Column({type: "int", length: 5})
+    @Column({type: "int"})
     capacity: number;
 
-    @Column({type: "int", length: 5})
+    @Column({type: "int"})
     rate: number;
 
     @Column({type: "text"})
@@ -50,7 +50,7 @@ export class Venue {
     //logic: each venue is owned by 1 user. 
     
     //might need @JoinColumn
-    @ManyToOne(() => User, (user) => user.venues)
+    @ManyToOne(() => User, (user) => user.venues, {nullable: false})
     @JoinColumn({
         name: "ownerID", //name in venues tab;e
         referencedColumnName: "id", //name in users table

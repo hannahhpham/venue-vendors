@@ -9,19 +9,28 @@ interface formProps {
   altLoc : string;
   signup : boolean;
   //login or signup pages will give specific function represented here
-  onSubmit : (email: string, password: string) => void;
+  onSubmit : (email: string, password: string, type?: string) => void;
 }
 
 const Form = ({title, altLoc, signup, altMsg, onSubmit}: formProps) => {
 
   //get hooks ready
+  // TODO: use useReducer instead?
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [type, setType] = useState<string>("");
 
   //call the signup/login function given by parent
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault(); //prevent reloading of page immediately
-    onSubmit(email, password); //this will call handleLogin/handleSignup
+
+    if (signup) {
+      onSubmit(email, password, type); //this will call handleSignup
+    }
+    else {
+      onSubmit(email, password); //this will call handleLogin
+    }
+    
   };
 
   return (
@@ -49,7 +58,8 @@ const Form = ({title, altLoc, signup, altMsg, onSubmit}: formProps) => {
           (<div className="grid-template-rows-2 mb-2">
                 <label className="block font-medium">User type</label>
                 <select className="block p-2 outline outline-black bg-neutral-50 rounded w-100" 
-                       required
+                        onChange={(e)=>setType(e.target.value)}
+                        required
                 >
                   <option value="vendor">Vendor</option>
                   <option value="hirer">Hirer</option>

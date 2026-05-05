@@ -18,7 +18,7 @@ export class ShortlistedVenue {
 
     //REALLY NEED TO CHECK OVER THESE
     //this gets the shortlistedVenue's hirer 
-    @ManyToOne(() => User, (user) => user.shortlistedVenues)
+    @ManyToOne(() => User, (user) => user.shortlistedVenues, {nullable: false})
     @JoinColumn({
             name: "hirerID", //name in this table
             referencedColumnName: "id", //name in referenced table
@@ -27,7 +27,7 @@ export class ShortlistedVenue {
     user: User;
 
     //this gets the shortlisted venue's venue
-    @ManyToOne(() => Venue, (venue) => venue.shortlistedVenues)
+    @ManyToOne(() => Venue, (venue) => venue.shortlistedVenues, {nullable: false})
     @JoinColumn({
             name: "venueID", //name in this table
             referencedColumnName: "id", //name in venue table

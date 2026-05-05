@@ -1,12 +1,19 @@
 import Header from "../components/Header";
 import Form from "../components/Form";
 import Main from '../components/Main';
+import {useState} from 'react'
 
 export default function Signup() {
-  const handleSignup = () => {
-    //do this later
-    alert("Signup functionality will be implemented in the next part of the assignment.");
+  const handleSignup = (email: string, password: string, type?: string) => {
+    //MAKE API CALL HERE TO SIGN THE USER UP
   }
+
+   const [newUser, setNewUser] = useState({
+      email: "",
+      password: "",
+      type: "",
+  });
+
 
   return (
     <Main type='wholePage'>
@@ -18,6 +25,7 @@ export default function Signup() {
               signup={true}
               altLoc={"/login"}
               onSubmit={handleSignup}/>
+        
     
     </Main>
   );

@@ -18,13 +18,13 @@ export class User {
     @Column({type: "varchar", length: 50})
     password: string;
 
-    @Column({type: "varchar", length: 20})
+    @Column({type: "varchar", length: 20, nullable: true}) //made nullable cuz its added after creation
     firstName: string;
 
-    @Column({type: "varchar", length: 20})
+    @Column({type: "varchar", length: 20, nullable: true})
     lastName: string;
 
-    @Column({type: "varchar", length: 10})
+    @Column({type: "varchar", length: 10, nullable: true})
     phone: string;
 
     @Column({type: "varchar"})
@@ -50,7 +50,7 @@ export class User {
 
     //dont need to do anything here? already set the createdAt in the table itself
     //do i need the @createdAtColumn here since mssql is alr doing it
-    @CreateDateColumn()
+    @CreateDateColumn({type: "datetime"})
     createdAt: Date; 
 
     //HOW DO WE MAKE THIS OPTIONAL - not all users are vendors

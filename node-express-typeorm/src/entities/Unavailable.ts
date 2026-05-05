@@ -18,7 +18,7 @@ export class Unavailable {
     @Column({type: "date"}) //this too :(
     date: Date;
 
-    @ManyToOne(() => Venue, (venue) => venue.unavailable)
+    @ManyToOne(() => Venue, (venue) => venue.unavailable, {nullable: false})
     @JoinColumn({
             name: "venueID", //name in this table
             referencedColumnName: "id", //name in venue table
