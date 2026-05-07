@@ -7,23 +7,23 @@ const router = Router();
 
 const venueController = new VenueController();
 
-router.get("/users", async (req, res) => {
+router.get("/venues", async (req, res) => {
     await venueController.getAllVenues(req, res);
 });
 
-router.get("/users/:id", async (req, res) => {
+router.get("/venues/:id", async (req, res) => {
     await venueController.getOneVenue(req, res);
 });
 
-router.post("/users", async (req, res) => {
+router.post("/venues", async (req, res) => {
     await venueController.createVenue(req, res);
 });
 
-router.put("/users/:id", async (req, res) => {
+router.put("/venues/:id", async (req, res) => {
     await venueController.updateVenue(req, res);
 });
 
-router.delete("/users/:id", async (req, res) => {
+router.delete("/venues/:id", async (req, res) => {
     await venueController.deleteVenue(req, res);
 });
 
