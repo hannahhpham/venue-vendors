@@ -4,6 +4,8 @@ import {Venue} from './Venue'
 
 @Entity({name: "shortlistedVenues"})
 
+// USE THIS: https://typeorm.io/docs/relations/many-to-many-relations
+
 export class ShortlistedVenue {
 
     //2 primary keys
@@ -22,9 +24,9 @@ export class ShortlistedVenue {
     @JoinColumn({
             name: "hirerID", //name in this table
             referencedColumnName: "id", //name in referenced table
-            foreignKeyConstraintName: "FK_shortlistedVenues_hirerID", //constraint name in thus table
+            foreignKeyConstraintName: "FK_shortlistedVenues_hirerID", //constraint name in this table
     })
-    user: User;
+    hirer: User;
 
     //this gets the shortlisted venue's venue
     @ManyToOne(() => Venue, (venue) => venue.shortlistedVenues, {nullable: false})

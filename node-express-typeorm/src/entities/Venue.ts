@@ -4,11 +4,12 @@
 
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn} from 'typeorm'
 import { User } from './User'
-import {Application} from './Application'
-import {ShortlistedVenue} from './ShortlistedVenue'
-import {Unavailable} from './Unavailable'
+import { Application } from './Application'
+import { ShortlistedVenue } from './ShortlistedVenue'
+import { Unavailable } from './Unavailable'
 //there are lots of decorators like IsString() IsNotEmpty()
-import {IsEmail} from 'class-validator'
+// I think we gotta move these into the dtos
+import { IsEmail } from 'class-validator'
 
 //can say what table this entity is based on
 @Entity({name: "venues"})
@@ -17,6 +18,7 @@ export class Venue {
     @PrimaryGeneratedColumn({type: "int"})
     id: number;
 
+    // never really considered this, but might as well have it
     @Column({ unique: true }) //talk to ananya abt this
     name: string;
 
@@ -33,7 +35,7 @@ export class Venue {
     @Column({type: "varchar", length: 3})
     state: "VIC" | "TAS" | "ACT" | "SA" | "WA" | "NSW" | "QLD" | "NT" ;
 
-    @Column({type: "int"})
+    @Column({type: "int", length: 4})
     postcode: number;
 
     @Column({type: "int"})
@@ -48,6 +50,8 @@ export class Venue {
     //IMPORTANT!!! check over this. 
     //this will add a new column
     //logic: each venue is owned by 1 user. 
+
+    // CHECK: WHAT DOES THE foreignKeyConstraintName mean??
     
     //might need @JoinColumn
     @ManyToOne(() => User, (user) => user.venues, {nullable: false})
@@ -56,7 +60,7 @@ export class Venue {
         referencedColumnName: "id", //name in users table
         foreignKeyConstraintName: "FK_venues_userID", //constraint name in venues table
     })
-    user: User;
+    vendor: User;
 
     //logic: each application has 1 venue
     //for applications. again, how do we make this optional

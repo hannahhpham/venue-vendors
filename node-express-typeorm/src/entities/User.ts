@@ -1,5 +1,8 @@
 //all entity files have used lab 8 as a reference
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany} from 'typeorm'
+import { Entity,
+     PrimaryGeneratedColumn,
+      Column, CreateDateColumn,
+       UpdateDateColumn, OneToMany} from 'typeorm'
 import {Venue} from './Venue'
 import {Application} from './Application'
 import {ShortlistedVenue} from './ShortlistedVenue'
@@ -18,6 +21,7 @@ export class User {
     @Column({type: "varchar", length: 50})
     password: string;
 
+    // wait why do we need this nullable?
     @Column({type: "varchar", length: 20, nullable: true}) //made nullable cuz its added after creation
     firstName: string;
 
@@ -30,23 +34,26 @@ export class User {
     @Column({type: "varchar"})
     type: "hirer" | "vendor" ;
 
+    // maybe we need these as those update columns?
     @Column({type: "int", nullable: true})
-    reputation?: number;
+    reputation: number;
 
+    // maybe we need these as those update columns?
     @Column({type: "int", nullable: true})
-    credibility?: number;
+    credibility: number;
 
+    // shift into applications or no - double check w teachers
     @Column({type: "varchar", length: 15, nullable: true})
-    abn?: string;
+    abn: string;
 
     @Column({type: "text", nullable: true})
-    license?: string;
+    license: string;
 
     @Column({type: "text", nullable: true})
-    insurance?: string;
+    insurance: string;
 
     @Column({type: "text", nullable: true})
-    registrationCert?: string;
+    registrationCert: string;
 
     //dont need to do anything here? already set the createdAt in the table itself
     //do i need the @createdAtColumn here since mssql is alr doing it
@@ -55,14 +62,14 @@ export class User {
 
     //HOW DO WE MAKE THIS OPTIONAL - not all users are vendors
     //for the venue the vendor manages. create one-to-many relation. this doesnt add a column
-    @OneToMany(()=> Venue, (venue)=>venue.user)
+    @OneToMany(()=> Venue, (venue) => venue.vendor)
     venues: Venue[]
 
     //for applications. again, how do we make this optional
-    @OneToMany(()=> Application , (application)=> application.user)
+    @OneToMany(()=> Application , (application) => application.user)
     applications: Application []
 
     //for the shortlisted venues
-    @OneToMany(()=>ShortlistedVenue, (shortlistedVenue)=> shortlistedVenue.user)
+    @OneToMany(()=>ShortlistedVenue, (shortlistedVenue) => shortlistedVenue.hirer)
     shortlistedVenues: ShortlistedVenue[]
 }
