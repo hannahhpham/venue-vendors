@@ -18,11 +18,12 @@ import Button from '../../components/Button';
 import Sidebar from '../../components/Sidebar'
 import Main from '../../components/Main';
 import Analytics from "../../components/Analytics";
+import { venueAPI } from "../../services/api";
 
 
 export default function VenuePage() {
   const router = useRouter();
-  const { allVenues } = useVenues();
+  //const { allVenues } = useVenues();
   const { currUser, allUsers, updateUser } = useAuth();
   const { allApplications, setBooking, shortlist } = useApplications();
   const { allBlocked, blockVenue, unblockVenue } = useUnavail();
@@ -30,7 +31,28 @@ export default function VenuePage() {
   // this is a string - the venue id
   const { id } = router.query;
 
-  const thisVenue: Venue | undefined = allVenues.filter((venue: Venue) => venue.id === Number(id)).at(0);
+  //const thisVenue: Venue | undefined = allVenues.filter((venue: Venue) => venue.id === Number(id)).at(0);
+
+  // the following code is based on [id].tsx, profile, frontend, Lecture 9 Example 1
+  const [thisVenue, setThisVenue] = useState<Venue | undefined>(undefined);
+
+  // the problem with this is that there is a delay in displaying the page
+  // in this gap, it shows that "This venue does not exist"
+  // we probably need to use a different hook (?)
+  useEffect( () => {
+    if (id) {
+      fetchVenue();
+    }
+  }, [id]);
+
+  const fetchVenue = async () => {
+    try {
+      const data = await venueAPI.getVenue(id as string);
+      setThisVenue(data);
+    } catch (error) {
+      console.error("Error fetching venue ([id].tsx): ", error);
+    }
+  };
 
   // get all the applications submitted for this venue
   const [currApps, setCurrApps] = useState<Application[]>(allApplications.filter(

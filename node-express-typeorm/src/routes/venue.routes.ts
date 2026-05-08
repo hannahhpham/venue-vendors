@@ -29,6 +29,8 @@ router.delete("/venues/:id", async (req, res) => {
 
 // CHECK THIS - again not sure whether this would be best
 //  to have linked to user rather than venue
-router.get("/:id/user", (req, res) => venueController.findByVendor(req, res));
+router.get("/users/:id/venues", (req, res) => {
+    venueController.getByVendor(req, res);
+});
 
 export default router;

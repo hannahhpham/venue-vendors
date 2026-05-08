@@ -1,5 +1,5 @@
 import axios from "axios";
-//import Venue from "../types/venues";
+import { Venue } from "../types/venues";
 import {User} from '../types/users'
 
 //REFERENCES:
@@ -46,8 +46,21 @@ export const userApi = {
 
 // api for accessing the venues table
 export const venueAPI = {
+  
   getAllVenues: async () => {
     const response = await api.get("/venues");
     return response.data;
-  }
+  },
+
+  getVenue: async (id: String) => {
+    const response = await api.get(`/venues/${id}`);
+    return response.data;
+  },
+
+  // not sure a return is necessary
+  getByVendor: async (id: string) => {
+    const response = await api.get(`/users/${id}/venues`);
+    return response.data;
+  },
+
 };

@@ -123,7 +123,7 @@ export class VenueController {
 
     // find venues linked to a vendor
     // look at Week 08 Example 1 - Comments Controller, Example 2 - Profile Controller
-    async findByVendor(req: Request, res: Response) {
+    async getByVendor(req: Request, res: Response) {
         // I think this block should work
         // const vendorID = parseInt(request.params.vendorID as string);
         // const venues = await this.venueRepository.find({
@@ -141,7 +141,7 @@ export class VenueController {
         }
 
         /** Retrieve the venues from the database */
-        const venues = await this.venueRepository.findOne({
+        const venues = await this.venueRepository.find({
             where: {
                 vendor: { id: vendor.id },
             },
@@ -152,7 +152,7 @@ export class VenueController {
             return res.status(404).json({ message: "Venues not found" });
         }
 
-        /** Return the pet */
+        /** Returns the venues */
         res.json(venues);
     }
 

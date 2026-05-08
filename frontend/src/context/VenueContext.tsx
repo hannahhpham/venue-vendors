@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, createContext } from 'react';
-import { venues, Venue } from "../types/venues";
-import {useNotif} from '../context/NotifContext';
+import { Venue } from "../types/venues";
+import { useNotif } from '../context/NotifContext';
+import { venueAPI } from "../services/api";
 
 // NOTE: Most of this is based off Week 4 Example 3 (Lectures)
 
@@ -23,34 +24,30 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
     const [allVenues, setAllVenues] = useState<Venue[]>([]);
     const {showNotif} = useNotif();
 
-    // stores all the most up to date list of venues (either in localStorage or the file)
-    // NOTE: the following hook is adapted from Week 2 Example 6 (Lectures)
+    // stores all the venues in the database
+    // this useEffect and the fetchvenues functions are based on
+    // Lecture 9 Example 1 - frontend (index.tsx under pets)
     useEffect(() => {
+        fetchVenues();
+    }, []);
 
-        // stores all the venues that are saved in localStorage
-        const savedVenues = localStorage.getItem("venues");
-
-        // if there is nothing saved in localStorage, save the "default values" (those stored in the file)
-        if (!savedVenues || JSON.parse(savedVenues).length === 0) {
-            setAllVenues(venues);
-            localStorage.setItem("venues", JSON.stringify(venues));
-
-        } else {
-            // or else store what is in localStorage
-            setAllVenues(JSON.parse((savedVenues)));
+    const fetchVenues = async () => {
+        try {
+            const data = await venueAPI.getAllVenues();
+            setAllVenues(data);
+        } catch (error) {
+            console.error("Error fetching all venues (Context File): ", error);
         }
-
-    }
-        , []);
+    };
 
 
     // update localStorage with the updated set of venues whenever a new one is added
-    useEffect(() => {
-        if (allVenues.length > 0) {
-            localStorage.setItem("venues", JSON.stringify(allVenues));
-        }
+    // useEffect(() => {
+    //     if (allVenues.length > 0) {
+    //         localStorage.setItem("venues", JSON.stringify(allVenues));
+    //     }
        
-    }, [allVenues])
+    // }, [allVenues])
 
 
     // add a new venue TO LOCALSTORAGE ONLY

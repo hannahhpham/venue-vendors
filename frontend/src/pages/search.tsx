@@ -12,21 +12,21 @@ import { venueAPI } from "../services/api";
 export default function Search() {
   const router = useRouter();
 
-  const [allVenues, setAllVenues] = useState<Venue[]>([]);
+//   const [allVenues, setAllVenues] = useState<Venue[]>([]);
 
-  useEffect(() => {
-    venues();
-  }, []);
+//   useEffect(() => {
+//     venues();
+//   }, []);
   
-  const venues = async () => {
-    try {
-        const data = await venueAPI.getAllVenues();
-        setAllVenues(data);
-    } catch (error) {
-        console.log("Error getting all venues: ", error);
-    }
-  };
-  //const { allVenues } = useVenues();
+//   const venues = async () => {
+//     try {
+//         const data = await venueAPI.getAllVenues();
+//         setAllVenues(data);
+//     } catch (error) {
+//         console.log("Error getting all venues: ", error);
+//     }
+//   };
+  const { allVenues } = useVenues();
 
   const [search, setSearch] = useState<string>("");
   const [filterPopup, setFilterPopup] = useState<boolean>(false);
