@@ -29,7 +29,7 @@ export class User {
     lastName: string;
 
     @Column({type: "varchar", length: 10, nullable: true})
-    phone: string;
+    phoneNumber: string;
 
     @Column({type: "varchar"})
     type: "hirer" | "vendor" ;
@@ -47,10 +47,10 @@ export class User {
     abn: string;
 
     @Column({type: "text", nullable: true})
-    license: string;
+    drivLic: string;
 
     @Column({type: "text", nullable: true})
-    insurance: string;
+    insur: string;
 
     @Column({type: "text", nullable: true})
     registrationCert: string;

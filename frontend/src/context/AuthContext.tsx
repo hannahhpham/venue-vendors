@@ -6,13 +6,14 @@ import { useApplications } from './ApplyContext';
 import {venues, Venue} from '../types/venues'
 import {useVenues} from './VenueContext'
 import {useNotif} from './NotifContext'
+import {userApi} from '../services/api'
 
 //lectorial 2 example 6 was referenced when creating this AuthContext 
 
 interface AuthContextType {
     currUser : User | null,
     allUsers : User[],
-    login : (email: string, password: string) => boolean;
+    login : (email: string, password: string) => void;
     logout : () => void,
     updateUser : (updatedUser: User) => void, //update user information, including their shortlisted venues
     getRepRating : (user : User) => number,
@@ -31,6 +32,8 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
     const {allApplications} = useApplications();
     const {allVenues} = useVenues();
     const {showNotif} = useNotif();
+
+    // REMOVE THESE FROM LOCAL STORAGE WHEN RECFACTORING DONE
     const[currUser, setCurrUser] = useState<User | null>(null);
     const[allUsers, setAllUsers] = useState<User[]>([]);
 
@@ -39,21 +42,21 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
     const [shortlistedVenues, setShortlistedVenues] = useState<Venue[]>([]);
     const [venueApplications, setVenueApplications] = useState<Application[]>([]);
 
-    
-    //check if theres user in localstorage. check if theres shortlisted venues and applications
+    const getAllUsers = async () => {
+        try {
+            const data = await userApi.getAllUsers();
+            setAllUsers(data); //need to remove this after refactoring
+            return data;
+        } catch (error) {
+            console.log("Error getting all users: ", error);
+        }
+    };
+
+    //check if theres user in the database. check if theres shortlisted venues and applications
     //NOTE: lec2example6 takes user information from LS and stores in useState above.
     //      if theres nothing in LS then it takes default user array from file.
     useEffect( () => {
-        const localUsers = localStorage.getItem("allUsers");
-
-        //get  information from LS. if no info, take from default user array
-        if (!localUsers || JSON.parse(localUsers).length === 0) {
-            localStorage.setItem("allUsers", JSON.stringify(users));
-            setAllUsers(users);
-        }
-        else if (localUsers){
-            setAllUsers(JSON.parse(localUsers));
-        }
+        getAllUsers();
 
         //check if user stored
         const storedUser = localStorage.getItem("currUser");
@@ -61,7 +64,6 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
             setCurrUser(JSON.parse(storedUser));
             setShortlistedVenues(JSON.parse(storedUser).shortlistedVenues);
             setVenueApplications(allApplications.filter((app : Application)=>   (currUser?.applications?.includes(app.id))));
-            //console.log(JSON.parse(storedUser).applications);
         }
 
     }
@@ -72,7 +74,6 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
         if (allUsers.length > 0) {
             localStorage.setItem("allUsers", JSON.stringify(allUsers));
         }
-        //console.log("AFTER RESET (after)): " + allVenues);
     }, [allUsers])
 
     //get the user's shortlisted venues from local storage and store in state
@@ -109,27 +110,29 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
         //console.log(venueApplications);
     }, [allApplications, currUser]);
 
-    // login functionality. moved here from login.ts cuz if its in login.tsx it cant access authcontext
-    const login = (email: string, password: string): boolean => {
-        const userFound = allUsers.find(
-        (u) => u.email === email && u.password === password
-        );
+    // login functionality.
+    const login = async (email: string, password: string) => {
+        // const userFound = allUsers.find(
+        // (u) => u.email === email && u.password === password
+        // );
+        try {
+            const data = await userApi.getUserByEmail(email);
+                
+            if (data) {
+                //store current to local storage. use this for other pages
+                localStorage.setItem("currUser", JSON.stringify(data));
+                setCurrUser(data);
 
-        if (userFound) {
-            //store current to local storage. use this for other pages
-            localStorage.setItem("currUser", JSON.stringify(userFound));
-            setCurrUser(userFound);
+                //use this over link cuz this is properly pushing the user instead of loading smth new
+                router.push('/');
+                showNotif("You have successfully signed in.", 'success');
 
-            //use this over link cuz this is properly pushing the user instead of loading smth new
-            router.push('/');
-            showNotif("You have successfully signed in.", 'success');
-
-            return true;
-        }
-        else {
+            }
+        } catch (error) {
+            console.log("Error getting all users: ", error);
             showNotif("Incorrect email/password combination entered. Please try again.", 'fail');
-            return false;
         }
+
     }
 
     //logout functionality - remove user from LS, push to homepage
@@ -143,24 +146,36 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
 
     //for updating user details (name, phone). also for updating the user's shortlisted venues
     // and uploading / updating the user's driver's license and public liability insurance cert
-    const updateUser = (updatedUser: User) => {
-        //console.log("update user ran");
+    const updateUser = async (updatedUser: User) => {
 
-        //create new allUsers array
-        const updatedAllUsers = allUsers.map(user => //map function I LOVE YOUU
-                user.id === currUser?.id ? updatedUser : user
-        )
+        // const allUsers: User[] = await getAllUsers();
+
+        // //create new allUsers array
+        // const updatedAllUsers = allUsers.map(user => //map function I LOVE YOUU
+        //         user.id === currUser?.id ? updatedUser : user
+        // )
         
-        //update state and localstorage
-        setCurrUser(updatedUser);
-        setAllUsers(updatedAllUsers)
-        localStorage.setItem("currUser", JSON.stringify(updatedUser));
-        localStorage.setItem("allUsers", JSON.stringify(updatedAllUsers));
+        // //update state and localstorage
+        // setCurrUser(updatedUser);
+        // setAllUsers(updatedAllUsers)
+        // localStorage.setItem("currUser", JSON.stringify(updatedUser));
+        // localStorage.setItem("allUsers", JSON.stringify(updatedAllUsers));
+
+        //update this user in the database
+        await userApi.updateUser(updatedUser.id, updatedUser);
+
+        //update all the users in use state
+        await getAllUsers();
+
+        //update the currUser in use state
+        const user = await userApi.getUserById(updatedUser.id);
+        //console.log("user phone:" + user?.phone);
+        setCurrUser(user);
+        
     }
 
-
     // calculate the reputation rating of a hirer
-        // source: https://www.geeksforgeeks.org/typescript/typescript-array-reduce-method/
+    // source: https://www.geeksforgeeks.org/typescript/typescript-array-reduce-method/
     const getRepRating = (user : User) : number => {
         const myApps = allApplications.filter((app : Application) => (app.hirerID === user.id && app.accepted === true && app.vendorRating !== undefined));
         let rating : number = myApps.reduce((total, currVal) => {

@@ -7,7 +7,7 @@ import { User } from "../entities/User";
 
 //TODO:
 // need to change ALL methods to accept the relevant user data
-
+ 
 export class UserController {
     private userRepository = AppDataSource.getRepository(User);
     /**
@@ -20,16 +20,34 @@ export class UserController {
         const users = await this.userRepository.find();
         return response.json(users);
     }
+
     /**
      * Retrieves a single user by their ID
      * @param request - Express request object containing the user ID in params
      * @param response - Express response object
      * @returns JSON response containing the user if found, or 404 error if not found
      */
-    async one(request: Request, response: Response) {
+    async oneById(request: Request, response: Response) {
         const id = parseInt(request.params.id as string);
         const user = await this.userRepository.findOne({
             where: { id },
+        });
+        if (!user) {
+            return response.status(404).json({ message: "User not found" });
+        }
+        return response.json(user);
+    }
+
+    /**
+     * Retrieves a single user by their email
+     * @param request - Express request object containing the user email in params
+     * @param response - Express response object
+     * @returns JSON response containing the user if found, or 404 error if not found
+     */
+    async oneByEmail(request: Request, response: Response) {
+        const email = request.params.email as string;
+        const user = await this.userRepository.findOne({
+            where: {email},
         });
         if (!user) {
             return response.status(404).json({ message: "User not found" });
@@ -45,12 +63,10 @@ export class UserController {
      * @returns JSON response containing the created user or error message
      */
     async save(request: Request, response: Response) {
-        const { firstName, lastName, email, age } = request.body;
+        const { email, password } = request.body;
         const user = Object.assign(new User(), {
-            firstName,
-            lastName,
             email,
-            age,
+            password,
         });
         try {
             const savedUser = await this.userRepository.save(user);
@@ -88,18 +104,19 @@ export class UserController {
      */
     async update(request: Request, response: Response) {
         const id = parseInt(request.params.id as string);
-        const { firstName, lastName, email, age } = request.body;
+        const { firstName, lastName, phoneNumber, drivLic, insur } = request.body;
         let userToUpdate = await this.userRepository.findOne({
             where: { id },
         });
         if (!userToUpdate) {
             return response.status(404).json({ message: "User not found" });
         }
-        userToUpdate = Object.assign(userToUpdate, {
+        userToUpdate = Object.assign(userToUpdate, { //may need to change this to have all user details
             firstName,
             lastName,
-            email,
-            age,
+            phoneNumber,
+            drivLic,
+            insur
         });
         try {
             const updatedUser = await this.userRepository.save(userToUpdate);

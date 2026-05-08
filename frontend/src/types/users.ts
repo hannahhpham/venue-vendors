@@ -7,7 +7,6 @@ export type User = {
   lastName: string,
   phoneNumber : string, //vendors dont really need to view this info at all? remove?
                         //hirers do tho! i think we make it optional
-
   drivLic? : string,    // our base64 string - this is a jpg
   insur? : string,      // our base64 string - this is a pdf
   

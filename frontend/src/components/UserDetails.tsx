@@ -38,7 +38,6 @@ const Details = ({edit} : detailsType) => {
       //update local storage and states with new values using function from authcontext
       //needs to be in authcontext cuz thats where the state for currUser and allUsers is
       updateUser(updatedUser);
-
       showNotif("Details successfully updated", 'success');
     }
   }

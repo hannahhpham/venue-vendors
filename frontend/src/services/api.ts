@@ -1,5 +1,6 @@
 import axios from "axios";
 //import Venue from "../types/venues";
+import {User} from '../types/users'
 
 //REFERENCES:
 //FSD Lectorial 8 code archive
@@ -7,25 +8,6 @@ export const api = axios.create({
   baseURL: "http://localhost:3001/api",
 });
 
-// can we not take this from types?
-//declare types here for our API objects to use
-export interface User {
-  id: number
-  email: string,
-  password: string,
-  firstName: string,
-  lastName: string,
-  phone : string, 
-  type: "hirer" | "vendor",
-  //HIRER SPECIFIC
-  reputation?: number,
-  credibility?: number,
-  ABN?: string
-  license? : string,    // our base64 string - this is a jpg
-  insurance? : string,      // our base64 string - this is a pdf
-  registrationCert?: string,
-  createdAt: Date,
-};
 
 //api objects are made here for CRUD operations
 
@@ -37,9 +19,26 @@ export const userApi = {
         return response.data;
     },
 
-    createUser: async (user: Partial<User>) => {
+    getUserById: async (id: number) => {
+      const response = await api.get(`/users/${id}`);
+      return response.data;
+    },
+
+    //https://stackoverflow.com/questions/79196343/how-to-resolve-route-conflicts-in-express-js-with-similar-route-paths
+    //NEED TO DISTINGUISH ROUTES SO THEY DONT CLASH
+    getUserByEmail: async (email: string) => {
+      const response = await api.get(`/users/login/${email}`);
+      return response.data;
+    },
+
+    createUser: async (user: Partial<User>) => { //idk what Partial is but lab 8 had it
         const response = await api.post("/users", user);
         return response.data;
+    },
+
+    updateUser: async (id: number, user: Partial<User>) => {
+      const response = await api.put(`/users/${id}`, user);
+      return response.data;
     },
 };
 

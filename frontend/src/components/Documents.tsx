@@ -25,32 +25,33 @@ const Documents = ({edit} : DocumentType) => {
 
 
   // to upload / update documents AND update the currUser + allUsers array.
-  const handleSaveDocs = () => {
+  const handleSaveDocs = async (currDlStr: string, currInsurStr: string) => {
+
     if (currUser && currUser.type === "hirer") {
       let updatedUser: User = {...currUser};
 
       //if the documents are present then prepare to update the user
-      if (dlStr !== "") {
-        console.log("drivers license: " + dlStr);
+      if (currDlStr !== "") {
+        //console.log("drivers license: " + dlStr);
         updatedUser = {
           ...updatedUser,
-          drivLic: dlStr
+          drivLic: currDlStr
         };
       }
       
-      if (insurStr !== "") {
+      if (currInsurStr !== "") {
         updatedUser = {
           ...updatedUser,
-          insur: insurStr
+          insur: currInsurStr
         };
       }
 
-      if (dlStr === "" && insurStr === "") {
+      if (currDlStr === "" && currInsurStr === "") {
         showNotif("Error! Please upload your documents again!", "fail");
         return;
       }
       else { //update user 
-        updateUser(updatedUser);
+        await updateUser(updatedUser);
         showNotif("Your documents were successfully updated!", "success");
       }
   
@@ -118,7 +119,7 @@ const Documents = ({edit} : DocumentType) => {
                 <div>
                   <label className="">Driver's license</label>
                   <input type="file" accept="image/jpg" 
-                         onChange={(e) => utils.uploadFile(e, dl, setDL, dlStr, setDLStr)}/>
+                         onChange={(e) => {utils.uploadFile(e, dl, setDL, dlStr, setDLStr)}}/>
 
                 </div><br/>
 
@@ -128,7 +129,7 @@ const Documents = ({edit} : DocumentType) => {
                          onChange={(e) => utils.uploadFile(e, insur, setInsur, insurStr, setInsurStr)}/>
                 </div><br/>
 
-                <Button onClick={handleSaveDocs} text="Submit" className="m-5"/>
+                <Button onClick={() => handleSaveDocs(dlStr, insurStr)} text="Submit" className="m-5"/>
               </form>
             </Popup>
             }  
@@ -140,11 +141,11 @@ const Documents = ({edit} : DocumentType) => {
       <div className="details flex flex-col bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
 
         <label>Drivers License</label>
-        <input disabled value={currUser?.drivLic !== "" ? "Uploaded Successfully" : "Not Uploaded"} />
+        <input disabled value={currUser?.drivLic !== null ? "Uploaded Successfully" : "Not Uploaded"} />
       
 
         <label>Insurance Certificate</label>
-        <input disabled value={currUser?.insur !== "" ? "Uploaded Successfully" : "Not Uploaded"} />
+        <input disabled value={currUser?.insur !== null ? "Uploaded Successfully" : "Not Uploaded"} />
 
         <label>Business Registration Certificate</label>
         <input className="bg-gray-100 text-sm italic" value="Please upload when applying" disabled />

@@ -9,7 +9,12 @@ router.get("/users", async (req, res) => {
 });
 
 router.get("/users/:id", async (req, res) => {
-    await userController.one(req, res);
+    await userController.oneById(req, res);
+});
+
+//get a user by their email
+router.get("/users/login/:email", async (req, res) => {
+    await userController.oneByEmail(req, res);
 });
 
 router.post("/users", async (req, res) => {
