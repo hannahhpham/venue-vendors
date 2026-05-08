@@ -4,7 +4,7 @@
 
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne} from 'typeorm'
 import { User } from './User'
-import {Venue} from './Venue'
+import { Venue } from './Venue'
 
 //can say what table this entity is based on
 @Entity({name: "applications"})

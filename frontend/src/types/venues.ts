@@ -1,4 +1,4 @@
-export type Venue = {
+export interface Venue {
   id: number,
   name: string,
   phone: string,

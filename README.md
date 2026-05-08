@@ -9,9 +9,10 @@ Shared Notion (DELETE B4 SUBMITTING): [Here](https://www.notion.so/assignment-2-
 
 ## References for TypeOrm/Database Stuff
 - lab 7 and 8
+- lectures week 9
 - MatsT (2010). Creation date column in SQL table. [online] Stack Overflow. Available at: https://stackoverflow.com/questions/2737763/creation-date-column-in-sql-table [Accessed 1 May 2026].
 - Typeorm.io. (2025). Entities | TypeORM. [online] Available at: https://typeorm.io/docs/entity/entities/ [Accessed 1 May 2026].
 ‌- Typeorm.io. (2026). Decorator reference | TypeORM. [online] Available at: https://typeorm.io/docs/help/decorator-reference/ [Accessed 1 May 2026].
-‌
+‌- Typeorm.io. (2026). Many-to-many relations | TypeORM. [online] Available at: https://typeorm.io/docs/relations/many-to-many-relations [Accessed 6 May 2026].
 ‌
 ‌

@@ -1,4 +1,5 @@
 import axios from "axios";
+//import Venue from "../types/venues";
 
 //REFERENCES:
 //FSD Lectorial 8 code archive
@@ -6,6 +7,7 @@ export const api = axios.create({
   baseURL: "http://localhost:3001/api",
 });
 
+// can we not take this from types?
 //declare types here for our API objects to use
 export interface User {
   id: number
@@ -41,4 +43,12 @@ export const userApi = {
     },
 };
 
-//other api obkects
+//other api objects
+
+// api for accessing the venues table
+export const venueAPI = {
+  getAllVenues: async () => {
+    const response = await api.get("/venues");
+    return response.data;
+  }
+};

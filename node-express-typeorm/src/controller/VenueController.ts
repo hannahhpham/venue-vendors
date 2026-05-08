@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Venue } from "../entities/Venue";
 import { User } from "../entities/User";
+import { Application } from "../entities/Application";
+import { Unavailable } from "../entities/Unavailable";
 
 // using Lecture 9 Example 1
 
@@ -10,6 +12,10 @@ export class VenueController {
     private venueRepository = AppDataSource.getRepository(Venue);
 
     private userRepository = AppDataSource.getRepository(User);
+
+    private applicationRepository = AppDataSource.getRepository(Application);
+
+    private blockedRepository = AppDataSource.getRepository(Unavailable);
 
     /**
      * Retrieves all venues from the database
@@ -149,6 +155,10 @@ export class VenueController {
         /** Return the pet */
         res.json(venues);
     }
+
+
+    // get the applications associated with this venue
+    // get the unavailability periods associated with this venue
 
 
 }

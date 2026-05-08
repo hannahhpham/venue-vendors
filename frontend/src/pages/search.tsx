@@ -7,10 +7,26 @@ import { useVenues } from "../context/VenueContext";
 import { Venue } from "../types/venues";
 import Main from '../components/Main'
 import Popup from '../components/Popup'
+import { venueAPI } from "../services/api";
 
 export default function Search() {
   const router = useRouter();
-  const { allVenues } = useVenues();
+
+  const [allVenues, setAllVenues] = useState<Venue[]>([]);
+
+  useEffect(() => {
+    venues();
+  }, []);
+  
+  const venues = async () => {
+    try {
+        const data = await venueAPI.getAllVenues();
+        setAllVenues(data);
+    } catch (error) {
+        console.log("Error getting all venues: ", error);
+    }
+  };
+  //const { allVenues } = useVenues();
 
   const [search, setSearch] = useState<string>("");
   const [filterPopup, setFilterPopup] = useState<boolean>(false);

@@ -25,9 +25,13 @@ export class Venue {
     @Column({type: "varchar", length: 15})
     phone: string;
 
-    @Column({type: "varchar", length: 15, unique: true})
+    // had to make this longer to accomodate our existing venue emails :'(
+    @Column({type: "varchar", length: 35, unique: true})
     @IsEmail() //first test with class-validator. NEED TO LEARN MORE
     email: string;
+
+    @Column({type: "varchar", length: 75})
+    address: string;
 
     @Column({type: "varchar", length: 30})
     suburb: string;
@@ -35,7 +39,8 @@ export class Venue {
     @Column({type: "varchar", length: 3})
     state: "VIC" | "TAS" | "ACT" | "SA" | "WA" | "NSW" | "QLD" | "NT" ;
 
-    @Column({type: "int", length: 4})
+    // tried putting length property on this but it didn't work
+    @Column({type: "int"})
     postcode: number;
 
     @Column({type: "int"})
@@ -64,16 +69,16 @@ export class Venue {
 
     //logic: each application has 1 venue
     //for applications. again, how do we make this optional
-    @OneToMany(()=> Application , (application)=> application.venue)
-    applications: Application []
+    @OneToMany(()=> Application , (application) => application.venue)
+    applications: Application[]
 
     //for the shortlisted venues
-    @OneToMany(()=>ShortlistedVenue, (shortlistedVenue)=> shortlistedVenue.venue)
+    @OneToMany(()=>ShortlistedVenue, (shortlistedVenue) => shortlistedVenue.venue)
     shortlistedVenues: ShortlistedVenue[]
 
     //for the unavailable timeslots
     //for the shortlisted venues
-    @OneToMany(()=>Unavailable, (unavailable)=> unavailable.venue)
+    @OneToMany(()=>Unavailable, (unavailable) => unavailable.venue)
     unavailable: Unavailable[]
    
 }
