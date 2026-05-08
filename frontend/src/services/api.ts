@@ -4,6 +4,7 @@ import {User} from '../types/users'
 
 //REFERENCES:
 //FSD Lectorial 8 code archive
+
 export const api = axios.create({
   baseURL: "http://localhost:3001/api",
 });
@@ -12,7 +13,7 @@ export const api = axios.create({
 //api objects are made here for CRUD operations
 
 //api for accessing the users table
-export const userApi = {
+export const userAPI = {
 
     getAllUsers: async () => {
         const response = await api.get("users");
@@ -42,8 +43,6 @@ export const userApi = {
     },
 };
 
-//other api objects
-
 // api for accessing the venues table
 export const venueAPI = {
   
@@ -63,4 +62,31 @@ export const venueAPI = {
     return response.data;
   },
 
+};
+
+// api for accessing the venues table
+export const shortlistedVenueAPI = {
+  
+  getShortlistedVenues: async (hirerID: number) => {
+    const response = await api.get(`/shortlistedVenues/${hirerID}`);
+    return response.data;
+  },
+
+  shortlistVenue: async (hirerID: number) => {
+    const response = await api.post(`/shortlistedVenues/${hirerID}`);
+    return response.data;
+  },
+
+  updateRank: async (hirerID:number) => {
+    const response = await api.put(`/shortlistedVenues/${hirerID}`);
+    return response.data;
+  },
+
+  deleteShortlist: async (hirerID: number) => {
+    const response = await api.delete(`/shortlistedVenues/${hirerID}`);
+    return response.data;
+  },
+
+
+  
 };

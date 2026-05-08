@@ -72,9 +72,7 @@ export default function Home() {
                 </Button>
               </div>
               <Carousel type="shortlistedVenues" ranked={true} 
-                        carouselItems={shortlistedVenues.map((venue) => {
-                              return allVenues.find((thisVenue) => thisVenue === venue)
-                              }).filter((venue) => venue !== undefined) }
+                        carouselItems={shortlistedVenues}
                             />
               <hr className="mt-5 text-gray-200"></hr>
             </div>

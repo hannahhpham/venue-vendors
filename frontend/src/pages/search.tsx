@@ -152,12 +152,12 @@ export default function Search() {
                 //check if the search comes up empty. if yes, display message and otherwise show contents
                 //added in the venue description so that keywords like 'weddings' and 'corporate' show up - this helps fulfill 'recommended suitability'
                 (searchResults.filter((v : Venue) => ((v.name.toLowerCase()).includes(search) || (v.suburb.toLowerCase()).includes(search) || v.postcode === Number(search) 
-                || v.capacity === Number(search) || v.rate === Number(search) || v.description.includes(search))).length === 0 
+                || v.capacity === Number(search) || v.rate === Number(search) || v.keywords?.includes(search))).length === 0 
                 ? 
                     "No venues match your specifications. Please try again. " 
                     : 
                     (searchResults.filter((v : Venue) => ((v.name.toLowerCase()).includes(search) || (v.suburb.toLowerCase()).includes(search) || v.postcode === Number(search) 
-                        || v.capacity === Number(search) || v.rate === Number(search) || v.description.includes(search))).map((venue: Venue) =>
+                        || v.capacity === Number(search) || v.rate === Number(search) || v.keywords?.includes(search))).map((venue: Venue) =>
                         <div key={venue.id}>
                             <button className="px-5 py-2" onClick={() => router.push(`/venues/${venue.id}`)}>
                             <Card heading={venue.name} style="hover:bg-sky-100">

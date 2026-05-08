@@ -7,7 +7,9 @@ import express from "express";
 import { AppDataSource } from "./data-source";
 import userRoutes from "./routes/user.routes";
 import venueRoutes from "./routes/venue.routes";
+import shortlistedVenueRoutes from './routes/shortlistedVenue.routes'
 import cors from "cors";
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -15,6 +17,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use("/api", userRoutes);
 app.use("/api", venueRoutes);
+app.use("/api", shortlistedVenueRoutes);
 
 AppDataSource.initialize()
   .then(() => {

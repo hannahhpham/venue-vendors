@@ -12,6 +12,7 @@ export interface Venue {
   stars: number,
   description: string,
   ownerID: number
+  keywords?: string
 };
 
 // please note that (as per assignment specifications allow) venue information has been generated 

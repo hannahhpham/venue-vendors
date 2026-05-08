@@ -6,7 +6,7 @@ import { useApplications } from './ApplyContext';
 import {venues, Venue} from '../types/venues'
 import {useVenues} from './VenueContext'
 import {useNotif} from './NotifContext'
-import {userApi} from '../services/api'
+import {userAPI, shortlistedVenueAPI, venueAPI} from '../services/api'
 
 //lectorial 2 example 6 was referenced when creating this AuthContext 
 
@@ -42,15 +42,36 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
     const [shortlistedVenues, setShortlistedVenues] = useState<Venue[]>([]);
     const [venueApplications, setVenueApplications] = useState<Application[]>([]);
 
+    // api calls here
     const getAllUsers = async () => {
         try {
-            const data = await userApi.getAllUsers();
+            const data = await userAPI.getAllUsers();
+
             setAllUsers(data); //need to remove this after refactoring
             return data;
         } catch (error) {
             console.log("Error getting all users: ", error);
         }
     };
+
+    const getShortlistedVenues = async () => {
+        console.log("currUser is " + currUser);
+
+        if (currUser) {
+            const shortlistedVenuesData = await shortlistedVenueAPI.getShortlistedVenues(currUser.id);
+            const venues = await venueAPI.getAllVenues();
+
+            //organise the data and get the shortlistedVenues of type Venue
+            const shortlistedVenues: Venue[] = shortlistedVenuesData.map((shortlistedVenue: {hirerID: number, venueID: number, rank: number}) => 
+                                                                     venues.find((venue: Venue) => venue.id === shortlistedVenue.venueID));
+
+            setShortlistedVenues(shortlistedVenues);
+            console.log("venue:", shortlistedVenuesData[0]);
+            return shortlistedVenues;
+        }
+    }
+
+    // useEffects
 
     //check if theres user in the database. check if theres shortlisted venues and applications
     //NOTE: lec2example6 takes user information from LS and stores in useState above.
@@ -60,9 +81,9 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
 
         //check if user stored
         const storedUser = localStorage.getItem("currUser");
+
         if (storedUser) {
-            setCurrUser(JSON.parse(storedUser));
-            setShortlistedVenues(JSON.parse(storedUser).shortlistedVenues);
+            setCurrUser(JSON.parse(storedUser)); //cant get shortlisted venus yet cuz no user
             setVenueApplications(allApplications.filter((app : Application)=>   (currUser?.applications?.includes(app.id))));
         }
 
@@ -93,17 +114,21 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
         setShortlistedVenues(shortlistedVenueArray)
     }, [currUser?.shortlistedVenues]);
 
-    //get user's APPLICATIONS from local storage and store it as type Application
-    //check if the application added belongs to this user
+    
+
+    //get user related data everytime the user OR user-related things change
     useEffect(() => {
+        getShortlistedVenues();
+
+        // check that user application matches the
         let applicationsArray: Application[] = [];
         let currUserApplications: number[] = [];
+
         
         //check if the new application added affects this user. 
         if (currUser && currUser.applications) {
             applicationsArray = allApplications.filter(
                                 apps => apps.hirerID === currUser.id);
-            //console.log(applicationsArray);
 
             setVenueApplications(applicationsArray);
         }
@@ -116,12 +141,15 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
         // (u) => u.email === email && u.password === password
         // );
         try {
-            const data = await userApi.getUserByEmail(email);
+            const data = await userAPI.getUserByEmail(email);
                 
             if (data) {
                 //store current to local storage. use this for other pages
                 localStorage.setItem("currUser", JSON.stringify(data));
-                setCurrUser(data);
+                
+                //set the use state
+                const user: User = data;
+                setCurrUser(user);
 
                 //use this over link cuz this is properly pushing the user instead of loading smth new
                 router.push('/');
@@ -162,13 +190,13 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
         // localStorage.setItem("allUsers", JSON.stringify(updatedAllUsers));
 
         //update this user in the database
-        await userApi.updateUser(updatedUser.id, updatedUser);
+        await userAPI.updateUser(updatedUser.id, updatedUser);
 
         //update all the users in use state
         await getAllUsers();
 
         //update the currUser in use state
-        const user = await userApi.getUserById(updatedUser.id);
+        const user = await userAPI.getUserById(updatedUser.id);
         //console.log("user phone:" + user?.phone);
         setCurrUser(user);
         

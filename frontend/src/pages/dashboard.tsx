@@ -8,11 +8,13 @@ import UserDetails from '../components/UserDetails';
 import Sidebar from '../components/Sidebar';
 import Main from '../components/Main';
 import Documents from '../components/Documents'
+import {useEffect, useState} from 'react'
 import { useRouter } from 'next/router';
 import { useAuth } from "../context/AuthContext";
 import { useVenues } from "../context/VenueContext";
 import { Application } from '../types/apply';
 import { Venue } from "../types/venues";
+import {shortlistedVenueAPI} from '../services/api'
 import * as utils from '../utils/utils';
 
 export default function Dashboard() {
@@ -90,7 +92,7 @@ export default function Dashboard() {
 
                 <div className="ml-5">
                   <h2 className="p-2">Recommended Venues</h2>
-                  <Carousel type="all" ranked={false} carouselItems={allVenues} />
+                  {/* <Carousel type="all" ranked={false} carouselItems={allVenues} /> */}
                 </div> <br />
 
 

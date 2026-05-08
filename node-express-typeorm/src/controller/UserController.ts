@@ -10,6 +10,7 @@ import { User } from "../entities/User";
  
 export class UserController {
     private userRepository = AppDataSource.getRepository(User);
+    
     /**
      * Retrieves all users from the database
      * @param request - Express request object
@@ -77,7 +78,8 @@ export class UserController {
                 .json({ message: "Error creating user", error });
         }
     }
-    /**
+
+    /** do we even need this...no right...
      * Deletes a user from the database by their ID
      * @param request - Express request object containing the user ID in params
      * @param response - Express response object
@@ -95,7 +97,6 @@ export class UserController {
         return response.json({ message: "User removed successfully" });
     }
 
-    // TODO: UPDATE THIS
     /**
      * Updates an existing user's information
      * @param request - Express request object containing user ID in params and updated details in body

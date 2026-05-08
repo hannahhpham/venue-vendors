@@ -52,6 +52,9 @@ export class Venue {
     @Column({type: "text"})
     description: string;
 
+    // @Column({type: "text", nullable: true})
+    // keywords: string | null;
+
     //IMPORTANT!!! check over this. 
     //this will add a new column
     //logic: each venue is owned by 1 user. 

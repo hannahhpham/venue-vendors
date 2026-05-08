@@ -9,6 +9,7 @@ import { Venue } from './Venue'
 //can say what table this entity is based on
 @Entity({name: "applications"})
 
+
 export class Application {
     @PrimaryGeneratedColumn({type: "int"})
     id: number;
