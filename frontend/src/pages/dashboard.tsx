@@ -8,18 +8,19 @@ import UserDetails from '../components/UserDetails';
 import Sidebar from '../components/Sidebar';
 import Main from '../components/Main';
 import Documents from '../components/Documents'
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router';
 import { useAuth } from "../context/AuthContext";
 import { useVenues } from "../context/VenueContext";
 import { Application } from '../types/apply';
 import { Venue } from "../types/venues";
-import {shortlistedVenueAPI} from '../services/api'
+import { shortlistedVenueAPI } from '../services/api'
+import { venueAPI } from "../services/api";
 import * as utils from '../utils/utils';
 
 export default function Dashboard() {
   const router = useRouter(); //for button clicks
-  const { currUser, shortlistedVenues, venueApplications } = useAuth();
+  const { currUser, shortlistedVenues, venueApplications, vendorVenues } = useAuth();
   const { allVenues, removeVenue } = useVenues();
 
   if (currUser) {
@@ -46,28 +47,27 @@ export default function Dashboard() {
                   <h2 className="text-2xl font-bold">My Venues</h2>
                   <div>
                     {
-                      allVenues.filter((venue: Venue) => 
-                        venue.ownerID === currUser.id).map((venue: Venue) =>
-                        <div key={venue.id}>
-                          <Card heading={venue.name}>
-                            <h3 className="italic text-base font-medium">{venue.address}</h3>
-                            <p>{venue.description}</p>
-                            <div className="flex gap-5 place-content-center">
-                              <Button className="px-10 p-3 mt-5 bg-green-500 rounded-md font-medium hover:bg-green-600"
-                               onClick={() => router.push(`/venues/${venue.id}`)} text="Manage">
-                                <img src="arrowForwardFull.png" className="invert inline ml-2"></img></Button>
-                              <Button className="px-10 p-3 mt-5 bg-red-500 rounded-md font-medium hover:bg-red-600"
-                               onClick={() => removeVenue(venue.id)} text="Delete" onLeft={true}>
-                                <img src="deleteBin.png" className="invert inline mr-2"></img></Button>
-                            </div>
-                          </Card>
-                        </div>
-                      )
+                      vendorVenues.map((venue: Venue) =>
+                          <div key={venue.id}>
+                            <Card heading={venue.name}>
+                              <h3 className="italic text-base font-medium">{venue.address}</h3>
+                              <p>{venue.description}</p>
+                              <div className="flex gap-5 place-content-center">
+                                <Button className="px-10 p-3 mt-5 bg-green-500 rounded-md font-medium hover:bg-green-600"
+                                  onClick={() => router.push(`/venues/${venue.id}`)} text="Manage">
+                                  <img src="arrowForwardFull.png" className="invert inline ml-2"></img></Button>
+                                <Button className="px-10 p-3 mt-5 bg-red-500 rounded-md font-medium hover:bg-red-600"
+                                  onClick={() => removeVenue(venue.id)} text="Delete" onLeft={true}>
+                                  <img src="deleteBin.png" className="invert inline mr-2"></img></Button>
+                              </div>
+                            </Card>
+                          </div>
+                        )
                     }
                   </div>
 
                   <Button className="px-10 p-3 mt-5 rounded-md font-medium"
-                   onClick={() => router.push("/addVenue")} text="Add Venue" onLeft={true}>
+                    onClick={() => router.push("/addVenue")} text="Add Venue" onLeft={true}>
                     <img src="add.png" className="invert inline mr-2"></img>
                   </Button>
 
@@ -108,9 +108,9 @@ export default function Dashboard() {
                   <h2 className='p-2'>My Applications</h2>
                   {/* this carousel only shows applications that were rejected, submitted,
                    or accepted BUT occurring in the future */}
-                  <ApplicationCarousel type='applications' 
+                  <ApplicationCarousel type='applications'
                     carouselItems={venueApplications.filter((app: Application) =>
-                    app.date > utils.getCurrDate() || app.accepted === false)} />
+                      app.date > utils.getCurrDate() || app.accepted === false)} />
                 </div><br />
 
                 <div className="ml-5">
@@ -136,8 +136,8 @@ export default function Dashboard() {
                 <UserDetails edit={true} />
 
                 <br />
-                
-                <Documents edit={true}/>
+
+                <Documents edit={true} />
 
                 <br />
               </Sidebar>

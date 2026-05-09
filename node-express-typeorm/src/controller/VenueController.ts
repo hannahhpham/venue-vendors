@@ -45,8 +45,6 @@ export class VenueController {
         return response.json(venue);
     }
 
-    // looking at localhost, this is working but
-    //  idk why its giving me an error when im trying to use it
     /**
      * Get the venues associated with a Vendor
      * @param req - Express request object containing user id in params
@@ -62,6 +60,8 @@ export class VenueController {
         if (!myVenues) {
             return res.status(404).json({ message: "Vendor has no shortlisted venues." });
         }
+        console.log("myVenues in venue controller:");
+        console.log(myVenues);
         return res.json(myVenues);
     }
 

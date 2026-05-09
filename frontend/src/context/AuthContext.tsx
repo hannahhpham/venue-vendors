@@ -1,25 +1,28 @@
-import React, {useState, useEffect, useContext, createContext} from 'react';
-import {useRouter } from 'next/router';
-import {users, User} from "../types/users";
-import {Application} from "../types/apply";
+import React, { useState, useEffect, useContext, createContext } from 'react';
+import { useRouter } from 'next/router';
+import { users, User } from "../types/users";
+import { Application } from "../types/apply";
 import { useApplications } from './ApplyContext';
-import {venues, Venue} from '../types/venues'
-import {useVenues} from './VenueContext'
-import {useNotif} from './NotifContext'
-import {userAPI, shortlistedVenueAPI, venueAPI} from '../services/api'
+import { venues, Venue } from '../types/venues'
+import { useVenues } from './VenueContext'
+import { useNotif } from './NotifContext'
+import { userAPI, shortlistedVenueAPI, venueAPI } from '../services/api'
 
 //lectorial 2 example 6 was referenced when creating this AuthContext 
 
 interface AuthContextType {
-    currUser : User | null,
-    allUsers : User[],
-    login : (email: string, password: string) => void;
-    logout : () => void,
-    updateUser : (updatedUser: User) => void, //update user information, including their shortlisted venues
-    getRepRating : (user : User) => number,
+    currUser: User | null,
+    allUsers: User[],
+    login: (email: string, password: string) => void;
+    logout: () => void,
+    updateUser: (updatedUser: User) => void, //update user information, including their shortlisted venues
+    getRepRating: (user: User) => number,
     shortlistedVenues: Venue[],
     //pastVenues: Venue[],
     venueApplications: Application[], //stores the application id
+
+    // specifically for the vendors - stores the Vendor's venues
+    vendorVenues: Venue[],
 
 }
 
@@ -27,15 +30,15 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 //custom provider component for consumers
-export function AuthProvider({children} : {children : React.ReactNode}) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter();
-    const {allApplications} = useApplications();
-    const {allVenues} = useVenues();
-    const {showNotif} = useNotif();
+    const { allApplications } = useApplications();
+    const { allVenues } = useVenues();
+    const { showNotif } = useNotif();
 
     // REMOVE THESE FROM LOCAL STORAGE WHEN RECFACTORING DONE
-    const[currUser, setCurrUser] = useState<User | null>(null);
-    const[allUsers, setAllUsers] = useState<User[]>([]);
+    const [currUser, setCurrUser] = useState<User | null>(null);
+    const [allUsers, setAllUsers] = useState<User[]>([]);
 
     //add the shortlisted venue usestate here since its linked to the user. use this to 
     //update components that render the hshortlisted venues
@@ -62,8 +65,8 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
             const venues = await venueAPI.getAllVenues();
 
             //organise the data and get the shortlistedVenues of type Venue
-            const shortlistedVenues: Venue[] = shortlistedVenuesData.map((shortlistedVenue: {hirerID: number, venueID: number, rank: number}) => 
-                                                                     venues.find((venue: Venue) => venue.id === shortlistedVenue.venueID));
+            const shortlistedVenues: Venue[] = shortlistedVenuesData.map((shortlistedVenue: { hirerID: number, venueID: number, rank: number }) =>
+                venues.find((venue: Venue) => venue.id === shortlistedVenue.venueID));
 
             setShortlistedVenues(shortlistedVenues);
             console.log("venue:", shortlistedVenuesData[0]);
@@ -76,7 +79,7 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
     //check if theres user in the database. check if theres shortlisted venues and applications
     //NOTE: lec2example6 takes user information from LS and stores in useState above.
     //      if theres nothing in LS then it takes default user array from file.
-    useEffect( () => {
+    useEffect(() => {
         getAllUsers();
 
         //check if user stored
@@ -84,11 +87,11 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
 
         if (storedUser) {
             setCurrUser(JSON.parse(storedUser)); //cant get shortlisted venus yet cuz no user
-            setVenueApplications(allApplications.filter((app : Application)=>   (currUser?.applications?.includes(app.id))));
+            setVenueApplications(allApplications.filter((app: Application) => (currUser?.applications?.includes(app.id))));
         }
 
     }
-    , []);
+        , []);
 
     //store updated users to localstorage when user information changes
     useEffect(() => {
@@ -114,7 +117,7 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
         setShortlistedVenues(shortlistedVenueArray)
     }, [currUser?.shortlistedVenues]);
 
-    
+
 
     //get user related data everytime the user OR user-related things change
     useEffect(() => {
@@ -124,16 +127,37 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
         let applicationsArray: Application[] = [];
         let currUserApplications: number[] = [];
 
-        
+
         //check if the new application added affects this user. 
         if (currUser && currUser.applications) {
             applicationsArray = allApplications.filter(
-                                apps => apps.hirerID === currUser.id);
+                apps => apps.hirerID === currUser.id);
 
             setVenueApplications(applicationsArray);
         }
         //console.log(venueApplications);
     }, [allApplications, currUser]);
+
+
+    // the following code is based on [id].tsx, profile, frontend, Lecture 9 Example 1
+    const [vendorVenues, setVendorVenues] = useState<Venue[]>([]);
+
+    useEffect(() => {
+        fetchVendorVenues();
+    }, [currUser]);
+
+    const fetchVendorVenues = async () => {
+        if (currUser && currUser.type === "vendor") {
+            try {
+                const data = await venueAPI.getByVendor(currUser.id);
+                setVendorVenues(data);
+            } catch (error) {
+                console.error("Error fetching vendor's venues (Venue Context): ", error);
+            }
+        }
+    };
+
+
 
     // login functionality.
     const login = async (email: string, password: string) => {
@@ -142,11 +166,11 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
         // );
         try {
             const data = await userAPI.getUserByEmail(email);
-                
+
             if (data) {
                 //store current to local storage. use this for other pages
                 localStorage.setItem("currUser", JSON.stringify(data));
-                
+
                 //set the use state
                 const user: User = data;
                 setCurrUser(user);
@@ -182,7 +206,7 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
         // const updatedAllUsers = allUsers.map(user => //map function I LOVE YOUU
         //         user.id === currUser?.id ? updatedUser : user
         // )
-        
+
         // //update state and localstorage
         // setCurrUser(updatedUser);
         // setAllUsers(updatedAllUsers)
@@ -199,23 +223,23 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
         const user = await userAPI.getUserById(updatedUser.id);
         //console.log("user phone:" + user?.phone);
         setCurrUser(user);
-        
+
     }
 
     // calculate the reputation rating of a hirer
     // source: https://www.geeksforgeeks.org/typescript/typescript-array-reduce-method/
-    const getRepRating = (user : User) : number => {
-        const myApps = allApplications.filter((app : Application) => (app.hirerID === user.id && app.accepted === true && app.vendorRating !== undefined));
-        let rating : number = myApps.reduce((total, currVal) => {
+    const getRepRating = (user: User): number => {
+        const myApps = allApplications.filter((app: Application) => (app.hirerID === user.id && app.accepted === true && app.vendorRating !== undefined));
+        let rating: number = myApps.reduce((total, currVal) => {
             if (currVal.vendorRating !== undefined) {
-                return total + currVal.vendorRating  
+                return total + currVal.vendorRating
             } else {
                 return total
             }
         }, 0) / (myApps.length);
 
         rating = Number.isNaN(rating) ? 0 : rating;
-        
+
         return rating;
     }
 
@@ -223,12 +247,14 @@ export function AuthProvider({children} : {children : React.ReactNode}) {
     return (
         // NOTE; lec2example6 also returns all users array + login function
         //this authContext provides context to all its kids (aka everything)
-        <AuthContext.Provider value={{currUser, allUsers, login, logout, updateUser, getRepRating, 
-                                      shortlistedVenues, venueApplications}}>
+        <AuthContext.Provider value={{
+            currUser, allUsers, login, logout, updateUser, getRepRating,
+            shortlistedVenues, venueApplications, vendorVenues
+        }}>
             {children}
         </AuthContext.Provider>
     );
-  
+
 }
 
 //consumer component (custom hook!)
@@ -238,7 +264,7 @@ export function useAuth() {
 
 
     //CHECK FOR IF ITS UNDEFINED. IF YES, ROUTE TO LOGIN AND THROW ERROR
-    if (context===undefined) {
+    if (context === undefined) {
         //replace this with notification component
         throw new Error("useAuth must be used within an AuthProvider");
     }

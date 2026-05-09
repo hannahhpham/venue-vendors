@@ -5,16 +5,13 @@ import Carousel from "../components/Carousel";
 import Main from '../components/Main';
 import { useRouter } from 'next/router';
 import { useAuth } from "../context/AuthContext";
-import { useVenues } from "../context/VenueContext";
-import { Venue } from "../types/venues";
 
 export default function Home() {
-  
-  const router = useRouter();
-  const { currUser, shortlistedVenues } = useAuth();
-  const { allVenues } = useVenues();
 
-  const onClickDash = () : void => {
+  const router = useRouter();
+  const { currUser, shortlistedVenues, vendorVenues } = useAuth();
+
+  const onClickDash = (): void => {
     router.push("/dashboard");
   }
 
@@ -23,18 +20,18 @@ export default function Home() {
       <title>Home</title>
 
       <Header active={"none"} />
-      
+
 
       <Main type="wholePage">
         <div className="p-20 m-auto text-center bg-blue-50">
           <h1 className="text-4xl font-bold">Welcome to Venue Vendors</h1>
           <h2>Your one stop shop for all things events!</h2>
-          <br/>
+          <br />
           {
-            currUser ? 
-            (<Button text="Search venues now!" onClick={()=>{router.push('./search')}}/>) 
+            currUser ?
+              (<Button text="Search venues now!" onClick={() => { router.push('./search') }} />)
               :
-            (<Button text="Get Started Now!" onClick={() => {router.push('/signup')}} />)
+              (<Button text="Get Started Now!" onClick={() => { router.push('/signup') }} />)
           }
         </div>
 
@@ -48,12 +45,15 @@ export default function Home() {
                 </Button>
               </div>
               {
-                allVenues.filter((venue: Venue) => venue.ownerID === currUser.id).length > 0 &&
-                <Carousel type="shortlistedVenues" ranked={false} 
-                carouselItems = {allVenues.filter((venue: Venue) => venue.ownerID === currUser.id)} />
+                // TODO: double check if there is a double error message
+                <Carousel type="shortlistedVenues" ranked={false}
+                  carouselItems={vendorVenues} />
+                // allVenues.filter((venue: Venue) => venue.ownerID === currUser.id).length > 0 &&
+                // <Carousel type="shortlistedVenues" ranked={false} 
+                // carouselItems = {allVenues.filter((venue: Venue) => venue.ownerID === currUser.id)} />
               }
               {
-                allVenues.filter((venue: Venue) => venue.ownerID === currUser.id).length === 0 &&
+                vendorVenues.length === 0 &&
                 <p><i>No venues found. Add your venues today by heading over to your dashboard.</i></p>
               }
               <hr className="mt-5 text-gray-200"></hr>
@@ -71,9 +71,9 @@ export default function Home() {
                   <img src="arrowForwardFull.png" className="invert inline ml-2" />
                 </Button>
               </div>
-              <Carousel type="shortlistedVenues" ranked={true} 
-                        carouselItems={shortlistedVenues}
-                            />
+              <Carousel type="shortlistedVenues" ranked={true}
+                carouselItems={shortlistedVenues}
+              />
               <hr className="mt-5 text-gray-200"></hr>
             </div>
           ) : (<p></p>)
@@ -85,11 +85,11 @@ export default function Home() {
               A group of venue owners and event planners.<br></br>
               We want to make sure that your event goes smoothly by helping you get a high quality venue.
               <br></br>
-              Equally, we want to make sure that vendors’ minds are at ease when 
-              allowing people to use their venue by pairing them with trustworthy 
+              Equally, we want to make sure that vendors' minds are at ease when
+              allowing people to use their venue by pairing them with trustworthy
               customers.
               <br></br>
-              It’s a win win. So what are you waiting for? Get started today!
+              It's a win win. So what are you waiting for? Get started today!
             </p>
           </Card>
           <Card heading="What do we do?" style="text-white bg-blue-900">
@@ -104,15 +104,15 @@ export default function Home() {
         </div>
 
         <div className="p-5 m-auto text-center bg-blue-50">
-          <br/>
+          <br />
           <h2>So what are you waiting for?</h2>
           <br></br>
-          {currUser ? 
-            (<Button text="Get Started Now!" onClick={onClickDash}/>) 
-              :
-            (<Button text="Get Started Now!" onClick={() => {router.push('/signup')}} />)
+          {currUser ?
+            (<Button text="Get Started Now!" onClick={onClickDash} />)
+            :
+            (<Button text="Get Started Now!" onClick={() => { router.push('/signup') }} />)
           }
-          <br/>
+          <br />
         </div>
 
       </Main>
