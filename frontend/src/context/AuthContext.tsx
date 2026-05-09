@@ -6,7 +6,7 @@ import { useApplications } from './ApplyContext';
 import { venues, Venue } from '../types/venues'
 import { useVenues } from './VenueContext'
 import { useNotif } from './NotifContext'
-import { userAPI, shortlistedVenueAPI, venueAPI } from '../services/api'
+import { userAPI, shortlistedVenueAPI, venueAPI, applicationAPI } from '../services/api'
 
 //lectorial 2 example 6 was referenced when creating this AuthContext 
 
@@ -87,11 +87,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (storedUser) {
             setCurrUser(JSON.parse(storedUser)); //cant get shortlisted venus yet cuz no user
-            setVenueApplications(allApplications.filter((app: Application) => (currUser?.applications?.includes(app.id))));
+            fetchHirerApplications();
+            // setVenueApplications(allApplications.filter((app: Application) => (currUser?.applications?.includes(app.id))));
         }
 
-    }
-        , []);
+    }, []);
 
     //store updated users to localstorage when user information changes
     useEffect(() => {
@@ -144,6 +144,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         fetchVendorVenues();
+        // probably don't need this one anymore
+        // fetchHirerApplications();
     }, [currUser]);
 
     const fetchVendorVenues = async () => {
@@ -151,6 +153,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             try {
                 const data = await venueAPI.getByVendor(currUser.id);
                 setVendorVenues(data);
+            } catch (error) {
+                console.error("Error fetching vendor's venues (Venue Context): ", error);
+            }
+        }
+    };
+
+    const fetchHirerApplications = async () => {
+        if (currUser && currUser.type === "hirer") {
+            try {
+                const data = await applicationAPI.getHirerApps(currUser.id);
+                setVenueApplications(data);
             } catch (error) {
                 console.error("Error fetching vendor's venues (Venue Context): ", error);
             }
