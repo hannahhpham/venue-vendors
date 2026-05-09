@@ -45,34 +45,67 @@ export class VenueController {
         return response.json(venue);
     }
 
+    // looking at localhost, this is working but
+    //  idk why its giving me an error when im trying to use it
     /**
-   * Creates a new venue record
-   * @param req - Express request object containing venue data in body
-   * @param res - Express response object
-   * @returns JSON object of the created venue with 201 status
-   */
+     * Get the venues associated with a Vendor
+     * @param req - Express request object containing user id in params
+     * @param res - Express response object
+     * @returns the list of venues associated with a vendor
+     */
+    async getByVendor(req: Request, res: Response) {
+        
+        const vendorID = parseInt(req.params.vendorID as string);
+        const myVenues = await this.venueRepository.find({
+            where: {vendor : {id : vendorID} },
+        });
+        if (!myVenues) {
+            return res.status(404).json({ message: "Vendor has no shortlisted venues." });
+        }
+        return res.json(myVenues);
+    }
+
+    /**
+     * Creates a new venue record
+     * @param req - Express request object containing venue data in body
+     * @param res - Express response object
+     * @returns JSON object of the created venue with 201 status
+     */
     async createVenue(req: Request, res: Response) {
         /** Create a new Venue object from the request body */
         const venue = this.venueRepository.create(req.body);
+        // const { name, phone, email, address, suburb, state, postcode, capacity, rate, description, ownerID } = req.body;
+        // const venue = Object.assign(new Venue(), {
+        //     name, 
+        //     phone, 
+        //     email, 
+        //     address, 
+        //     suburb, 
+        //     state, 
+        //     postcode, 
+        //     capacity, 
+        //     rate, 
+        //     description, 
+        //     ownerID
+        // });
 
-        /** Save the new profile to the database */
+        /** Save the new venue to the database */
         try {
-            await this.venueRepository.save(venue);
+            const savedVenue = await this.venueRepository.save(venue);
+            /** Return the created venue with a 201 status */
+            res.status(201).json(savedVenue);
         } catch (error) {
-            return res.status(500).json({ message: "Error saving venue", error });
+            return res.status(500).json({ message: "Error creating venue", error });
         }
-
-        /** Return the created venue with a 201 status */
-        res.status(201).json(venue);
     }
 
 
     /**
-   * Updates a venue record
-   * @param req - Express request object containing venueID in params and update data in body
-   * @param res - Express response object
-   * @returns JSON object of the updated venue or 404 if not found
-   */
+     * Updates a venue record
+     * @param req - Express request object containing venueID in params and update data in body
+     * @param res - Express response object
+     * @returns JSON object of the updated venue or 404 if not found
+     */
     async updateVenue(req: Request, res: Response) {
         /** Retrieve the profile from the database */
         let venue = await this.venueRepository.findOneBy({
@@ -100,11 +133,11 @@ export class VenueController {
 
 
     /**
-   * Deletes a venue record
-   * @param req - Express request object containing venueID in params
-   * @param res - Express response object
-   * @returns 204 status on success or 404 if venue not found
-   */
+     * Deletes a venue record
+     * @param req - Express request object containing venueID in params
+     * @param res - Express response object
+     * @returns 204 status on success or 404 if venue not found
+     */
     async deleteVenue(req: Request, res: Response) {
         /** Delete the venue from the database */
         const result = await this.venueRepository.delete({
@@ -118,42 +151,6 @@ export class VenueController {
 
         /** Return a 204 status on success */
         res.status(204).send();
-    }
-
-
-    // find venues linked to a vendor
-    // look at Week 08 Example 1 - Comments Controller, Example 2 - Profile Controller
-    async getByVendor(req: Request, res: Response) {
-        // I think this block should work
-        // const vendorID = parseInt(request.params.vendorID as string);
-        // const venues = await this.venueRepository.find({
-        //     where: { vendor: { id: vendorID } }
-        // });
-        // return response.json(venues);
-
-        const vendor = await this.userRepository.findOneBy({
-            id: parseInt(req.params.id as string),
-        });
-
-        /** Check if the Vendor exists, if not, return a 404 error */
-        if (!vendor) {
-            return res.status(404).json({ message: "Owner not found" });
-        }
-
-        /** Retrieve the venues from the database */
-        const venues = await this.venueRepository.find({
-            where: {
-                vendor: { id: vendor.id },
-            },
-        });
-
-        /** Check if venues exists, if not, return a 404 error */
-        if (!venues) {
-            return res.status(404).json({ message: "Venues not found" });
-        }
-
-        /** Returns the venues */
-        res.json(venues);
     }
 
 

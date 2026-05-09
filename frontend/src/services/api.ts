@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Venue } from "../types/venues";
 import {User} from '../types/users'
+import { Application } from "@/types/apply";
 
 //REFERENCES:
 //FSD Lectorial 8 code archive
@@ -56,9 +57,23 @@ export const venueAPI = {
     return response.data;
   },
 
-  // not sure a return is necessary
-  getByVendor: async (id: string) => {
-    const response = await api.get(`/users/${id}/venues`);
+  getByVendor: async (vendorID: number) => {
+    const response = await api.get(`/venues/${vendorID}`);
+    return response.data;
+  },
+
+  createVenue: async (venue: Partial<Venue>) => {
+    const response = await api.post("/venues", venue);
+    return response.data;
+  },
+
+  updateVenue: async (venueID: number, venue: Partial<Venue>) => {
+    const response = await api.put(`/venues/${venueID}`, venue);
+    return response.data;
+  },
+
+  deleteVenue: async (venueID: number) => {
+    const response = await api.delete(`/venues/${venueID}`);
     return response.data;
   },
 
@@ -89,4 +104,43 @@ export const shortlistedVenueAPI = {
 
 
   
+};
+
+export const applicationAPI = {
+
+  getAll: async () => {
+    const response = await api.get("/applications");
+    return response.data;
+  },
+
+  getVenueApps: async (venueID: number) => {
+    const response = await api.get(`/applications/venues/${venueID}`);
+    return response.data;
+  },
+
+  getHirerApps: async (hirerID : number) => {
+    const response = await api.get(`/applications/hirers/${hirerID}`);
+    return response.data;
+  },
+
+  getApp: async (appID : number) => {
+    const response = await api.get(`/applications/${appID}`);
+    return response.data;
+  },
+
+  createApp: async (app : Partial<Application>) => {
+    const response = await api.post("/applications", app);
+    return response.data;
+  },
+
+  updateApp: async (id : number, app : Partial<Application>) => {
+    const response = await api.put(`/applications/${id}`, app);
+    return response.data;
+  },
+
+  deleteApp: async (id : number) => {
+    const response = await api.delete(`/applications/${id}`);
+    return response.data;
+  },
+
 };

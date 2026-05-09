@@ -7,30 +7,28 @@ const router = Router();
 
 const venueController = new VenueController();
 
-router.get("/venues", async (req, res) => {
+router.get("/", async (req, res) => {
     await venueController.getAllVenues(req, res);
 });
 
-router.get("/venues/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
     await venueController.getOneVenue(req, res);
 });
 
-router.post("/venues", async (req, res) => {
+router.get("/users/:vendorID", async (req, res) => {
+    await venueController.getByVendor(req, res);
+});
+
+router.post("/", async (req, res) => {
     await venueController.createVenue(req, res);
 });
 
-router.put("/venues/:id", async (req, res) => {
+router.put("/:venueID", async (req, res) => {
     await venueController.updateVenue(req, res);
 });
 
-router.delete("/venues/:id", async (req, res) => {
+router.delete("/:venueID", async (req, res) => {
     await venueController.deleteVenue(req, res);
-});
-
-// CHECK THIS - again not sure whether this would be best
-//  to have linked to user rather than venue
-router.get("/users/:id/venues", (req, res) => {
-    venueController.getByVendor(req, res);
 });
 
 export default router;
