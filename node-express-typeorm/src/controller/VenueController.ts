@@ -28,6 +28,7 @@ export class VenueController {
         return response.json(venues);
     }
 
+
     /**
      * Retrieves a single venue by its ID
      * @param request - Express request object containing the venue ID in params
@@ -45,6 +46,7 @@ export class VenueController {
         return response.json(venue);
     }
 
+
     /**
      * Get the venues associated with a Vendor
      * @param req - Express request object containing user id in params
@@ -54,16 +56,26 @@ export class VenueController {
     async getByVendor(req: Request, res: Response) {
         
         const vendorID = parseInt(req.params.vendorID as string);
+
+        const vendor = await this.userRepository.findOne({
+            where: { id: vendorID },
+        });
+
+        if (!vendor) {
+            return res.status(404).json({ message: "Vendor could not be found." });
+        }
+
         const myVenues = await this.venueRepository.find({
             where: {vendor : {id : vendorID} },
         });
+
         if (!myVenues) {
             return res.status(404).json({ message: "Vendor has no shortlisted venues." });
         }
-        console.log("myVenues in venue controller:");
-        console.log(myVenues);
+        
         return res.json(myVenues);
     }
+
 
     /**
      * Creates a new venue record
@@ -152,10 +164,5 @@ export class VenueController {
         /** Return a 204 status on success */
         res.status(204).send();
     }
-
-
-    // get the applications associated with this venue
-    // get the unavailability periods associated with this venue
-
 
 }
