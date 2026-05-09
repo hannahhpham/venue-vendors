@@ -45,6 +45,7 @@ export class ApplicationController {
         const apps = await this.applicationRepository.find({
             where: { venue: {id : venue.id } },
         });
+
         return response.json(apps);
     }
 
@@ -57,8 +58,9 @@ export class ApplicationController {
      */
     async allByHirer(request: Request, response: Response) {
         const hirerID = parseInt(request.params.hirerID as string);
+
         const hirer = await this.userRepository.findOne({
-            where: {id: hirerID },
+            where: { id: hirerID },
         })
 
         if (!hirer) {
@@ -68,24 +70,28 @@ export class ApplicationController {
         const apps = await this.applicationRepository.find({
             where: { user: { id: hirer.id } },
         });
+
         return response.json(apps);
     }
 
 
     /**
      * Retrieves a single application by its ID
-     * @param request - Express request object containing the application ID in params
+     * @param request - Express request object containing the applicationID in params
      * @param response - Express response object
      * @returns JSON response containing the application if found, or 404 error if not found
      */
     async getOneApp(request: Request, response: Response) {
         const id = parseInt(request.params.appID as string);
+
         const app = await this.applicationRepository.findOne({
             where: { id },
         });
+
         if (!app) {
             return response.status(404).json({ message: "Application not found" });
         }
+
         return response.json(app);
     }
 
@@ -133,14 +139,14 @@ export class ApplicationController {
         /** Merge the existing application with the new data from the request body */
         this.applicationRepository.merge(app, req.body);
 
-        /** Save the updated venue to the database */
+        /** Save the updated application to the database */
         try {
             await this.applicationRepository.save(app);
         } catch (error) {
             return res.status(500).json({ message: "Error saving venue", error });
         }
 
-        /** Return the updated venue */
+        /** Return the updated application */
         res.json(app);
     }
 
@@ -152,12 +158,12 @@ export class ApplicationController {
      * @returns 204 status on success or 404 if application not found
      */
     async deleteApp(req: Request, res: Response) {
-        /** Delete the venue from the database */
+        /** Delete the application from the database */
         const result = await this.applicationRepository.delete({
             id: parseInt(req.params.id as string),
         });
 
-        /** Check if the profile was deleted, if not, return a 404 error */
+        /** Check if the application was deleted, if not, return a 404 error */
         if (!result.affected) {
             return res.status(404).json({ message: "Application not found" });
         }

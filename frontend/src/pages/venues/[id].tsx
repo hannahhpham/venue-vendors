@@ -4,7 +4,6 @@ import { User } from "../../types/users"
 import { Venue } from "../../types/venues"
 import { Application } from "../../types/apply";
 import { Unavailable } from "../../types/unavail";
-import { useVenues } from "../../context/VenueContext";
 import { useAuth } from "../../context/AuthContext";
 import { useApplications } from "../../context/ApplyContext";
 import { useUnavail } from "../../context/UnavailContext";
@@ -18,7 +17,7 @@ import Button from '../../components/Button';
 import Sidebar from '../../components/Sidebar'
 import Main from '../../components/Main';
 import Analytics from "../../components/Analytics";
-import { venueAPI } from "../../services/api";
+import { applicationAPI, venueAPI, blockedAPI } from "../../services/api";
 
 
 export default function VenuePage() {
@@ -42,6 +41,7 @@ export default function VenuePage() {
   useEffect( () => {
     if (id) {
       fetchVenue();
+      fetchCurrApps();
     }
   }, [id]);
 
@@ -55,8 +55,17 @@ export default function VenuePage() {
   };
 
   // get all the applications submitted for this venue
-  const [currApps, setCurrApps] = useState<Application[]>(allApplications.filter(
-    (app: Application) => app.venueID === Number(id)));
+  const [currApps, setCurrApps] = useState<Application[]>([]);
+
+  const fetchCurrApps = async () => {
+    try {
+      const data = await applicationAPI.getVenueApps(Number(id));
+      setCurrApps(data);
+    } catch (error) {
+      console.error("Error fetching applications ([id].tsx): ", error);
+    }
+  };
+
   // get all the shortlisted applications for the venue
   const [shortListItems, setShortList] = useState<Application[]>(currApps.filter(
     (app: Application) => app.rank));

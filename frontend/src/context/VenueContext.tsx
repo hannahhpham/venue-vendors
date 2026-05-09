@@ -10,7 +10,7 @@ interface VenueContextType {
     allVenues: Venue[],
     addVenue: (newVenue: Venue) => void,
     removeVenue: (id: number) => void,
-    editVenue: (id : number, updatedVenue : Venue) => void,
+    editVenue: (id: number, updatedVenue: Venue) => void,
 }
 
 
@@ -20,9 +20,8 @@ const VenContext = createContext<VenueContextType | undefined>(undefined);
 
 export function VenueProvider({ children }: { children: React.ReactNode }) {
 
-    // var stores all the venues in localStorage (later)
     const [allVenues, setAllVenues] = useState<Venue[]>([]);
-    const {showNotif} = useNotif();
+    const { showNotif } = useNotif();
 
     // stores all the venues in the database
     // this useEffect and the fetchvenues functions are based on
@@ -46,7 +45,7 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
     //     if (allVenues.length > 0) {
     //         localStorage.setItem("venues", JSON.stringify(allVenues));
     //     }
-       
+
     // }, [allVenues])
 
 
@@ -65,9 +64,9 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
     }
 
     // edit a venue
-    const editVenue = (id : number, updatedVenue : Venue) => {
-        setAllVenues(allVenues.map((venue : Venue) =>
-                venue.id === id ? updatedVenue : venue
+    const editVenue = (id: number, updatedVenue: Venue) => {
+        setAllVenues(allVenues.map((venue: Venue) =>
+            venue.id === id ? updatedVenue : venue
         ))
         showNotif('Venue successfully edited.', 'success');
     }

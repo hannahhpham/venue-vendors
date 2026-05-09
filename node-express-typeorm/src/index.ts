@@ -9,6 +9,7 @@ import userRoutes from "./routes/user.routes";
 import venueRoutes from "./routes/venue.routes";
 import shortlistedVenueRoutes from './routes/shortlistedVenue.routes'
 import applicationRoutes from "./routes/application.routes";
+import unavailableRoutes from "./routes/unavailable.routes";
 import cors from "cors";
 
 const app = express();
@@ -20,6 +21,7 @@ app.use("/api", userRoutes);
 app.use("/api/venues", venueRoutes);
 app.use("/api", shortlistedVenueRoutes);
 app.use("/api/applications", applicationRoutes);
+app.use("/api/unavailable", unavailableRoutes);
 
 AppDataSource.initialize()
   .then(() => {

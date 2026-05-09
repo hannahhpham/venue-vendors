@@ -1,7 +1,8 @@
 import axios from "axios";
 import { Venue } from "../types/venues";
-import {User} from '../types/users'
+import { User } from '../types/users'
 import { Application } from "@/types/apply";
+import { Unavailable } from "@/types/unavail";
 
 //REFERENCES:
 //FSD Lectorial 8 code archive
@@ -44,6 +45,7 @@ export const userAPI = {
     },
 };
 
+
 // api for accessing the venues table
 export const venueAPI = {
   
@@ -79,6 +81,7 @@ export const venueAPI = {
 
 };
 
+
 // api for accessing the venues table
 export const shortlistedVenueAPI = {
   
@@ -106,9 +109,11 @@ export const shortlistedVenueAPI = {
   
 };
 
+
+// api to access the applications table
 export const applicationAPI = {
 
-  getAll: async () => {
+  getAllApps: async () => {
     const response = await api.get("/applications");
     return response.data;
   },
@@ -140,6 +145,42 @@ export const applicationAPI = {
 
   deleteApp: async (id : number) => {
     const response = await api.delete(`/applications/${id}`);
+    return response.data;
+  },
+
+};
+
+
+// api to access the applications table
+export const blockedAPI = {
+
+  getAll: async () => {
+    const response = await api.get("/unavailable");
+    return response.data;
+  },
+
+  getVenueBlocked: async (venueID: number) => {
+    const response = await api.get(`/unavailable/venues/${venueID}`);
+    return response.data;
+  },
+
+  getOneBlocked: async (blockedID : number) => {
+    const response = await api.get(`/unavailable/${blockedID}`);
+    return response.data;
+  },
+
+  create: async (block : Partial<Unavailable>) => {
+    const response = await api.post("/unavailable", block);
+    return response.data;
+  },
+
+  updateApp: async (id : number, block : Partial<Unavailable>) => {
+    const response = await api.put(`/unavailable/${id}`, block);
+    return response.data;
+  },
+
+  deleteApp: async (id : number) => {
+    const response = await api.delete(`/unavailable/${id}`);
     return response.data;
   },
 
