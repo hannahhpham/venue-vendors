@@ -25,8 +25,6 @@ export default function Dashboard() {
   // const {allApplications} = useApplications();
   const { allVenues, removeVenue } = useVenues();
 
-  console.log(venueApplications);
-
   if (currUser) {
     return (
       <Main type="dashboard">
@@ -114,12 +112,9 @@ export default function Dashboard() {
                   <h2 className='p-2'>My Applications</h2>
                   {/* this carousel only shows applications that were rejected, submitted,
                    or accepted BUT occurring in the future */}
-                  {/* <ApplicationCarousel type='applications'
-                    carouselItems={venueApplications.filter((app: Application) =>
-                      app.date > utils.getCurrDate() || app.accepted === false)} /> */}
                       <ApplicationCarousel type='applications'
                     carouselItems={venueApplications.filter((app: Application) =>
-                      app.date > utils.getCurrDate() || app.accepted === false) ?? []} />
+                      app.date > utils.getCurrDate() || app.isAccepted === false) ?? []} />
                 </div><br />
 
                 <div className="ml-5">
@@ -128,7 +123,7 @@ export default function Dashboard() {
                   {/* this carousel shows applications that were approved AND in the past */}
                   {<ApplicationCarousel type='pastVenues' carouselItems={
                     venueApplications.filter((app: Application) =>
-                      app.accepted === true && app.date < utils.getCurrDate())
+                      app.isAccepted === true && app.date < utils.getCurrDate())
                   } />}
                 </div><br /><br />
 

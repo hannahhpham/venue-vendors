@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const getShortlistedVenues = async () => {
-        // console.log("currUser is " + currUser);
+        //console.log("currUser in shortlistedVenues is " + currUser);
 
         if (currUser) {
             const shortlistedVenuesData = await shortlistedVenueAPI.getShortlistedVenues(currUser.id);
@@ -74,6 +74,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const fetchHirerApplications = async () => {
+        if (currUser && currUser.type === "hirer") {
+            try {
+                const data = await applicationAPI.getHirerApps(currUser.id);
+                setVenueApplications(data);
+            } catch (error) {
+                console.error("Error fetching vendor's venues (Venue Context): ", error);
+            }
+        }
+    };
+
     // useEffects
 
     //check if theres user in the database. check if theres shortlisted venues and applications
@@ -87,8 +98,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (storedUser) {
             setCurrUser(JSON.parse(storedUser)); //cant get shortlisted venus yet cuz no user
-            fetchHirerApplications();
-            // setVenueApplications(allApplications.filter((app: Application) => (currUser?.applications?.includes(app.id))));
+            //fetchHirerApplications();
+            setVenueApplications(venueApplications.filter((app: Application) => (currUser?.applications?.includes(app.id))));
         }
 
     }, []);
@@ -121,7 +132,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     //get user related data everytime the user OR user-related things change
     useEffect(() => {
-        getShortlistedVenues();
 
         // check that user application matches the
         let applicationsArray: Application[] = [];
@@ -135,17 +145,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             setVenueApplications(applicationsArray);
         }
-        //console.log(venueApplications);
     }, [allApplications, currUser]);
 
 
     // the following code is based on [id].tsx, profile, frontend, Lecture 9 Example 1
     const [vendorVenues, setVendorVenues] = useState<Venue[]>([]);
 
+    // 
     useEffect(() => {
         fetchVendorVenues();
         // probably don't need this one anymore
-        // fetchHirerApplications();
+        // HANNAH: do u mean we should remove this useEffect?
+        fetchHirerApplications();
+        getShortlistedVenues();
     }, [currUser]);
 
     const fetchVendorVenues = async () => {
@@ -158,19 +170,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
         }
     };
-
-    const fetchHirerApplications = async () => {
-        if (currUser && currUser.type === "hirer") {
-            try {
-                const data = await applicationAPI.getHirerApps(currUser.id);
-                setVenueApplications(data);
-            } catch (error) {
-                console.error("Error fetching vendor's venues (Venue Context): ", error);
-            }
-        }
-    };
-
-
 
     // login functionality.
     const login = async (email: string, password: string) => {
@@ -191,7 +190,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 //use this over link cuz this is properly pushing the user instead of loading smth new
                 router.push('/');
                 showNotif("You have successfully signed in.", 'success');
-
             }
         } catch (error) {
             console.log("Error getting all users: ", error);
@@ -213,19 +211,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // and uploading / updating the user's driver's license and public liability insurance cert
     const updateUser = async (updatedUser: User) => {
 
-        // const allUsers: User[] = await getAllUsers();
-
-        // //create new allUsers array
-        // const updatedAllUsers = allUsers.map(user => //map function I LOVE YOUU
-        //         user.id === currUser?.id ? updatedUser : user
-        // )
-
-        // //update state and localstorage
-        // setCurrUser(updatedUser);
-        // setAllUsers(updatedAllUsers)
-        // localStorage.setItem("currUser", JSON.stringify(updatedUser));
-        // localStorage.setItem("allUsers", JSON.stringify(updatedAllUsers));
-
         //update this user in the database
         await userAPI.updateUser(updatedUser.id, updatedUser);
 
@@ -242,7 +227,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // calculate the reputation rating of a hirer
     // source: https://www.geeksforgeeks.org/typescript/typescript-array-reduce-method/
     const getRepRating = (user: User): number => {
-        const myApps = allApplications.filter((app: Application) => (app.hirerID === user.id && app.accepted === true && app.vendorRating !== undefined));
+        const myApps = allApplications.filter((app: Application) => (app.hirerID === user.id && app.isAccepted === true && app.vendorRating !== undefined));
         let rating: number = myApps.reduce((total, currVal) => {
             if (currVal.vendorRating !== undefined) {
                 return total + currVal.vendorRating
@@ -252,6 +237,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }, 0) / (myApps.length);
 
         rating = Number.isNaN(rating) ? 0 : rating;
+
+        // update the user's information as well
+        
 
         return rating;
     }

@@ -8,9 +8,9 @@ export type Application = {
   description: string,
   abn?: string,                         // when the user is applying on behalf of a company
   file?: string,                        // file upload - Business Name Registration Certificate
-  accepted?: boolean,                  // i.e. if it has been approved by the vendor
+  isAccepted?: boolean,                  // i.e. if it has been approved by the vendor
   notes: string,
-  vendorRating?: number,               // 0-5 stars ==> contributes to the reputation rating IF accepted === true
+  vendorRating?: number,               // 0-5 stars ==> contributes to the reputation rating IF isAccepted === true
   rank?: number | undefined,
   hirerID: number,
   venueID: number
@@ -41,7 +41,7 @@ export const applications: Application[] = [
         date: "2026-04-06",
         guests: 50,
         description: "A get together for all employees to come together, here keynote speeches and enjoy a feast!",
-        accepted: true,
+        isAccepted: true,
         notes: "Long duration. Plenty of people. Good way to showcase the restaurant as well and spread the word.",
         rank: 1,
         vendorRating: 5,
@@ -86,7 +86,7 @@ export const applications: Application[] = [
         description: "A wedding for my cousins, will get catering from the in house restaurant. Want to make use of the beautiful rooftop views.",
         notes: "Long duration. Plenty of people. Good way to showcase the restaurant as well and possibly get promotional pics.",
         rank: 2,
-        accepted: true,
+        isAccepted: true,
         vendorRating: 5,
         hirerID: 6,
         venueID: 1
@@ -99,7 +99,7 @@ export const applications: Application[] = [
         endTime: "17:00",
         date: "2026-04-10",
         guests: 50,
-        accepted: false,
+        isAccepted: false,
         description: "An anniversary celebration for my in-laws. Includes a grand ball and lunch at the restaurant.",
         notes: "",
         hirerID: 6,
@@ -114,7 +114,7 @@ export const applications: Application[] = [
         date: "2027-05-20",
         guests: 120,
         description: "A formal evening event to raise funds for a local charity, including auctions, speeches, and dinner.",
-        accepted: true,
+        isAccepted: true,
         notes: "High guest count but well-organised. Great exposure for venue and potential repeat clients.",
         rank: 2,
         //no rating as this hasnt happened yet
@@ -130,7 +130,7 @@ export const applications: Application[] = [
         date: "2026-01-12",
         guests: 40,
         description: "An intimate engagement celebration with family and friends, including a sit-down dinner and speeches.",
-        accepted: true,
+        isAccepted: true,
         notes: "Smaller group, easier logistics. Awaiting final confirmation from hirer.",
         rank: 3,
         vendorRating: 2,
@@ -146,7 +146,7 @@ export const applications: Application[] = [
         guests: 25,
         description: "A private birthday dinner with close friends and family, featuring a customised menu and decorations.",
         notes: "",
-        accepted: false,
+        isAccepted: false,
         hirerID: 7,
         venueID: 7
     }

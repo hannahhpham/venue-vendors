@@ -71,7 +71,7 @@ const ApplicationCarousel = ({type, carouselItems} : ApplicationCarouselType) =>
                                                                                     .map((venue: Venue) => venue.name)}</p>
 
                 
-                {utils.compareTime(application.date) && application.accepted === true ? 
+                {utils.compareTime(application.date) && application.isAccepted === true ? 
                 (<span>
                     <p className="italic text-xs"><span className="font-bold">Address: </span> {allVenues
                       .filter((venue: Venue) => venue.id === application.venueID)
@@ -85,9 +85,10 @@ const ApplicationCarousel = ({type, carouselItems} : ApplicationCarouselType) =>
 
                 <div className="flex italic text-xs">
                     <p className="font-bold pr-1">Status: </p> 
-                        {typeof application.accepted === 'boolean' ? 
-                        //if theres a value here, then it's either been accepted or rejected
-                        (application.accepted === true ? <p>Accepted</p> : <p>Rejected</p>
+                        {typeof application.isAccepted === 'boolean' ? 
+                        //if theres a value here, then it's either been isAccepted or rejected
+                        (application.isAccepted != true ? <p>Rejected</p> : 
+                          (application.date < utils.getCurrDate() ? <p>Completed</p> : <p>Accepted</p>)
                         ) : 
                         //if theres no value, then it hasn't yet been reviewed
                         (<p>Submitted</p>) }
