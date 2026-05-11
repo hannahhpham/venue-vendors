@@ -33,10 +33,14 @@ export class ShortlistedVenueController {
      * @returns JSON response containing the shortlistedVenue
      */
     async save(request: Request, response: Response) {
-        const { hirerId, venueId, rank } = request.body;
+        //get hirerID from url params instead
+        const { hirerID, venueID, rank } = request.body;
+
+        console.log("hirerID is ", hirerID);
+
         const shortlistedVenue = Object.assign(new ShortlistedVenue(), {
-            hirerId,
-            venueId,
+            hirerID,
+            venueID,
             rank,
         });
         try {
@@ -57,10 +61,14 @@ export class ShortlistedVenueController {
      * @returns JSON response with success message or 404 error if venue not found
      */
     async remove(request: Request, response: Response) {
-        const venueID = parseInt(request.params.venueID as string);
+        const venueID = parseInt(request.body.venueID as string);
+        const hirerID = parseInt(request.params.hirerID as string);
         const venueToRemove = await this.shortlistRepository.findOne({
-            where: { venueID },
+            where: {venueID },
         });
+
+        // console.log("venue id we want to remove is ", venueID);
+        // console.log("found venue to remove is ", venueToRemove);
         if (!venueToRemove) {
             return response.status(404).json({ message: "Venue to remove not found" });
         }

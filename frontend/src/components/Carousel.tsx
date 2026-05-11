@@ -18,6 +18,7 @@ const Carousel = ({type, ranked, carouselItems} : carouselType) => {
   const [itemIndex, setItemIndex] = useState<number>(0);
   const {currUser} = useAuth(); //need to know which user we are getting data for
 
+
   const items = carouselItems;
   
   //----------- CALCULATE WHAT DATA IS SHOWN IN CAROUSEL ------------------------
@@ -33,6 +34,7 @@ const Carousel = ({type, ranked, carouselItems} : carouselType) => {
     //get array of just shortlisted stuff
     else if (type === "shortlistedVenues" ) {
       visibleItems = carouselItems;
+      //console.log("shortlisted venues are: " + JSON.stringify(carouselItems));
     } 
   }
 

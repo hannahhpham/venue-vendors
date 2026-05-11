@@ -90,18 +90,18 @@ export const shortlistedVenueAPI = {
     return response.data;
   },
 
-  shortlistVenue: async (hirerID: number) => {
-    const response = await api.post(`/shortlistedVenues/${hirerID}`);
+  shortlistVenue: async (hirerID: number, venueID: number, rank: number) => {
+    const response = await api.post(`/shortlistedVenues/${hirerID}`, {hirerID, venueID, rank}); //add it to the request body
     return response.data;
   },
 
-  updateRank: async (hirerID:number) => {
-    const response = await api.put(`/shortlistedVenues/${hirerID}`);
+  updateRank: async (hirerID:number, venueID: number, rank: number) => {
+    const response = await api.put(`/shortlistedVenues/${hirerID}`, {hirerID, venueID, rank});
     return response.data;
   },
 
-  deleteShortlist: async (hirerID: number) => {
-    const response = await api.delete(`/shortlistedVenues/${hirerID}`);
+  deleteShortlist: async (hirerID: number, venueID: number) => {
+    const response = await api.delete(`/shortlistedVenues/${hirerID}`, { data: {venueID} });
     return response.data;
   },
 

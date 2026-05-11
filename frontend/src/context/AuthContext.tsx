@@ -19,7 +19,8 @@ interface AuthContextType {
     getRepRating: (user: User) => number,
     fetchHirerApplications: () => void,
     fetchVendorVenues: () => void,
-    shortlistedVenues: Venue[],
+    getShortlistedVenues: () => void, 
+    shortlistedVenues: number [],
     //pastVenues: Venue[],
     venueApplications: Application[], //stores the application id
 
@@ -47,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     //add the shortlisted venue usestate here since its linked to the user. use this to 
     //update components that render the hshortlisted venues
-    const [shortlistedVenues, setShortlistedVenues] = useState<Venue[]>([]);
+    const [shortlistedVenues, setShortlistedVenues] = useState<number[]>([]);
 
     // these are specific to the hirer
     const [venueApplications, setVenueApplications] = useState<Application[]>([]);
@@ -67,16 +68,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const getShortlistedVenues = async () => {
         //console.log("currUser in shortlistedVenues is " + currUser);
 
+        type shortlistedVenueType = { hirerID: number, venueID: number, rank: number };
+
         if (currUser) {
-            const shortlistedVenuesData = await shortlistedVenueAPI.getShortlistedVenues(currUser.id);
-            const venues = await venueAPI.getAllVenues();
+            let shortlistedVenues = await shortlistedVenueAPI.getShortlistedVenues(currUser.id);
 
-            //organise the data and get the shortlistedVenues of type Venue
-            const shortlistedVenues: Venue[] = shortlistedVenuesData.map((shortlistedVenue: { hirerID: number, venueID: number, rank: number }) =>
-                venues.find((venue: Venue) => venue.id === shortlistedVenue.venueID));
+            //create number id array that is sorted according to the ranks
+            shortlistedVenues.sort((a: shortlistedVenueType, b: shortlistedVenueType) => a.rank - b.rank);
 
+            //get the number ids and store it
+            shortlistedVenues = shortlistedVenues.map((data: shortlistedVenueType) => data.venueID);
+            
             setShortlistedVenues(shortlistedVenues);
-            // console.log("venue:", shortlistedVenuesData[0]);
+            // console.log("shortlistedVenues:", shortlistedVenues);
             return shortlistedVenues;
         }
     }
@@ -115,44 +119,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const storedUser = localStorage.getItem("currUser");
 
         if (storedUser) {
-            setCurrUser(JSON.parse(storedUser)); //cant get shortlisted venus yet cuz no user
-            //fetchHirerApplications();
+            setCurrUser(JSON.parse(storedUser)); 
+            fetchHirerApplications();
+            getShortlistedVenues();
             setVenueApplications(venueApplications.filter((app: Application) => (currUser?.applications?.includes(app.id))));
         }
 
     }, []);
-
-    //get the user's shortlisted venues from local storage and store in state
-    //need this for carousel to display shortlisted venues IN CORRECT ORDER EVERYTIME THINGS CHANGE
-    useEffect(() => {
-        const shortlistedVenueArray: Venue[] = [];
-        if (currUser && currUser.shortlistedVenues) {
-            //foreach loop over all items in shortlistedVenues. TRY REPLACE THIS W SMTH MORE EFFICIENT?? map function?
-            for (const id of currUser.shortlistedVenues) {
-                const found = allVenues.find(venue => venue.id === id);
-                if (found) {
-                    shortlistedVenueArray.push(found); //push the VENUE to shortlistedVenueArray
-                }
-            }
-        }
-
-        setShortlistedVenues(shortlistedVenueArray)
-    }, [currUser?.shortlistedVenues]);
-
-
 
     //get user related data everytime the user OR user-related things change
     useEffect(() => {
 
         // check that user application matches the
         let applicationsArray: Application[] = [];
-        let currUserApplications: number[] = [];
 
 
         //check if the new application added affects this user. 
         if (currUser && currUser.applications) {
-            applicationsArray = allApplications.filter(
-                apps => apps.hirerID === currUser.id);
+            applicationsArray = allApplications.filter(apps => apps.hirerID === currUser.id);
 
             setVenueApplications(applicationsArray);
         }
@@ -165,18 +149,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // HANNAH: do u mean we should remove this useEffect?
         fetchHirerApplications();
         getShortlistedVenues();
-
-        // remove this 
-        if (allUsers.length > 0) {
-            localStorage.setItem("allUsers", JSON.stringify(allUsers));
-        }
     }, [currUser]);
 
     // login functionality.
     const login = async (email: string, password: string) => {
-        // const userFound = allUsers.find(
-        // (u) => u.email === email && u.password === password
-        // );
+
         try {
             const data = await userAPI.getUserByEmail(email);
 
@@ -216,7 +193,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await userAPI.updateUser(updatedUser.id, updatedUser);
 
         //update all the users in use state
-        await getAllUsers();
+        // await getAllUsers();
 
         //update the currUser in use state
         const user = await userAPI.getUserById(updatedUser.id);
@@ -251,7 +228,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         //this authContext provides context to all its kids (aka everything)
         <AuthContext.Provider value={{
             currUser, allUsers, login, logout, updateUser, getRepRating, fetchHirerApplications,
-            fetchVendorVenues, shortlistedVenues, venueApplications, vendorVenues
+            fetchVendorVenues, getShortlistedVenues, shortlistedVenues, venueApplications, vendorVenues
         }}>
             {children}
         </AuthContext.Provider>

@@ -5,11 +5,15 @@ import Carousel from "../components/Carousel";
 import Main from '../components/Main';
 import { useRouter } from 'next/router';
 import { useAuth } from "../context/AuthContext";
+import {useVenues} from '../context/VenueContext'
+import {Venue} from '../types/venues'
+
 
 export default function Home() {
 
   const router = useRouter();
   const { currUser, shortlistedVenues, vendorVenues } = useAuth();
+  const {allVenues} = useVenues();
 
   const onClickDash = (): void => {
     router.push("/dashboard");
@@ -72,7 +76,7 @@ export default function Home() {
                 </Button>
               </div>
               <Carousel type="shortlistedVenues" ranked={true}
-                carouselItems={shortlistedVenues}
+                carouselItems={shortlistedVenues.map((venueID: number) => allVenues.find((venue: Venue) => venue.id === venueID)).filter((venue) => venue !== undefined)}
               />
               <hr className="mt-5 text-gray-200"></hr>
             </div>

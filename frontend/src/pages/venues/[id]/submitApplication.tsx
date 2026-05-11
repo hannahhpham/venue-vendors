@@ -9,6 +9,7 @@ import { Application } from "../../../types/apply";
 import { useApplications } from "../../../context/ApplyContext";
 import { Unavailable } from "../../../types/unavail";
 import { useUnavail } from "../../../context/UnavailContext";
+import { useNotif } from '../../../context/NotifContext';
 import { Venue } from '../../../types/venues';
 import * as utils from '../../../utils/utils';
 
@@ -17,6 +18,7 @@ export default function SubmitApplication() {
     const { currUser, shortlistedVenues, fetchHirerApplications } = useAuth();
     const { addApp } = useApplications();
     const { allBlocked } = useUnavail();
+    const {showNotif} = useNotif();
     const { id } = router.query;
 
 
@@ -33,7 +35,7 @@ export default function SubmitApplication() {
         const [file, setFile] = useState<File>();
         const [fileStr, setFileStr] = useState<string>("");
 
-        const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
+        //const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
         const [unavailPopup, setUnavailPopup] = useState<boolean>(false);
         const [notShortlistedPopup, setNotShortlistedPopup] = useState<boolean>(false);
 
@@ -68,9 +70,10 @@ export default function SubmitApplication() {
             else {
 
                 // check the this venueID is not present in the user's shortlisted venues
-                if (shortlistedVenues.filter((venue: Venue) => 
-                    venue.id === Number(id)).map((venue: Venue) => venue.id)[0] != Number(id)) {
-                    setNotShortlistedPopup(true);
+                // if (shortlistedVenues.filter((venueID: number) => 
+                //     venueID === Number(id)).map((venue: Venue) => )[0] != Number(id)) {
+                if (!shortlistedVenues.includes(Number(id))) {
+                    setNotShortlistedPopup(true); //REPLACE THIS with showNotif
 
                 } else {
                     // valid application
@@ -110,8 +113,11 @@ export default function SubmitApplication() {
                     setFileStr("");
                     setABN("");
 
+                    showNotif("You have successfully submitted your application!", "success");
+                    router.push("/dashboard");
+
                     // style this nicely
-                    setConfirmPopup(true);
+                    //setConfirmPopup(true);
                 }
             }
         }
@@ -119,7 +125,7 @@ export default function SubmitApplication() {
         return (
             <Main type='wholePage'>
 
-                {confirmPopup &&
+                {/* {confirmPopup &&
                     <Popup onClose={() => {
                         router.push(`/venues/${id}`);
                         setConfirmPopup(false);
@@ -129,7 +135,7 @@ export default function SubmitApplication() {
                             <h2>We will be in touch!</h2>
                         </div>
                     </Popup>
-                }
+                } */}
 
                 {unavailPopup &&
                     <Popup onClose={() => {

@@ -113,7 +113,7 @@ export default function Dashboard() {
                   <Carousel type="shortlistedVenues" ranked={true}
 
                     //this uses the shorlistedVenues which are of type Venue
-                    carouselItems={shortlistedVenues} />
+                    carouselItems={shortlistedVenues.map((venueID: number) => allVenues.find((venue: Venue) => venue.id === venueID)).filter((venue) => venue !== undefined)} />
                 </div><br />
 
                 <div className="ml-5">

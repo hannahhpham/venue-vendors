@@ -18,18 +18,21 @@ import Button from '../../components/Button';
 import Sidebar from '../../components/Sidebar'
 import Main from '../../components/Main';
 import Analytics from "../../components/Analytics";
-import { applicationAPI, venueAPI, blockedAPI } from "../../services/api";
+import { applicationAPI, venueAPI, shortlistedVenueAPI, blockedAPI } from "../../services/api";
 
 
 export default function VenuePage() {
   const router = useRouter();
   //const { allVenues } = useVenues();
-  const { currUser, allUsers, updateUser } = useAuth();
+  const { currUser, allUsers, updateUser, shortlistedVenues, getShortlistedVenues } = useAuth();
   const { allApplications, setBooking, shortlist } = useApplications();
   const { allBlocked, blockVenue, unblockVenue } = useUnavail();
   const { showNotif } = useNotif();
   // this is a string - the venue id
   const { id } = router.query;
+
+  // when this prints there are deadass like 10 million console logs. need to figure out why
+  // console.log("shortlistedVenues is " + JSON.stringify(shortlistedVenues));
 
   //const thisVenue: Venue | undefined = allVenues.filter((venue: Venue) => venue.id === Number(id)).at(0);
 
@@ -38,8 +41,9 @@ export default function VenuePage() {
 
   // the problem with this is that there is a delay in displaying the page
   // in this gap, it shows that "This venue does not exist"
-  // as a (very) temporary fix, i removed the "this venue does not exist" to make it less obvious. same issue still happens
+  // hannah: as a (very) temporary fix, i removed the "this venue does not exist" to make it less obvious. same issue still happens
   // we probably need to use a different hook (?)
+  // hannahL is it useMemo and useCallback's time to shine....
   useEffect( () => {
     if (id) {
       fetchVenue();
@@ -115,111 +119,126 @@ export default function VenuePage() {
 
     //handler functions for shortlisting venues
     //this is a lot of code try simplify this later
-    const shortlistVenue = (venueID: number, indexToInsertAt: number): void => {
-      //pass the updated shortlist here
-      if (currUser && currUser.shortlistedVenues && currUser.shortlistedVenues.length + 1 > indexToInsertAt) {
-        //this array isnt edited its just used so i dont have to write longer lines
-        const venueShortlist = currUser.shortlistedVenues;
+    const shortlistVenue = async (venueID: number, indexToInsertAt: number): Promise<void> => {
+      if (currUser) {
+        
+        if (shortlistedVenues.length - 1 < indexToInsertAt) { //shortlisting at end of list
 
-        let updatedUser = {
-          ...currUser,
+          showNotif("You have shortlisted this venue.", "success");
+          const result = await shortlistedVenueAPI.shortlistVenue(currUser.id, venueID, indexToInsertAt);
+          console.log(result);
+        }
+        else { //inserting in the middle of the list
+          showNotif("insert in middle", "success");
         }
 
-        if (currUser.shortlistedVenues.length > 4) {
-          // alert("You can only have 5 venues shortlisted! Please remove a shortlisted venue to continue.");
-          showNotif("You can only have 5 venues shortlisted! Please remove a shortlisted venue to continue.", 'fail');
-        }
-        else {
-          //get the ranking of this venue. shift other venues 1 to the right
-          if (venueShortlist.length === 0) {
-            updatedUser = {
-              ...currUser,
-              shortlistedVenues: [venueID]
-            }
-          }
-          else if (venueShortlist.length > 0) {
-            let newVenueShortlist: number[] = []; //make new array
-
-            //add all the elements before the inserted venue into the new venue
-            for (let i = 0; i < indexToInsertAt; i++) {
-              newVenueShortlist.push(venueShortlist[i]);
-            }
-            newVenueShortlist.push(venueID); //insert the new venue
-
-            //insert the remaining venues from the old venue list
-            for (let i = indexToInsertAt; i < venueShortlist.length; i++) {
-              newVenueShortlist.push(venueShortlist[i]);
-            }
-
-            updatedUser = {
-              ...currUser,
-              shortlistedVenues: newVenueShortlist
-            };
-          }
-          showNotif("Venue successfully shortlisted.", 'success');
-          updateUser(updatedUser);
-        }
+        await getShortlistedVenues();
+          
       }
+      
+      // let currShortlist: Venue[] = [];
+
+      // if (currUser) {
+      //   currShortlist = await shortlistedVenueAPI.getShortlistedVenues(currUser.id);
+      
+      //   if (currShortlist.length + 1 <= indexToInsertAt) { //shortlisting at end of list
+      //     await shortlistedVenueAPI.shortlistVenue(currUser.id, thisVenue.id, indexToInsertAt);
+      //   }
+      //   else if (currShortlist.length + 1 > indexToInsertAt) { //shortlisting in middle/not at end
+
+      //     if (currShortlist.length > 4) {
+      //       // alert("You can only have 5 venues shortlisted! Please remove a shortlisted venue to continue.");
+      //       showNotif("You can only have 5 venues shortlisted! Please remove a shortlisted venue to continue.", 'fail');
+      //     }
+      //     else {
+      //       //get the ranking of this venue. shift other venues 1 to the right
+      //       if (currShortlist.length >= 0) {
+      //         let newcurrShortlist: Venue[] = []; //make new array
+
+      //         //add all the elements before the inserted venue into the new venue
+      //         for (let i = 0; i < indexToInsertAt; i++) {
+      //           newcurrShortlist.push(currShortlist[i]);
+      //         }
+      //         newcurrShortlist.push(thisVenue); //insert the new venue
+
+      //         //insert the remaining venues from the old venue list
+      //         for (let i = indexToInsertAt; i < currShortlist.length; i++) {
+      //           newcurrShortlist.push(currShortlist[i]);
+      //         }
+      //       }
+      //       showNotif("Venue successfully shortlisted.", 'success');
+      //     }
+      //   }
+      //   else {
+      //     showNotif("Venue unable to be shortlisted.", 'fail');
+
+      //   }
+      
+      // }
+      // else {
+      //   showNotif("You are not logged in.", 'fail');
+
+      // }
+      
+      
     }
 
-    const changeRanking = (venueID: number, newRanking: number): void => {
-      if (currUser && currUser.shortlistedVenues) {
-        const venueShortlist = currUser.shortlistedVenues;
+    const changeRanking = async (venueID: number, newRanking: number): Promise<void> => {
+      // if (currUser && shortlistedVenues) {
+      //   const currShortlist = currUser.shortlistedVenues;
 
-        if (venueShortlist.length > 1 && venueShortlist.length > newRanking) {
-          //get array without the element they want to change rnak of
-          const oldArray: number[] = venueShortlist.filter((id: number) => (id !== venueID));
+      //   if (currShortlist.length > 1 && currShortlist.length > newRanking) {
+      //     //get array without the element they want to change rnak of
+      //     const oldArray: number[] = currShortlist.filter((id: number) => (id !== venueID));
 
-          //create the new array
-          let newVenueShortlist: number[] = []; //make new array
+      //     //create the new array
+      //     let newcurrShortlist: number[] = []; //make new array
 
-          //add all the elements before the inserted venue into the new venue
-          for (let i = 0; i < newRanking; i++) {
-            newVenueShortlist.push(oldArray[i]);
-          }
-          newVenueShortlist.push(venueID); //insert the new venue
+      //     //add all the elements before the inserted venue into the new venue
+      //     for (let i = 0; i < newRanking; i++) {
+      //       newcurrShortlist.push(oldArray[i]);
+      //     }
+      //     newcurrShortlist.push(venueID); //insert the new venue
 
-          //insert the remaining venues from the old venue list
-          for (let i = newRanking; i < oldArray.length; i++) {
-            newVenueShortlist.push(oldArray[i]);
-          }
+      //     //insert the remaining venues from the old venue list
+      //     for (let i = newRanking; i < oldArray.length; i++) {
+      //       newcurrShortlist.push(oldArray[i]);
+      //     }
 
-          //create the updated user
-          const updatedUser = {
-            ...currUser,
-            shortlistedVenues: newVenueShortlist,
-          }
-          showNotif("Venue ranking successfully changed.", 'success');
+      //     //create the updated user
+      //     const updatedUser = {
+      //       ...currUser,
+      //       shortlistedVenues: newcurrShortlist,
+      //     }
+      //     showNotif("Venue ranking successfully changed.", 'success');
 
-          //update LS + useState
-          updateUser(updatedUser);
+      //     //update LS + useState
+      //     updateUser(updatedUser);
 
-        }
+      //   }
 
+      //}
+
+      if (currUser) {
+        await shortlistedVenueAPI.updateRank(currUser.id, venueID, newRanking);
+        //update state
+        await getShortlistedVenues();
       }
 
     }
 
-    const removeShortlistedVenue = (venueID: number) => {
+    const removeShortlistedVenue = async (venueID: number) => {
       //find the index corresponding to the venueID
 
-      if (currUser && currUser.shortlistedVenues) {
+      if (currUser) {
+        await shortlistedVenueAPI.deleteShortlist(currUser.id, venueID);
+        //so we update the shortlisted venues, which is scheduled for next render. need useeffect
+        await getShortlistedVenues();
 
-        //edit: this fucks up local storage EVEN THO IT LOOKS LIKE IT WORKS RAAAA
-        // currUser.shortlistedVenues.splice(index, 1);
-        //create a completely new user using old user information
-        const updatedUser = {
-          ...currUser, //get previous user details
-          //create a mnew shortlisted venues
-          shortlistedVenues: currUser.shortlistedVenues.filter(
-            (id) => (id !== venueID))
-        };
-
-        showNotif("Venue removed from shortlist.", 'success');
-        //update the user's information
-        updateUser(updatedUser);
-
+        showNotif("Venue successfully removed from shortlist.", "success");
       }
+
+  
     }
 
 
@@ -548,24 +567,24 @@ export default function VenuePage() {
                   {/* shotlist functionality */}
                   <div className="flex flex-col items-center">
                     <h3>Shortlist this Venue</h3>
-                    <form className="flex flex-col w-[100%] items-center bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
+                    <div className="flex flex-col w-[100%] items-center bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
 
                       {/* check if this venue is alr shortlisted. if yes, show option to change ranking/delete */}
                       {/* if not shortlisted, then rank */}
                       <div className="flex flex-col">
-                        <label>{currUser.shortlistedVenues?.includes(thisVenue.id) ?
+                        <label>{shortlistedVenues.includes(thisVenue.id) ?
                           (<p>Change current ranking:</p>) : (<p>Assign a ranking:</p>)}</label>
                         <select className="border border-[#e0e0e0] rounded-md m-2 p-2"
                           onChange={(e) => { setShortlistRank(parseInt(e.target.value)) }}>
-                          <option value={0}>1</option>
-                          <option value={1}>2</option>
-                          <option value={2}>3</option>
-                          <option value={3}>4</option>
-                          <option value={4}>5</option>
+                          <option value={1}>1</option>
+                          <option value={2}>2</option>
+                          <option value={3}>3</option>
+                          <option value={4}>4</option>
+                          <option value={5}>5</option>
                         </select>
                       </div>
                       {
-                        currUser.shortlistedVenues?.includes(thisVenue.id) ?
+                        shortlistedVenues.includes(thisVenue.id) ?
                           // if thisVenue is in the shortlistedVenues, show option to remove
                           (<div className="flex flex-col items-center">
                             <Button text="Change Ranking" onClick={() => { changeRanking(thisVenue.id, shortlistRank) }} />
@@ -576,11 +595,11 @@ export default function VenuePage() {
                           :
                           // if thisVenue isn't in shortlist, show option to add
                           (<div className="flex flex-col items-center">
-                            <Button text="Shortlist" onClick={() => { shortlistVenue(thisVenue.id, shortlistRank) }} />
+                            <Button  text="Shortlist" onClick={() => {shortlistVenue(thisVenue.id, shortlistRank)}} />
                           </div>)
                       }
 
-                    </form>
+                    </div>
                   </div>
 
                   <div className="mb-3">
@@ -612,7 +631,6 @@ export default function VenuePage() {
                     }
                   </div>
 
-                  {/* </aside> */}
                 </Sidebar>
               </div>
             )

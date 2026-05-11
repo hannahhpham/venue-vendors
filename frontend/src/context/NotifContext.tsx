@@ -32,11 +32,6 @@ export function NotifProvider({children} : {children : React.ReactNode}) {
 
     
     }
-
-    // useEffect (() => {
-
-    //     const hideNotif = setTime
-    // }, 5000); 
     
     //return provider
     return (
