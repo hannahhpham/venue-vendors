@@ -65,7 +65,7 @@ export class User {
     venues: Venue[]
 
     //for applications. again, how do we make this optional
-    @OneToMany(()=> Application , (application) => application.user)
+    @OneToMany(()=> Application , (application) => application.hirer)
     applications: Application []
 
     //for the shortlisted venues

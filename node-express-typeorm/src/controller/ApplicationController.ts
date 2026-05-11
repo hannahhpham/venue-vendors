@@ -68,11 +68,36 @@ export class ApplicationController {
         }
 
         const apps = await this.applicationRepository.find({
-            where: { user: { id: hirer.id } },
+            where: { hirer: {id: hirer.id } },
         });
 
         return response.json(apps);
     }
+
+
+    /**
+     * Retrieves all APPROVED applications for a hirer
+     * @param request - Express request object containing the hirerID in the params
+     * @param response - Express response object
+     * @returns JSON response containing an array of all applications
+     */
+    // async allPastByHirer(request: Request, response: Response) {
+    //     const hirerID = parseInt(request.params.hirerID as string);
+
+    //     const hirer = await this.userRepository.findOne({
+    //         where: { id: hirerID },
+    //     })
+
+    //     if (!hirer) {
+    //         return response.status(404).json({ message: "Hirer could not be found" });
+    //     }
+
+    //     const apps = await this.applicationRepository.find({
+    //         where: { hirer: { id: hirer.id }, isAccepted: true, },
+    //     });
+
+    //     return response.json(apps);
+    // }
 
 
     /**
@@ -103,7 +128,40 @@ export class ApplicationController {
      */
     async createApp(req: Request, res: Response) {
         /** Create a new Application object from the request body */
-        const app = this.applicationRepository.create(req.body);
+        // const app = this.applicationRepository.create(req.body);
+
+        // how does this work if they're not applying on behalf of a company?
+        const {
+            eventName,
+            startTime,
+            endTime,
+            date,
+            guests,
+            description,
+            abn,
+            file,
+            hirerID,
+            venueID
+        } = req.body;
+
+        const app = Object.assign(new Application(), {
+            eventName: eventName,
+            startTime: startTime,
+            endTime: endTime,
+            date: date,
+            guests: guests,
+            description: description,
+            abn: abn,
+            file: file,
+            isAccepted: null,
+            notes: "",
+            vendorRating: null,
+            rank: null,
+            hirerID: hirerID,
+            venueID: venueID
+        })
+
+        const data = this.applicationRepository.create(app);
 
         /** Save the new application to the database */
         try {

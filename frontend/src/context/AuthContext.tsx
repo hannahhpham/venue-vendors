@@ -17,6 +17,7 @@ interface AuthContextType {
     logout: () => void,
     updateUser: (updatedUser: User) => void, //update user information, including their shortlisted venues
     getRepRating: (user: User) => number,
+    fetchHirerApplications: () => void,
     shortlistedVenues: Venue[],
     //pastVenues: Venue[],
     venueApplications: Application[], //stores the application id
@@ -246,7 +247,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // NOTE; lec2example6 also returns all users array + login function
         //this authContext provides context to all its kids (aka everything)
         <AuthContext.Provider value={{
-            currUser, allUsers, login, logout, updateUser, getRepRating,
+            currUser, allUsers, login, logout, updateUser, getRepRating, fetchHirerApplications,
             shortlistedVenues, venueApplications, vendorVenues
         }}>
             {children}

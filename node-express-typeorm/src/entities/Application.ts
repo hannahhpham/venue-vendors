@@ -71,7 +71,7 @@ export class Application {
             referencedColumnName: "id", //name in users table
             foreignKeyConstraintName: "FK_applications_hirerID", //constraint name in apps table
     })
-    user: User;
+    hirer: User;
 
     //get the venueID
     @ManyToOne(() => Venue, (venue) => venue.applications, {nullable: false})

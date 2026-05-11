@@ -14,12 +14,10 @@ import * as utils from '../../../utils/utils';
 
 export default function SubmitApplication() {
     const router = useRouter();
-    const { currUser, shortlistedVenues } = useAuth();
+    const { currUser, shortlistedVenues, fetchHirerApplications } = useAuth();
     const { addApp } = useApplications();
     const { allBlocked } = useUnavail();
     const { id } = router.query;
-
-    // NOTE: THERE IS AN ERROR SOMEWHERE IN THIS FILE (react change of hooks - appears in console when application is submitted)
 
 
     if (currUser && currUser.type === "hirer") {
@@ -34,6 +32,7 @@ export default function SubmitApplication() {
         const [abn, setABN] = useState<string>("");
         const [file, setFile] = useState<File>();
         const [fileStr, setFileStr] = useState<string>("");
+
         const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
         const [unavailPopup, setUnavailPopup] = useState<boolean>(false);
         const [notShortlistedPopup, setNotShortlistedPopup] = useState<boolean>(false);
@@ -72,11 +71,11 @@ export default function SubmitApplication() {
                 if (shortlistedVenues.filter((venue: Venue) => 
                     venue.id === Number(id)).map((venue: Venue) => venue.id)[0] != Number(id)) {
                     setNotShortlistedPopup(true);
-                }
-                else { //application sucessful
 
-                    const newApp: Application = {
-                        id: Date.now(),
+                } else {
+                    // valid application
+
+                    const newApp: Partial<Application> = {
                         eventName: eventName,
                         startTime: startTime,
                         endTime: endTime,
@@ -85,18 +84,21 @@ export default function SubmitApplication() {
                         description: desc,
                         notes: "",
                         hirerID: currUser.id,
-                        venueID: Number(id)
+                        venueID: Number(id),
+                    // }
+                        // not sure whether to keep this or not
+                    // if (hirerType === "company") {
+                        abn: abn.trim() === "" ? undefined : abn,
+                        file: fileStr.trim() === "" ? undefined : fileStr,
                     }
 
-                    if (hirerType === "company") {
-                        newApp.abn = abn;
-                        newApp.file = fileStr;
-                    }
-
-                    console.log("filestr:\n" + fileStr);
+                    //console.log("filestr:\n" + fileStr);
 
                     // add the application to localStorage
                     addApp(newApp);
+
+                    // update the hirer's dashboard with their most up to date applications
+                    fetchHirerApplications();
 
                     // reset all states to defaults
                     setEventName("");
@@ -183,7 +185,7 @@ export default function SubmitApplication() {
                                 <label className="mb-2">
                                     Start Time
                                     <input className="block p-2 outline-black bg-neutral-50 rounded w-10/10"
-                                     type="time" step="1" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
+                                     type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
                                 </label>
                                 <label className="mb-2">
                                     End Time

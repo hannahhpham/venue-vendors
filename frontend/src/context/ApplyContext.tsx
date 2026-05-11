@@ -8,7 +8,7 @@ import { applicationAPI } from '@/services/api';
 
 interface ApplyContextType {
     allApplications: Application[],
-    addApp: (newApp: Application) => void,
+    addApp: (newApp: Partial<Application>) => void,
     removeApp: (id: number) => void,
     addNotes: (id: number, newNotes: string) => void,
     setBooking: (id: number, set: boolean | undefined) => void,
@@ -24,25 +24,25 @@ const ApplyContext = createContext<ApplyContextType | undefined>(undefined);
 
 export function ApplyProvider({ children }: { children: React.ReactNode }) {
 
-    // var stores all the venues in localStorage (later)
+    // var stores all the applications
     const [allApplications, setAllApps] = useState<Application[]>([]);
 
-    // stores all the most up to date list of venues (either in localStorage or the file)
-    // NOTE: the following hook is adapted from Week 2 Example 6 (Lectures)
+    // A1 NOTE: the following hook is adapted from Week 2 Example 6 (Lectures)
     useEffect(() => {
         fetchAllApps();
     }, []);
 
 
     // update localStorage with the updated set of venues whenever a new one is added
-    useEffect(() => {
-        if (allApplications.length > 0) {
-            localStorage.setItem("applications", JSON.stringify(allApplications));
-        }
+    // useEffect(() => {
+    //     if (allApplications.length > 0) {
+    //         localStorage.setItem("applications", JSON.stringify(allApplications));
+    //     }
 
-    }, [allApplications])
+    // }, [allApplications])
 
 
+    // API call to get all the applications in the database
     const fetchAllApps = async () => {
         try {
             const data = await applicationAPI.getAllApps();
@@ -53,12 +53,17 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
     };
 
 
-    // add a new application TO LOCALSTORAGE ONLY
+    // add a new application the database
     // used by hirers to lodge an application for a venue, on a perticular date
-    const addApp = async (newApp: Application) => {
-        if (newApp !== null) {
-            setAllApps([...allApplications, newApp]);
-            // await applicationAPI.createApp(newApp);
+    // note: hirer's applications will be updated on submitApplication.tsx page itself
+        // because useAuth must be used in an AuthProvider
+    const addApp = async (newApp: Partial<Application>) => {
+        try {
+            const result = await applicationAPI.createApp(newApp);
+            // make sure that the applications array is updated
+            fetchAllApps();
+        } catch (error) {
+            console.error("Error adding new application (Context): ", error);
         }
     }
 
@@ -67,6 +72,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
     const removeApp = async (id: number) => {
         try {
             const result = await applicationAPI.deleteApp(id);
+            // update the applications array
             fetchAllApps();
         } catch (error) {
             console.error("Error removing application (Context): ", error);
