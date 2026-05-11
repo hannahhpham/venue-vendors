@@ -20,10 +20,18 @@ import { venueAPI } from "../services/api";
 import * as utils from '../utils/utils';
 
 export default function Dashboard() {
-  const router = useRouter(); //for button clicks
-  const { currUser, shortlistedVenues, venueApplications, vendorVenues } = useAuth();
+  const router = useRouter();
+  const { currUser, shortlistedVenues, venueApplications, vendorVenues, fetchVendorVenues } = useAuth();
   // const {allApplications} = useApplications();
   const { allVenues, removeVenue } = useVenues();
+
+  const deleteVenue = (id : number) => {
+    removeVenue(id);
+
+    // update the vendor's list of venues
+    // performed here because useAuth must be used within an AuthProvider
+    fetchVendorVenues();
+  }
 
   if (currUser) {
     return (
@@ -59,7 +67,7 @@ export default function Dashboard() {
                                   onClick={() => router.push(`/venues/${venue.id}`)} text="Manage">
                                   <img src="arrowForwardFull.png" className="invert inline ml-2"></img></Button>
                                 <Button className="px-10 p-3 mt-5 bg-red-500 rounded-md font-medium hover:bg-red-600"
-                                  onClick={() => removeVenue(venue.id)} text="Delete" onLeft={true}>
+                                  onClick={() => deleteVenue(venue.id)} text="Delete" onLeft={true}>
                                   <img src="deleteBin.png" className="invert inline mr-2"></img></Button>
                               </div>
                             </Card>

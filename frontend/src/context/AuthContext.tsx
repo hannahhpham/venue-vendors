@@ -18,6 +18,7 @@ interface AuthContextType {
     updateUser: (updatedUser: User) => void, //update user information, including their shortlisted venues
     getRepRating: (user: User) => number,
     fetchHirerApplications: () => void,
+    fetchVendorVenues: () => void,
     shortlistedVenues: Venue[],
     //pastVenues: Venue[],
     venueApplications: Application[], //stores the application id
@@ -47,6 +48,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     //add the shortlisted venue usestate here since its linked to the user. use this to 
     //update components that render the hshortlisted venues
     const [shortlistedVenues, setShortlistedVenues] = useState<Venue[]>([]);
+
+    // these are specific to the hirer
     const [venueApplications, setVenueApplications] = useState<Application[]>([]);
 
     // api calls here
@@ -248,7 +251,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         //this authContext provides context to all its kids (aka everything)
         <AuthContext.Provider value={{
             currUser, allUsers, login, logout, updateUser, getRepRating, fetchHirerApplications,
-            shortlistedVenues, venueApplications, vendorVenues
+            fetchVendorVenues, shortlistedVenues, venueApplications, vendorVenues
         }}>
             {children}
         </AuthContext.Provider>

@@ -8,7 +8,7 @@ import { venueAPI } from "../services/api";
 
 interface VenueContextType {
     allVenues: Venue[],
-    addVenue: (newVenue: Venue) => void,
+    addVenue: (newVenue: Partial<Venue>) => void,
     removeVenue: (id: number) => void,
     editVenue: (id: number, updatedVenue: Venue) => void,
 }
@@ -50,17 +50,31 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
 
 
     // add a new venue TO LOCALSTORAGE ONLY
-    const addVenue = (newVenue: Venue) => {
+    const addVenue = async (newVenue: Partial<Venue>) => {
         if (newVenue !== null) {
-            setAllVenues([...allVenues, newVenue]);
+            // setAllVenues([...allVenues, newVenue]);
+            try {
+                const result = await venueAPI.createVenue(newVenue);
+                // make sure that the venues array is updated
+                fetchVenues();
+                showNotif("New venue successfully added.", 'success');
+            } catch (error) {
+                console.error("Error adding new venue (Context): ", error);
+            }
         }
-        showNotif("New venue successfully added.", 'success');
     }
 
     // remove the venue of id
-    const removeVenue = (id: number) => {
-        setAllVenues(allVenues.filter((venue: Venue) => venue.id !== id));
-        showNotif("Venue successfully deleted.", 'success');
+    const removeVenue = async (id: number) => {
+        try {
+            const result = await venueAPI.deleteVenue(id);
+            // make sure that the venues array is updated
+            fetchVenues();
+            showNotif("Venue successfully deleted.", 'success');
+        } catch (error) {
+            console.error("Error removing venue (Context): ", error);
+        }
+        //setAllVenues(allVenues.filter((venue: Venue) => venue.id !== id));
     }
 
     // edit a venue

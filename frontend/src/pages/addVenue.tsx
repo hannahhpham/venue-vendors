@@ -6,11 +6,11 @@ import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { Venue } from "../types/venues";
 import { useVenues } from "../context/VenueContext";
-import {useNotif} from '../context/NotifContext';
+import { useNotif } from '../context/NotifContext';
 
 export default function SubmitApplication() {
     const router = useRouter();
-    const { currUser } = useAuth();
+    const { currUser, fetchVendorVenues } = useAuth();
     const { addVenue } = useVenues();
     const {showNotif} = useNotif();
 
@@ -35,24 +35,27 @@ export default function SubmitApplication() {
         const handleAddVenue = (e: React.FormEvent) => {
             e.preventDefault();
 
-            const newVenue: Venue = {
-                id: Date.now(),
+            const newVenue: Partial<Venue> = {
+                //id: Date.now(),
                 name: name,
                 phone: phone,
                 email: email,
                 address: address,
                 suburb: suburb,
-                state: "VIC",
+                state: "VIC",               // FIND A WAY TO FIX THIS
                 postcode: postcode,
                 capacity: cap,
                 rate: rate,
-                stars: 0,
+                //stars: 0,
                 description: desc.trim(),
                 ownerID: currUser.id
             }
 
-            // add the venue to your localStorage (NOTE: any new user will not be able to access these venues, only those in the files)
+            // add the venue to the database
             addVenue(newVenue);
+            
+            // update the user's venues and all venues
+            fetchVendorVenues();
 
             // reset all states to defaults
             setName("");

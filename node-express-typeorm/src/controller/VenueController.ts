@@ -15,15 +15,13 @@ export class VenueController {
 
     private applicationRepository = AppDataSource.getRepository(Application);
 
-    private blockedRepository = AppDataSource.getRepository(Unavailable);
-
     /**
      * Retrieves all venues from the database
      * @param request - Express request object
      * @param response - Express response object
      * @returns JSON response containing an array of all venues
      */
-    async getAllVenues(request: Request, response: Response) { //params are always the same here,
+    async getAllVenues(request: Request, response: Response) {
         const venues = await this.venueRepository.find();
         return response.json(venues);
     }
@@ -85,21 +83,25 @@ export class VenueController {
      */
     async createVenue(req: Request, res: Response) {
         /** Create a new Venue object from the request body */
-        const venue = this.venueRepository.create(req.body);
-        // const { name, phone, email, address, suburb, state, postcode, capacity, rate, description, ownerID } = req.body;
-        // const venue = Object.assign(new Venue(), {
-        //     name, 
-        //     phone, 
-        //     email, 
-        //     address, 
-        //     suburb, 
-        //     state, 
-        //     postcode, 
-        //     capacity, 
-        //     rate, 
-        //     description, 
-        //     ownerID
-        // });
+        // const venue = this.venueRepository.create(req.body);
+        const { name, phone, email, address,
+             suburb, state, postcode, capacity,
+              rate, description, ownerID } = req.body;
+        const venue = Object.assign(new Venue(), {
+            name: name, 
+            phone: phone, 
+            email: email, 
+            address: address, 
+            suburb: suburb, 
+            state: state, 
+            postcode: postcode, 
+            capacity: capacity, 
+            rate: rate, 
+            description: description, 
+            ownerID: ownerID
+        });
+
+        const date = this.venueRepository.create(venue);
 
         /** Save the new venue to the database */
         try {
@@ -119,7 +121,7 @@ export class VenueController {
      * @returns JSON object of the updated venue or 404 if not found
      */
     async updateVenue(req: Request, res: Response) {
-        /** Retrieve the profile from the database */
+        /** Retrieve the venue from the database */
         let venue = await this.venueRepository.findOneBy({
             id: parseInt(req.params.id as string),
         });
