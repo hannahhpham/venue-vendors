@@ -8,6 +8,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useApplications } from "../../context/ApplyContext";
 import { useUnavail } from "../../context/UnavailContext";
 import { useNotif } from '../../context/NotifContext'
+//import {useVenues} from ''
 import Header from "../../components/Header";
 import Popup from "../../components/Popup";
 import Card from "../../components/Card";
@@ -203,8 +204,6 @@ export default function VenuePage() {
 
       if (currUser && currUser.shortlistedVenues) {
 
-        const index = currUser.shortlistedVenues.indexOf(venueID);
-
         //edit: this fucks up local storage EVEN THO IT LOOKS LIKE IT WORKS RAAAA
         // currUser.shortlistedVenues.splice(index, 1);
         //create a completely new user using old user information
@@ -218,7 +217,6 @@ export default function VenuePage() {
         showNotif("Venue removed from shortlist.", 'success');
         //update the user's information
         updateUser(updatedUser);
-
 
       }
     }
@@ -675,7 +673,7 @@ export default function VenuePage() {
 
     // if this venue does not exist
     return (
-      <h1>This venue doesn't exist.</h1>
+      <h1></h1>
     )
   }
 

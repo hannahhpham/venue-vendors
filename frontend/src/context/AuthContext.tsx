@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const getShortlistedVenues = async () => {
-        console.log("currUser is " + currUser);
+        // console.log("currUser is " + currUser);
 
         if (currUser) {
             const shortlistedVenuesData = await shortlistedVenueAPI.getShortlistedVenues(currUser.id);
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 venues.find((venue: Venue) => venue.id === shortlistedVenue.venueID));
 
             setShortlistedVenues(shortlistedVenues);
-            console.log("venue:", shortlistedVenuesData[0]);
+            // console.log("venue:", shortlistedVenuesData[0]);
             return shortlistedVenues;
         }
     }

@@ -52,6 +52,10 @@ export class Venue {
     @Column({type: "text"})
     description: string;
 
+    @Column({type: "int"})
+    ownerID: number;
+
+
     // @Column({type: "text", nullable: true})
     // keywords: string | null;
 

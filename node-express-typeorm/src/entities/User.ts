@@ -56,7 +56,6 @@ export class User {
     registrationCert: string;
 
     //dont need to do anything here? already set the createdAt in the table itself
-    //do i need the @createdAtColumn here since mssql is alr doing it
     @CreateDateColumn({type: "datetime"})
     createdAt: Date; 
 

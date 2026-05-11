@@ -14,6 +14,7 @@ import { useAuth } from "../context/AuthContext";
 import { useVenues } from "../context/VenueContext";
 import { Application } from '../types/apply';
 import { Venue } from "../types/venues";
+import {useApplications} from '../context/ApplyContext'
 import { shortlistedVenueAPI } from '../services/api'
 import { venueAPI } from "../services/api";
 import * as utils from '../utils/utils';
@@ -21,7 +22,10 @@ import * as utils from '../utils/utils';
 export default function Dashboard() {
   const router = useRouter(); //for button clicks
   const { currUser, shortlistedVenues, venueApplications, vendorVenues } = useAuth();
+  // const {allApplications} = useApplications();
   const { allVenues, removeVenue } = useVenues();
+
+  console.log(venueApplications);
 
   if (currUser) {
     return (
@@ -92,7 +96,9 @@ export default function Dashboard() {
 
                 <div className="ml-5">
                   <h2 className="p-2">Recommended Venues</h2>
-                  {/* <Carousel type="all" ranked={false} carouselItems={allVenues} /> */}
+                  {/* error with api: api access takes longer -> brief moment where getting allVenues hasn;t finished -> error. */}
+                  {/* fix: add a fallback option via ??. [] is what is used if allVenues isn't ready yet */}
+                  {/* <Carousel type="all" ranked={false} carouselItems={allVenues ?? []} /> */}
                 </div> <br />
 
 
@@ -108,9 +114,12 @@ export default function Dashboard() {
                   <h2 className='p-2'>My Applications</h2>
                   {/* this carousel only shows applications that were rejected, submitted,
                    or accepted BUT occurring in the future */}
-                  <ApplicationCarousel type='applications'
+                  {/* <ApplicationCarousel type='applications'
                     carouselItems={venueApplications.filter((app: Application) =>
-                      app.date > utils.getCurrDate() || app.accepted === false)} />
+                      app.date > utils.getCurrDate() || app.accepted === false)} /> */}
+                      <ApplicationCarousel type='applications'
+                    carouselItems={venueApplications.filter((app: Application) =>
+                      app.date > utils.getCurrDate() || app.accepted === false) ?? []} />
                 </div><br />
 
                 <div className="ml-5">

@@ -50,6 +50,12 @@ export class Application {
     @Column({type: "int", nullable: true})
     rank?: number;
 
+    @Column({type: "int"})
+    hirerID: number;
+
+    @Column({type: "int"})
+    venueID: number;
+
    
     //IMPORTANT!!! check over this.
     //this will add a new column
