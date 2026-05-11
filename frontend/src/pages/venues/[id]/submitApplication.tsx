@@ -19,6 +19,8 @@ export default function SubmitApplication() {
     const { allBlocked } = useUnavail();
     const { id } = router.query;
 
+    // NOTE: THERE IS AN ERROR SOMEWHERE IN THIS FILE (react change of hooks - appears in console when application is submitted)
+
 
     if (currUser && currUser.type === "hirer") {
         // for the form
@@ -181,7 +183,7 @@ export default function SubmitApplication() {
                                 <label className="mb-2">
                                     Start Time
                                     <input className="block p-2 outline-black bg-neutral-50 rounded w-10/10"
-                                     type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
+                                     type="time" step="1" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
                                 </label>
                                 <label className="mb-2">
                                     End Time

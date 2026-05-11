@@ -96,7 +96,7 @@ export default function Dashboard() {
                   <h2 className="p-2">Recommended Venues</h2>
                   {/* error with api: api access takes longer -> brief moment where getting allVenues hasn;t finished -> error. */}
                   {/* fix: add a fallback option via ??. [] is what is used if allVenues isn't ready yet */}
-                  {/* <Carousel type="all" ranked={false} carouselItems={allVenues ?? []} /> */}
+                  <Carousel type="all" ranked={false} carouselItems={allVenues} />
                 </div> <br />
 
 

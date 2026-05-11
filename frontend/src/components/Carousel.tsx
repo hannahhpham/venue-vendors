@@ -2,6 +2,7 @@ import React from 'react'
 import {useState} from 'react'
 import VenueCard from './VenueCard'
 import {useAuth} from '../context/AuthContext'
+import {useVenues} from '../context/VenueContext'
 import { Venue } from "../types/venues";
 import {useRouter} from 'next/router'
 
@@ -16,6 +17,8 @@ const Carousel = ({type, ranked, carouselItems} : carouselType) => {
   const router = useRouter();
   const [itemIndex, setItemIndex] = useState<number>(0);
   const {currUser} = useAuth(); //need to know which user we are getting data for
+
+  const items = carouselItems;
   
   //----------- CALCULATE WHAT DATA IS SHOWN IN CAROUSEL ------------------------
   let visibleItems: Venue[]  = [];
@@ -60,7 +63,7 @@ const Carousel = ({type, ranked, carouselItems} : carouselType) => {
 
         {/* div containing the items */}
         <div className="flex w-full min-w-0 overflow-hidden mr-2">
-          {visibleItems.length > 0 ? visibleItems.map((item, index) => (
+          {items.length > 0 ? visibleItems.map((item, index) => (
             <div key={index} className="flex-1 min-w-0 overflow-hidden">
               <VenueCard linkToPage={true} onClick={() => router.push(`../venues/${item.id}`)}>
                 <p {...(index === 0 ? {"data-testid" : "venueName"} : {})} className=" font-bold">{ranked ? (index+1) + ". " + item.name : (item.name)}</p>

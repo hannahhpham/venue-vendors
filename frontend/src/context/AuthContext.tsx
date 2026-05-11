@@ -40,6 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [currUser, setCurrUser] = useState<User | null>(null);
     const [allUsers, setAllUsers] = useState<User[]>([]);
 
+    // the following code is based on [id].tsx, profile, frontend, Lecture 9 Example 1
+    const [vendorVenues, setVendorVenues] = useState<Venue[]>([]);
+
     //add the shortlisted venue usestate here since its linked to the user. use this to 
     //update components that render the hshortlisted venues
     const [shortlistedVenues, setShortlistedVenues] = useState<Venue[]>([]);
@@ -85,6 +88,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const fetchVendorVenues = async () => {
+        if (currUser && currUser.type === "vendor") {
+            try {
+                const data = await venueAPI.getByVendor(currUser.id);
+                setVendorVenues(data);
+            } catch (error) {
+                console.error("Error fetching vendor's venues (Venue Context): ", error);
+            }
+        }
+    };
+
     // useEffects
 
     //check if theres user in the database. check if theres shortlisted venues and applications
@@ -103,13 +117,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
     }, []);
-
-    //store updated users to localstorage when user information changes
-    useEffect(() => {
-        if (allUsers.length > 0) {
-            localStorage.setItem("allUsers", JSON.stringify(allUsers));
-        }
-    }, [allUsers])
 
     //get the user's shortlisted venues from local storage and store in state
     //need this for carousel to display shortlisted venues IN CORRECT ORDER EVERYTIME THINGS CHANGE
@@ -147,10 +154,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, [allApplications, currUser]);
 
-
-    // the following code is based on [id].tsx, profile, frontend, Lecture 9 Example 1
-    const [vendorVenues, setVendorVenues] = useState<Venue[]>([]);
-
     // 
     useEffect(() => {
         fetchVendorVenues();
@@ -158,18 +161,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // HANNAH: do u mean we should remove this useEffect?
         fetchHirerApplications();
         getShortlistedVenues();
-    }, [currUser]);
 
-    const fetchVendorVenues = async () => {
-        if (currUser && currUser.type === "vendor") {
-            try {
-                const data = await venueAPI.getByVendor(currUser.id);
-                setVendorVenues(data);
-            } catch (error) {
-                console.error("Error fetching vendor's venues (Venue Context): ", error);
-            }
+        // remove this 
+        if (allUsers.length > 0) {
+            localStorage.setItem("allUsers", JSON.stringify(allUsers));
         }
-    };
+    }, [currUser]);
 
     // login functionality.
     const login = async (email: string, password: string) => {

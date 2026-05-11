@@ -55,9 +55,10 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
 
     // add a new application TO LOCALSTORAGE ONLY
     // used by hirers to lodge an application for a venue, on a perticular date
-    const addApp = (newApp: Application) => {
+    const addApp = async (newApp: Application) => {
         if (newApp !== null) {
             setAllApps([...allApplications, newApp]);
+            // await applicationAPI.createApp(newApp);
         }
     }
 
@@ -88,7 +89,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
     // check this: during confirmation, hirers should be able to confirm they'll be there
     const setBooking = (id: number, set: boolean | undefined) => {
         allApplications.map((app: Application) => (
-            app.id === id ? (app.accepted = set) : app.accepted
+            app.id === id ? (app.isAccepted = set) : app.isAccepted
         ))
         localStorage.setItem("applications", JSON.stringify(allApplications));
     }

@@ -35,9 +35,9 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
 
     // get the status of the application
     const getStatus = () : string => {
-        if (app.accepted === true) {
-            return "Accepted";
-        } else if (app.accepted === false) {
+        if (app.isAccepted === true) {
+            return "isAccepted";
+        } else if (app.isAccepted === false) {
             return "Rejected";
         } else {
             return "In Progress";
@@ -133,12 +133,12 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                         onClick={() => (!app.rank ? shortlist(app.id, 1) : delist(app.id))}>
                                         {app.rank ? (<img src="../shortlisted.png" />) : (<img src="../shortlist.png" />)}
                                     </button><br/>
-                                    <button title="Reject Application" className={"p-2 hover:bg-red-100 hover:shadow-lg rounded-full " + (app.accepted === false ? "bg-red-200" : "")} 
-                                        onClick={() => ((app.accepted === true || app.accepted === undefined) ? setBooking(app.id, false) : app.accepted)}>
+                                    <button title="Reject Application" className={"p-2 hover:bg-red-100 hover:shadow-lg rounded-full " + (app.isAccepted === false ? "bg-red-200" : "")} 
+                                        onClick={() => ((app.isAccepted === true || app.isAccepted === undefined) ? setBooking(app.id, false) : app.isAccepted)}>
                                         <img src="../deleteBin.png" />
                                     </button><br/>
-                                    <button title="Approve Application" className={"p-2 hover:bg-green-100 hover:shadow-lg rounded-full " + (app.accepted === true ? "bg-green-200" : "")} 
-                                        onClick={() => (!app.rank ? setBooking(app.id, true) : app.accepted)}>
+                                    <button title="Approve Application" className={"p-2 hover:bg-green-100 hover:shadow-lg rounded-full " + (app.isAccepted === true ? "bg-green-200" : "")} 
+                                        onClick={() => (!app.rank ? setBooking(app.id, true) : app.isAccepted)}>
                                         <img src="../tick.png" />
                                     </button>
                                 </div>
@@ -161,7 +161,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                                     <h4>Hiring Credibility: {hirer?.credibility} stars</h4>
                                                     {<ApplicationCarousel type='pastVenues' carouselItems= {
                                                         allApplications.filter((app:Application) => 
-                                                            app.hirerID === hirer?.id && app.accepted === true && app.date < utils.getCurrDate() )
+                                                            app.hirerID === hirer?.id && app.isAccepted === true && app.date < utils.getCurrDate() )
                                                     }/>}
                                                     <h4>Total Events: {hirer?.pastVenues?.length}</h4>
                                                     <h4>Number of Venues Hired: {new Set(hirer?.pastVenues).size}</h4>

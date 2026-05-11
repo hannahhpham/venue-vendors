@@ -38,6 +38,7 @@ export default function VenuePage() {
 
   // the problem with this is that there is a delay in displaying the page
   // in this gap, it shows that "This venue does not exist"
+  // as a (very) temporary fix, i removed the "this venue does not exist" to make it less obvious. same issue still happens
   // we probably need to use a different hook (?)
   useEffect( () => {
     if (id) {
@@ -330,15 +331,15 @@ export default function VenuePage() {
                   <h1 className="text-2xl font-bold mt-2">History</h1>
                   <div className="max-h-150 overflow-x-hidden overflow-y-auto">
                     {
-                      currApps.filter((app: Application) => app.accepted && 
+                      currApps.filter((app: Application) => app.isAccepted && 
                       (app.date < Date() || app.date === Date())).length > 0 &&
-                      currApps.filter((app: Application) => app.accepted && 
+                      currApps.filter((app: Application) => app.isAccepted && 
                       (app.date < Date() || app.date === Date())).map((app: Application) => (
                         <ApplicationsCard app={app} history={true} />
                       ))
                     }
                     {
-                      currApps.filter((app: Application) => app.accepted && 
+                      currApps.filter((app: Application) => app.isAccepted && 
                       (app.date < Date() || app.date === Date())).length === 0 &&
                       <p><i>No previous hiring history.</i></p>
                     }
@@ -385,7 +386,7 @@ export default function VenuePage() {
                                     </label>
                                   </div>
                                   {
-                                    app.accepted ? (
+                                    app.isAccepted ? (
                                       <div>
                                         <button className="bg-gray-500 text-white font-medium hover:bg-gray-600 px-3 py-2 rounded-lg"
                                          onClick={() => setBooking(app.id, undefined)}>
@@ -396,7 +397,7 @@ export default function VenuePage() {
                                     ) : (
                                       <div>
                                         {
-                                          app.accepted === false ? (
+                                          app.isAccepted === false ? (
                                             <div>
                                               <button className="bg-gray-500 text-white font-medium hover:bg-gray-600 px-3 py-2 rounded-lg"
                                                onClick={() => setBooking(app.id, undefined)}>

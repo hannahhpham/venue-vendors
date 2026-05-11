@@ -24,17 +24,17 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
 
         // i. Most chosen applicant
             // we have done this for a given hirer as 
-            // (number of accepted applications) / total accepted applications * 100 ==> percentage
+            // (number of isAccepted applications) / total isAccepted applications * 100 ==> percentage
         if (type === "mostAccepted") {
 
-            // get the ids of hirers who have been accepted
+            // get the ids of hirers who have been isAccepted
             const allChosenApplicants: number[] = currApps.filter((app: Application) => 
-                app.accepted === true).map((app: Application) => app.hirerID);
+                app.isAccepted === true).map((app: Application) => app.hirerID);
 
             // get the distinct set
             const distChosenApplicants = new Set<number>(allChosenApplicants);
 
-            // Map (hirerID, accepted%)
+            // Map (hirerID, isAccepted%)
             let numOfChosenApps = new Map();
             for (const hirer of distChosenApplicants) {
                 let count: number = 0;
@@ -55,7 +55,7 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
 
             return (
                 finalMap.length === 0 ? (
-                    <p><i>No accepted applicants found. Unable to generate analytics.</i></p>
+                    <p><i>No isAccepted applicants found. Unable to generate analytics.</i></p>
                 ) : (
                     finalMap.map((group: number[]) => (
                         <div key={group[0]} className="grid grid-cols-[40%_60%] mb-1">
@@ -73,7 +73,7 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
 
             // get all the ids of rejected applicants
             const allRejectApplicants: number[] = currApps.filter((app: Application) =>
-                 app.accepted === false).map((app: Application) => app.hirerID);
+                 app.isAccepted === false).map((app: Application) => app.hirerID);
 
             // get the distinct set of rejected ids
             const distRejectApplicants = new Set<number>(allRejectApplicants);
@@ -144,7 +144,7 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
 
             return (
                 finalMap.length === 0 ? (
-                    <p><i>No accepted applicants found. Unable to generate analytics.</i></p>
+                    <p><i>No isAccepted applicants found. Unable to generate analytics.</i></p>
                 ) : (
                     finalMap.map((group: number[], index: number) => (
                         <div key={group[0]} className="grid grid-cols-[40%_60%] mb-1">
