@@ -1,24 +1,20 @@
 import React from 'react'
 import { useState } from 'react'
 import { useVenues } from '../context/VenueContext'
-import {useNotif} from '../context/NotifContext'
 import { Venue } from '../types/venues'
 import Popup from './Popup'
 import Button from './Button'
 
-//define types needed for the whole component
+// define types needed for the whole component
 interface VenueDetailsType {
   edit: boolean,
-  venue: Venue
+  venue: Venue,
 }
 
-//use this for past venues as well
-//and application?
 
 const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
 
   const { editVenue } = useVenues();
-  const {showNotif} = useNotif();
 
 
   //STATES ARE ONLY USED FOR VENDOR SIDE - NOT HIRER SIDE
@@ -40,8 +36,7 @@ const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
   const handleSubmit = (e: React.ChangeEvent) => {
     e.preventDefault();
 
-      const updatedVenue: Venue = {
-        id: venue.id,
+      const updatedVenue: Partial<Venue> = {
         name: name,
         phone: phone,
         email: email,
@@ -51,13 +46,11 @@ const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
         postcode: postcode,
         capacity: cap,
         rate: rate,
-        stars: venue.id,
         description: desc.trim(),
-        ownerID: venue.ownerID
       }
 
-      // add the venue to your localStorage (NOTE: any new user will not be able to access these venues, only those in the files)
-      editVenue(venue.id, updatedVenue);
+      // store the edited values
+      editVenue(Number(venue.id), updatedVenue);
 
       // reset all states to defaults
       setName(venue.name || "");
@@ -69,9 +62,8 @@ const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
       setPhone(venue.phone || "");
       setPostcode(venue.postcode || 0);
       setState("VIC");
-      setSuburb(venue.suburb ||"");
+      setSuburb(venue.suburb || "");
 
-      showNotif("Venue details successfully updated.", 'success');
   }
 
 

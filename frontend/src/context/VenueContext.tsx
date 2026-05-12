@@ -10,7 +10,7 @@ interface VenueContextType {
     allVenues: Venue[],
     addVenue: (newVenue: Partial<Venue>) => void,
     removeVenue: (id: number) => void,
-    editVenue: (id: number, updatedVenue: Venue) => void,
+    editVenue: (id: number, updatedVenue: Partial<Venue>) => void,
 }
 
 
@@ -77,12 +77,19 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
         //setAllVenues(allVenues.filter((venue: Venue) => venue.id !== id));
     }
 
-    // edit a venue
-    const editVenue = (id: number, updatedVenue: Venue) => {
-        setAllVenues(allVenues.map((venue: Venue) =>
-            venue.id === id ? updatedVenue : venue
-        ))
-        showNotif('Venue successfully edited.', 'success');
+    // edit a venue's details - used in VenueDetails component
+    const editVenue = async (id: number, updatedVenue: Partial<Venue>) => {
+        try {
+            const result = await venueAPI.updateVenue(id, updatedVenue);
+            // make sure that the venues array is updated
+            fetchVenues();
+            showNotif('Venue details edited successfully.', 'success');
+        } catch (error) {
+            console.error("Error updating venue (Context): ", error);
+        }
+        // setAllVenues(allVenues.map((venue: Venue) =>
+        //     venue.id === id ? updatedVenue : venue
+        // ))
     }
 
 
