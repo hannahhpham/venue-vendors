@@ -9,6 +9,11 @@ router.get("/shortlistedVenues/:hirerID", async (req, res) => {
     await shortlistedVenueController.all(req, res);
 });
 
+//get one shortlisted venue by its rank
+router.get("/:rank/shortlistedVenues/:hirerID", async (req, res) => {
+    await shortlistedVenueController.one(req, res);
+});
+
 //add new shortlisted venue
 router.post("/shortlistedVenues/:hirerID", async (req, res) => {
     await shortlistedVenueController.save(req, res);

@@ -27,6 +27,27 @@ export class ShortlistedVenueController {
     }
 
     /**
+     * Retrieves one shortlistedVenues belonging to a hirer by it's rank
+     * @param request - Express request object
+     * @param response - Express response object
+     * @returns JSON response containing an array of all shortlisted venues from the specific hirer
+     */
+    async one(request: Request, response: Response) {
+        const hirerID = parseInt(request.params.hirerID as string);
+        const rank = parseInt(request.params.rank as string);
+
+        // console.log("rank is ", rank, " hirer is ", hirerID);
+        const shortlistedVenue = await this.shortlistRepository.findOne({
+            where: {hirerID, rank},
+        });
+        // console.log("found venue ", shortlistedVenue, " in controller");
+        if (!shortlistedVenue) {
+            return response.status(404).json({ message: "Hirer has no shortlisted venue with this rank." });
+        }
+        return response.json(shortlistedVenue);
+    }
+
+    /**
      * saves a new shortlisted venue after checks
      * @param request - Express request object
      * @param response - Express response object
@@ -83,8 +104,10 @@ export class ShortlistedVenueController {
      * @returns JSON response containing the shortlisted venue
      */
     async update(request: Request, response: Response) {
-        const venueID = parseInt(request.params.venueID as string);
-        const { hirerID, rank } = request.body;
+        //const venueID = parseInt(request.params.venueID as string);
+        const { hirerID, venueID, rank } = request.body;
+
+        console.log("hirer: ", hirerID, " | venue: ", venueID, " | updated rank: ", rank);
         let venueToUpdate = await this.shortlistRepository.findOne({ //find the hirer's venue
             where: { hirerID, venueID },
         });

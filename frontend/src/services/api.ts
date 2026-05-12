@@ -90,6 +90,11 @@ export const shortlistedVenueAPI = {
     return response.data;
   },
 
+  getShortlistByRank: async (hirerID: number, rank: number) => {
+    const response = await api.get(`/${rank}/shortlistedVenues/${hirerID}`, {data: {rank}});
+    return response.data;
+  },
+
   shortlistVenue: async (hirerID: number, venueID: number, rank: number) => {
     const response = await api.post(`/shortlistedVenues/${hirerID}`, {hirerID, venueID, rank}); //add it to the request body
     return response.data;

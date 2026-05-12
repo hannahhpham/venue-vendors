@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { User } from "../../types/users"
-import { Venue } from "../../types/venues"
+import { Venue, shortlistedVenueType } from "../../types/venues"
 import { Application } from "../../types/apply";
 import { Unavailable } from "../../types/unavail";
 import { useAuth } from "../../context/AuthContext";
@@ -33,8 +33,6 @@ export default function VenuePage() {
 
   // when this prints there are deadass like 10 million console logs. need to figure out why
   // console.log("shortlistedVenues is " + JSON.stringify(shortlistedVenues));
-
-  //const thisVenue: Venue | undefined = allVenues.filter((venue: Venue) => venue.id === Number(id)).at(0);
 
   // the following code is based on [id].tsx, profile, frontend, Lecture 9 Example 1
   const [thisVenue, setThisVenue] = useState<Venue | undefined>(undefined);
@@ -111,7 +109,7 @@ export default function VenuePage() {
 
   //hirer stuff ------------------------------------------------------------------------------------------------------------
   //hirer hooks
-  const [shortlistRank, setShortlistRank] = useState<number>(0);
+  const [shortlistRank, setShortlistRank] = useState<number>(1);
 
   if (thisVenue) {
     //hirer stuff ------------------------------------------------------------------------------------------------------------
@@ -119,118 +117,93 @@ export default function VenuePage() {
 
     //handler functions for shortlisting venues
     //this is a lot of code try simplify this later
-    const shortlistVenue = async (venueID: number, indexToInsertAt: number): Promise<void> => {
+    const shortlistVenue = async (venueID: number, rankToInsertAt: number): Promise<void> => {
       if (currUser) {
-        
-        if (shortlistedVenues.length - 1 < indexToInsertAt) { //shortlisting at end of list
 
-          showNotif("You have shortlisted this venue.", "success");
-          const result = await shortlistedVenueAPI.shortlistVenue(currUser.id, venueID, indexToInsertAt);
-          console.log(result);
+        if (shortlistedVenues.length == 5) { //if shortlist is full
+          showNotif("Your shortlist is full! Please remove shortlisted venues to add more.", "fail");
         }
-        else { //inserting in the middle of the list
-          showNotif("insert in middle", "success");
-        }
+        else { 
+          if (shortlistedVenues.length  < rankToInsertAt) { //shortlisting at end of list. CHECK
 
-        await getShortlistedVenues();
-          
+            showNotif("You have shortlisted this venue.", "success");
+            await shortlistedVenueAPI.shortlistVenue(currUser.id, venueID, rankToInsertAt);
+            //console.log(result);
+          }
+          else { //inserting in the middle of the list
+            showNotif("insert in middle", "success");
+
+            let shortlistItem: shortlistedVenueType;
+
+            //change ranks of the venues ranking after the added venue
+            for (let i = shortlistedVenues.length ; i >= rankToInsertAt ; i--) {
+              
+              shortlistItem = await shortlistedVenueAPI.getShortlistByRank(currUser.id, i);
+
+              console.log("shortlistItem:", shortlistItem);
+              console.log("updating rank from", shortlistItem.rank, "to", shortlistItem.rank + 1);
+
+              await shortlistedVenueAPI.updateRank(shortlistItem.hirerID, shortlistItem.venueID, shortlistItem.rank + 1 );
+            }
+
+            //add venue and update state
+            await shortlistedVenueAPI.shortlistVenue(currUser.id, venueID, rankToInsertAt);
+            await getShortlistedVenues(); //update state
+          }
+        }
       }
-      
-      // let currShortlist: Venue[] = [];
-
-      // if (currUser) {
-      //   currShortlist = await shortlistedVenueAPI.getShortlistedVenues(currUser.id);
-      
-      //   if (currShortlist.length + 1 <= indexToInsertAt) { //shortlisting at end of list
-      //     await shortlistedVenueAPI.shortlistVenue(currUser.id, thisVenue.id, indexToInsertAt);
-      //   }
-      //   else if (currShortlist.length + 1 > indexToInsertAt) { //shortlisting in middle/not at end
-
-      //     if (currShortlist.length > 4) {
-      //       // alert("You can only have 5 venues shortlisted! Please remove a shortlisted venue to continue.");
-      //       showNotif("You can only have 5 venues shortlisted! Please remove a shortlisted venue to continue.", 'fail');
-      //     }
-      //     else {
-      //       //get the ranking of this venue. shift other venues 1 to the right
-      //       if (currShortlist.length >= 0) {
-      //         let newcurrShortlist: Venue[] = []; //make new array
-
-      //         //add all the elements before the inserted venue into the new venue
-      //         for (let i = 0; i < indexToInsertAt; i++) {
-      //           newcurrShortlist.push(currShortlist[i]);
-      //         }
-      //         newcurrShortlist.push(thisVenue); //insert the new venue
-
-      //         //insert the remaining venues from the old venue list
-      //         for (let i = indexToInsertAt; i < currShortlist.length; i++) {
-      //           newcurrShortlist.push(currShortlist[i]);
-      //         }
-      //       }
-      //       showNotif("Venue successfully shortlisted.", 'success');
-      //     }
-      //   }
-      //   else {
-      //     showNotif("Venue unable to be shortlisted.", 'fail');
-
-      //   }
-      
-      // }
-      // else {
-      //   showNotif("You are not logged in.", 'fail');
-
-      // }
-      
       
     }
 
     const changeRanking = async (venueID: number, newRanking: number): Promise<void> => {
-      // if (currUser && shortlistedVenues) {
-      //   const currShortlist = currUser.shortlistedVenues;
 
-      //   if (currShortlist.length > 1 && currShortlist.length > newRanking) {
-      //     //get array without the element they want to change rnak of
-      //     const oldArray: number[] = currShortlist.filter((id: number) => (id !== venueID));
+      //get the original rank of the venue
+      const oldRanking = shortlistedVenues.indexOf(venueID) + 1;
 
-      //     //create the new array
-      //     let newcurrShortlist: number[] = []; //make new array
+      //move this venue down. shift venues between old rank and new rank up by 1
+      if (newRanking > oldRanking && currUser) {
+        for (let i = oldRanking + 1; i <= newRanking ; i++) {
+          await shortlistedVenueAPI.updateRank(currUser.id, shortlistedVenues[i-1], i-1);
+        }
+      }
+      //move this venue up. shift venues between this and newranking down by 1
+      else if (newRanking < oldRanking && currUser) {
+        for (let i = newRanking ; i < oldRanking  ; i++) {
+          await shortlistedVenueAPI.updateRank(currUser.id, shortlistedVenues[i-1], i+1);
+        }
 
-      //     //add all the elements before the inserted venue into the new venue
-      //     for (let i = 0; i < newRanking; i++) {
-      //       newcurrShortlist.push(oldArray[i]);
-      //     }
-      //     newcurrShortlist.push(venueID); //insert the new venue
+      }
+      //if equal then do nothing #lol
 
-      //     //insert the remaining venues from the old venue list
-      //     for (let i = newRanking; i < oldArray.length; i++) {
-      //       newcurrShortlist.push(oldArray[i]);
-      //     }
-
-      //     //create the updated user
-      //     const updatedUser = {
-      //       ...currUser,
-      //       shortlistedVenues: newcurrShortlist,
-      //     }
-      //     showNotif("Venue ranking successfully changed.", 'success');
-
-      //     //update LS + useState
-      //     updateUser(updatedUser);
-
-      //   }
-
-      //}
-
+      //change venue rank and update state
       if (currUser) {
         await shortlistedVenueAPI.updateRank(currUser.id, venueID, newRanking);
-        //update state
-        await getShortlistedVenues();
+        showNotif("Venue ranking successfully updated", "success");
       }
-
+      await getShortlistedVenues(); //update state
     }
+    
+    
+
+  
 
     const removeShortlistedVenue = async (venueID: number) => {
       //find the index corresponding to the venueID
 
-      if (currUser) {
+      if (currUser) {//delete and shift every venue's rank under this venue up
+        let removedVenuePosition: number = 0;
+
+        for (let i = 0 ; i < shortlistedVenues.length ; i++) {
+          if (shortlistedVenues[i] == venueID) {
+            removedVenuePosition = i; //this is the index which every venue after should be updated
+          }
+        }
+
+        //for every venue after the removed venue, decrease its rank by 1
+        for (let i = removedVenuePosition + 1 ; i < shortlistedVenues.length ; i++) {
+          await shortlistedVenueAPI.updateRank(currUser.id, shortlistedVenues[i], i);
+        }
+
         await shortlistedVenueAPI.deleteShortlist(currUser.id, venueID);
         //so we update the shortlisted venues, which is scheduled for next render. need useeffect
         await getShortlistedVenues();

@@ -15,6 +15,8 @@ export interface Venue {
   keywords?: string
 };
 
+export type shortlistedVenueType = { hirerID: number, venueID: number, rank: number };
+
 // please note that (as per assignment specifications allow) venue information has been generated 
 // via ai (so that we don't have to spend time making up information and spend more time coding!!)
 export const venues: Venue[] = [

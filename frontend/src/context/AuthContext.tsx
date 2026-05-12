@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { users, User } from "../types/users";
 import { Application } from "../types/apply";
 import { useApplications } from './ApplyContext';
-import { venues, Venue } from '../types/venues'
+import { venues, shortlistedVenueType, Venue } from '../types/venues'
 import { useVenues } from './VenueContext'
 import { useNotif } from './NotifContext'
 import { userAPI, shortlistedVenueAPI, venueAPI, applicationAPI } from '../services/api'
@@ -67,8 +67,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const getShortlistedVenues = async () => {
         //console.log("currUser in shortlistedVenues is " + currUser);
-
-        type shortlistedVenueType = { hirerID: number, venueID: number, rank: number };
 
         if (currUser) {
             let shortlistedVenues = await shortlistedVenueAPI.getShortlistedVenues(currUser.id);
