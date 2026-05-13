@@ -58,27 +58,6 @@ const Documents = ({edit} : DocumentType) => {
     }
   }
 
-  // need to update credibility after uploading documents
-  const updateCredibility = (): void => {
-        if (currUser) {
-            let counter: number = 0;
-            if (currUser.drivLic !== "") {
-                counter+=2;
-            }
-
-            if (currUser.insur !== "") {
-                counter+=2;
-            }
-
-            const updatedUser: User= {
-                ...currUser,
-                credibility: counter,
-            }
-
-            updateUser(updatedUser);
-
-        }
-    }
 
 
   return (
@@ -109,7 +88,6 @@ const Documents = ({edit} : DocumentType) => {
                                   setInsurStr("");
                                   setDL(undefined);
                                   setInsur(undefined);
-                                  updateCredibility();
                                 }}>
               <form onSubmit={(e) => e.preventDefault()} className=' m-auto text-center'>
                 <div>

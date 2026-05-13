@@ -30,28 +30,24 @@ const Stars = ({ type }: starType) => {
           string += "☆ ";
         }
       }
+      
+              
     }
     //credibility is always max 4 stars.
     //abn and business certificate make credibility FOR THAT APPLICATION to 5 stars, cuz client
     //can decide whether they apply on behalf of business OR by themselves.
-    else if (type === "hirerCredibility") {
+    else if (type === "hirerCredibility" && currUser) {
       //add number of documents. 3 docs total, so scale is 1, 3, 5.
-      let counter: number = 0;
+      const credibility = currUser.credibility ?? 0;
 
-      if (currUser?.drivLic != "") {
-        counter += 2;
-      }
-      if (currUser?.insur != "") {
-        counter += 2;
-      }
-
-      for (let i = 0 ; i < counter ; i++) {
+      for (let i = 0 ; i < credibility ; i++) {
         string += "★ ";
       }
 
-      for (let i = 0 ; i < 5 - counter ; i++) {
+      for (let i = 0 ; i < 5 - credibility ; i++) {
         string += "☆ ";
       }
+
     }
 
     return string.trim();

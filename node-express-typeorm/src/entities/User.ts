@@ -35,11 +35,11 @@ export class User {
     type: "hirer" | "vendor" ;
 
     // maybe we need these as those update columns?
-    @Column({type: "int", nullable: true})
+    @Column({type: "int", default: 0, nullable: true})
     reputation: number;
 
     // maybe we need these as those update columns?
-    @Column({type: "int", nullable: true})
+    @Column({type: "int", default: 0, nullable: true})
     credibility: number;
 
     // shift into applications or no - double check w teachers

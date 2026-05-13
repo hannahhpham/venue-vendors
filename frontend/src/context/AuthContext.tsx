@@ -110,14 +110,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     //check if theres user in the database. check if theres shortlisted venues and applications
     //NOTE: lec2example6 takes user information from LS and stores in useState above.
     //      if theres nothing in LS then it takes default user array from file.
+    //THIS NEEDS TO STAY SO USERS STAY LOGGED IN UPON REFRESH
     useEffect(() => {
         getAllUsers();
 
         //check if user stored
         const storedUser = localStorage.getItem("currUser");
 
+        //this is incorrectly returning nulls for reputation, credibility, insur
+        console.log("stored user on refresh:", storedUser);
+
         if (storedUser) {
-            setCurrUser(JSON.parse(storedUser)); 
+            setCurrUser(JSON.parse(storedUser));
             fetchHirerApplications();
             getShortlistedVenues();
             setVenueApplications(venueApplications.filter((app: Application) => (currUser?.applications?.includes(app.id))));
@@ -125,20 +129,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     }, []);
 
-    //get user related data everytime the user OR user-related things change
+    //update the application useState each time an application is added or if files are added
     useEffect(() => {
+        if (currUser && currUser.type == "hirer") {
+            fetchHirerApplications();
+            //calculate reputaiton
+            const reputation = getRepRating(currUser);
+            let credibility: number = 0;
 
-        // check that user application matches the
-        let applicationsArray: Application[] = [];
+            if (currUser?.drivLic) {
+                credibility += 2;
+            }
+            if (currUser?.insur) {
+                credibility += 2;
+            }
 
+            const updatedUser: User = {
+                ...currUser,
+                reputation: reputation,
+                credibility: credibility
+            }
+            
+            // //update user via api directly so we dont have infinite calls #lol
+            const updateDatabase = async () => {
+                    await userAPI.updateUser(currUser.id, updatedUser);
+                    setCurrUser(updatedUser);
+                    localStorage.setItem("currUser", JSON.stringify(updatedUser));
 
-        //check if the new application added affects this user. 
-        if (currUser && currUser.applications) {
-            applicationsArray = allApplications.filter(apps => apps.hirerID === currUser.id);
-
-            setVenueApplications(applicationsArray);
+            };
+            updateDatabase();
         }
-    }, [allApplications, currUser]);
+
+    }, [allApplications, currUser?.drivLic, currUser?.insur]);
 
     // 
     useEffect(() => {
@@ -157,7 +179,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             if (data) {
                 //store current to local storage. use this for other pages
-                localStorage.setItem("currUser", JSON.stringify(data));
 
                 //set the use state
                 const user: User = data;
@@ -177,7 +198,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     //logout functionality - remove user from LS, push to homepage
     const logout = () => {
         //remove user from local storage
-        localStorage.removeItem("currUser");
+        //localStorage.removeItem("currUser");
         setCurrUser(null);
         showNotif("You have successfully logged out.", 'success');
         router.push('/');
@@ -186,7 +207,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     //for updating user details (name, phone). also for updating the user's shortlisted venues
     // and uploading / updating the user's driver's license and public liability insurance cert
     const updateUser = async (updatedUser: User) => {
-
         //update this user in the database
         await userAPI.updateUser(updatedUser.id, updatedUser);
 
@@ -195,12 +215,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         //update the currUser in use state
         const user = await userAPI.getUserById(updatedUser.id);
-        //console.log("user phone:" + user?.phone);
-        setCurrUser(user);
+        setCurrUser(updatedUser);
+        localStorage.setItem("currUser", JSON.stringify(updatedUser));
 
     }
 
-    // calculate the reputation rating of a hirer
+    // calculate the reputation and credibility rating of a hirer
     // source: https://www.geeksforgeeks.org/typescript/typescript-array-reduce-method/
     const getRepRating = (user: User): number => {
         const myApps = allApplications.filter((app: Application) => (app.hirerID === user.id && app.isAccepted === true && app.vendorRating !== undefined));
@@ -211,12 +231,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 return total
             }
         }, 0) / (myApps.length);
-
         rating = Number.isNaN(rating) ? 0 : rating;
-
-        // update the user's information as well
-        
-
         return rating;
     }
 

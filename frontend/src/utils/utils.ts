@@ -66,7 +66,7 @@ export function uploadFile(e: React.ChangeEvent<HTMLInputElement>, file: File | 
         // store the result
         setFileStr(result);
         // testing
-        console.log("result:\n" + result);
+        //console.log("result:\n" + result);
       }
       // return a data url
       read.readAsDataURL(e.target.files[0]);

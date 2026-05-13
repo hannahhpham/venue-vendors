@@ -105,7 +105,7 @@ export class UserController {
      */
     async update(request: Request, response: Response) {
         const id = parseInt(request.params.id as string);
-        const { firstName, lastName, phoneNumber, drivLic, insur } = request.body;
+        const { firstName, lastName, phoneNumber, drivLic, insur, credibility, reputation } = request.body;
         let userToUpdate = await this.userRepository.findOne({
             where: { id },
         });
@@ -117,7 +117,9 @@ export class UserController {
             lastName,
             phoneNumber,
             drivLic,
-            insur
+            insur,
+            credibility,
+            reputation
         });
         try {
             const updatedUser = await this.userRepository.save(userToUpdate);

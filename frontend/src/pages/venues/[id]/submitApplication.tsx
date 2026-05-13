@@ -68,10 +68,6 @@ export default function SubmitApplication() {
             }
 
             else {
-
-                // check the this venueID is not present in the user's shortlisted venues
-                // if (shortlistedVenues.filter((venueID: number) => 
-                //     venueID === Number(id)).map((venue: Venue) => )[0] != Number(id)) {
                 if (!shortlistedVenues.includes(Number(id))) {
                     setNotShortlistedPopup(true); //REPLACE THIS with showNotif
 
@@ -124,18 +120,6 @@ export default function SubmitApplication() {
 
         return (
             <Main type='wholePage'>
-
-                {/* {confirmPopup &&
-                    <Popup onClose={() => {
-                        router.push(`/venues/${id}`);
-                        setConfirmPopup(false);
-                    }}>
-                        <div className="h-40">
-                            <h1 className="text-2xl font-medium">You have submitted your application!</h1>
-                            <h2>We will be in touch!</h2>
-                        </div>
-                    </Popup>
-                } */}
 
                 {unavailPopup &&
                     <Popup onClose={() => {

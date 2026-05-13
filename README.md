@@ -7,6 +7,12 @@ ER Diagram: [Here](https://lucid.app/lucidchart/1a83b8c0-cbd1-4331-a1d0-6c9d3a8d
 
 Shared Notion (DELETE B4 SUBMITTING): [Here](https://www.notion.so/assignment-2-react-ts-node-express-mysql-314281c6814b80afb9a9d34ee77fa850?source=copy_link)
 
+
+## Vendor Explanations
+
+## Hirer Explanations
+- credibility and reputation explanations here 
+
 ## References for TypeOrm/Database Stuff
 - lab 7 and 8
 - lectures week 9
