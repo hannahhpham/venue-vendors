@@ -81,52 +81,96 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
 
 
     // let the vendor add notes to the application - THIS SHOULD NOT BE ACCESSED BY THE HIRER
-    const addNotes = (id: number, newNotes: string) => {
-        allApplications.map((app: Application) => (
-            // changes the array
-            app.id === id ? (app.notes = newNotes) : app.notes
-        ))
-        // update in local storage
-        localStorage.setItem("applications", JSON.stringify(allApplications));
+    const addNotes = async (id: number, newNotes: string) => {
+        const updatedObj : Partial<Application> = { notes: newNotes };
+        try {
+            const result = await applicationAPI.updateApp(id, updatedObj);
+            // update the applications array
+            fetchAllApps();
+        } catch (error) {
+            console.error("Error adding notes to application (Context): ", error);
+        }
+
+        // allApplications.map((app: Application) => (
+        //     // changes the array
+        //     app.id === id ? (app.notes = newNotes) : app.notes
+        // ))
+        // // update in local storage
+        // localStorage.setItem("applications", JSON.stringify(allApplications));
     }
 
 
-    // used by hirers to confirm bookings
-    // check this: during confirmation, hirers should be able to confirm they'll be there
-    const setBooking = (id: number, set: boolean | undefined) => {
-        allApplications.map((app: Application) => (
-            app.id === id ? (app.isAccepted = set) : app.isAccepted
-        ))
-        localStorage.setItem("applications", JSON.stringify(allApplications));
+    // used by vendors to confirm/reject bookings
+    const setBooking = async (id: number, set: boolean | undefined) => {
+        const updatedObj : Partial<Application> = { isAccepted: set };
+        try {
+            const result = await applicationAPI.updateApp(id, updatedObj);
+            // update the applications array
+            fetchAllApps();
+        } catch (error) {
+            console.error("Error altering booking status on application (Context): ", error);
+        }
+
+        // allApplications.map((app: Application) => (
+        //     app.id === id ? (app.isAccepted = set) : app.isAccepted
+        // ))
+        // localStorage.setItem("applications", JSON.stringify(allApplications));
     }
 
 
     // for vendors to give the rating that affects a hirer's reputation
-    const setRepRating = (id: number, rate: number) => {
-        allApplications.map((app: Application) => (
-            app.id === id ? (app.vendorRating = rate) : app.vendorRating
-        ))
-        localStorage.setItem("applications", JSON.stringify(allApplications));
+    const setRepRating = async (id: number, rate: number) => {
+        const updatedObj : Partial<Application> = { vendorRating: rate };
+        try {
+            const result = await applicationAPI.updateApp(id, updatedObj);
+            // update the applications array
+            fetchAllApps();
+        } catch (error) {
+            console.error("Error setting vendor rating on application (Context): ", error);
+        }
+
+        // allApplications.map((app: Application) => (
+        //     app.id === id ? (app.vendorRating = rate) : app.vendorRating
+        // ))
+        // localStorage.setItem("applications", JSON.stringify(allApplications));
     }
 
     // shortlist a venue - MUST have a rank
-    const shortlist = (id: number, rank: number) => {
-        allApplications.map((app: Application) => (
-            // changes the array
-            app.id === id ? (app.rank = rank) : app.rank
-        ))
-        // update in local storage
-        localStorage.setItem("applications", JSON.stringify(allApplications));
+    const shortlist = async (id: number, rank: number) => {
+        const updatedObj : Partial<Application> = { rank: rank };
+        try {
+            const result = await applicationAPI.updateApp(id, updatedObj);
+            // update the applications array
+            fetchAllApps();
+        } catch (error) {
+            console.error("Error shortlisting application (Context): ", error);
+        }
+
+        // allApplications.map((app: Application) => (
+        //     // changes the array
+        //     app.id === id ? (app.rank = rank) : app.rank
+        // ))
+        // // update in local storage
+        // localStorage.setItem("applications", JSON.stringify(allApplications));
     }
 
-    // remove an application from the shortlsit
-    const delist = (id: number) => {
-        allApplications.map((app: Application) => (
-            // changes the array
-            app.id === id ? (app.rank = undefined) : app.rank
-        ))
-        // update in local storage
-        localStorage.setItem("applications", JSON.stringify(allApplications));
+    // remove an application from the shortlist
+    const delist = async (id: number) => {
+        const updatedObj : Partial<Application> = { rank: undefined };
+        try {
+            const result = await applicationAPI.updateApp(id, updatedObj);
+            // update the applications array
+            fetchAllApps();
+        } catch (error) {
+            console.error("Error unshortlisting application (Context): ", error);
+        }
+
+        // allApplications.map((app: Application) => (
+        //     // changes the array
+        //     app.id === id ? (app.rank = undefined) : app.rank
+        // ))
+        // // update in local storage
+        // localStorage.setItem("applications", JSON.stringify(allApplications));
     }
 
 
