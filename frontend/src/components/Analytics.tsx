@@ -55,7 +55,7 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
 
             return (
                 finalMap.length === 0 ? (
-                    <p><i>No isAccepted applicants found. Unable to generate analytics.</i></p>
+                    <p><i>No accepted applicants found. Unable to generate analytics.</i></p>
                 ) : (
                     finalMap.map((group: number[]) => (
                         <div key={group[0]} className="grid grid-cols-[40%_60%] mb-1">
@@ -144,12 +144,11 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
 
             return (
                 finalMap.length === 0 ? (
-                    <p><i>No isAccepted applicants found. Unable to generate analytics.</i></p>
+                    <p><i>No unshortlisted applicants found. Unable to generate analytics.</i></p>
                 ) : (
-                    finalMap.map((group: number[], index: number) => (
+                    finalMap.map((group: number[]) => (
                         <div key={group[0]} className="grid grid-cols-[40%_60%] mb-1">
                             <p className="ml-auto mr-2">{allUsers.find((user: User) => user.id === group[0])?.firstName} {allUsers.find((user: User) => user.id === group[0])?.lastName}</p>
-                            {/* <div className={barWidths[index]}> {group[1]}%</div>  */}
                             <div style={{width: group[1] + "%"}} className={`text-white bg-blue-900`}> {group[1]}%</div>
                         </div>
                     ))

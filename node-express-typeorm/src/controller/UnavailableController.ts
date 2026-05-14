@@ -73,16 +73,17 @@ export class UnavailableController {
      */
     async block(req: Request, res: Response) {
         /** Create a new Unavailable object from the request body */
-        const { startTime, endTime, date, venueID } =  req.body;
+        const blocked = this.blockedRepository.create(req.body);
+        // const { startTime, endTime, date, venueID } =  req.body;
 
-        const blocked = Object.assign(new Unavailable(), {
-            startTime: startTime,
-            endTime: endTime,
-            date: date,
-            venueID: venueID
-        });
+        // const blocked = Object.assign(new Unavailable(), {
+        //     startTime: startTime,
+        //     endTime: endTime,
+        //     date: date,
+        //     venueID: venueID
+        // });
         
-        const data = this.blockedRepository.create(blocked);
+        // const data = this.blockedRepository.create(blocked);
 
         /** Save the new blocked period to the database */
         try {
@@ -97,7 +98,6 @@ export class UnavailableController {
 
 
 
-    // STILL NEED TO FIX THIS (POSSIBLY)
     /**
      * Updates a blocked record
      * @param req - Express request object containing blockedID in params and update data in body

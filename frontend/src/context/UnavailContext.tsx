@@ -69,8 +69,7 @@ export function UnavailProvider({ children }: { children: React.ReactNode }) {
     // }, [allBlocked])
 
 
-    // add a new application TO LOCALSTORAGE ONLY
-    // used by hirers to lodge an application for a venue, on a perticular date
+    // block a venue on a particular date, between given times
     const blockVenue = async (venueID: number, date: string, start: string, end: string) => {
         try {
             const newBlock: Partial<Unavailable> = {
@@ -80,8 +79,7 @@ export function UnavailProvider({ children }: { children: React.ReactNode }) {
                 endTime: end
             }
             const result = await blockedAPI.block(newBlock);
-            showNotif(`Venue availability successfully blocked on
-                 ${new Date(date).toDateString}.`, 'success');
+            showNotif(`Venue availability successfully blocked on ${new Date(date).toDateString()}.`, 'success');
             fetchAllBlocked();
         } catch (error) {
             console.error("Error creating new blocked period (Context): ", error);
@@ -89,8 +87,7 @@ export function UnavailProvider({ children }: { children: React.ReactNode }) {
         //setAllBlocked([...allBlocked, {id : Date.now(), startTime: start, endTime : end, date : date, venueID : venueID }]);
     }
 
-    // remove the venue of id
-    // would be used by hirers to rescind an application
+    // unblock the venue by deleting the blocked period
     const unblockVenue = async (venueID: number) => {
         try {
             const result = await blockedAPI.unblock(venueID);
@@ -150,7 +147,7 @@ export function UnavailProvider({ children }: { children: React.ReactNode }) {
 
     const editBlock = async (updateBlock : Unavailable) => {
         try {
-            const result = await blockedAPI.unblock(updateBlock.id);
+            const result = await blockedAPI.updateBlock(updateBlock.id, updateBlock);
             fetchAllBlocked();
             showNotif("Blocked period successfully updated.", 'success');
         } catch (error) {

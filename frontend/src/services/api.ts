@@ -174,17 +174,17 @@ export const blockedAPI = {
     return response.data;
   },
 
-  create: async (block : Partial<Unavailable>) => {
+  block: async (block : Partial<Unavailable>) => {
     const response = await api.post("/unavailable", block);
     return response.data;
   },
 
-  updateApp: async (id : number, block : Partial<Unavailable>) => {
+  updateBlock: async (id : number, block : Partial<Unavailable>) => {
     const response = await api.put(`/unavailable/${id}`, block);
     return response.data;
   },
 
-  deleteApp: async (id : number) => {
+  unblock: async (id : number) => {
     const response = await api.delete(`/unavailable/${id}`);
     return response.data;
   },
