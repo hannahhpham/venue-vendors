@@ -15,6 +15,9 @@ export default function Home() {
   const { currUser, shortlistedVenues, vendorVenues } = useAuth();
   const {allVenues} = useVenues();
 
+  //this is ok. authcontext doesnt get currUser immediately (cuz async? but index does)
+  //console.log("currUser in index.js is ", currUser);
+
   const onClickDash = (): void => {
     router.push("/dashboard");
   }

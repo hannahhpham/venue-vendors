@@ -39,8 +39,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { allVenues } = useVenues();
     const { showNotif } = useNotif();
 
-    // REMOVE THESE FROM LOCAL STORAGE WHEN RECFACTORING DONE
-    const [currUser, setCurrUser] = useState<User | null>(null);
+    const [currUser, setCurrUser] = useState<User | null>(null); //this is no longer stored in local storage
+    const [userID, setUserID] = useState<number>(0); //this is stored in localstorage
     const [allUsers, setAllUsers] = useState<User[]>([]);
 
     // the following code is based on [id].tsx, profile, frontend, Lecture 9 Example 1
@@ -111,17 +111,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     //NOTE: lec2example6 takes user information from LS and stores in useState above.
     //      if theres nothing in LS then it takes default user array from file.
     //THIS NEEDS TO STAY SO USERS STAY LOGGED IN UPON REFRESH
-    useEffect(() => {
+    useEffect( () => {
         getAllUsers();
 
-        //check if user stored
-        const storedUser = localStorage.getItem("currUser");
+        //if theres a user in LS then get the user from DB and update state
+        const storedUserID = localStorage.getItem("userID");
+        if (storedUserID) {
+            const getUser = async() => {
+                const user = await userAPI.getUserById(Number(storedUserID));
+                setCurrUser(user);
+            }
+            getUser();
+            //error: i think this is still null
+            //console.log("currUser is ", currUser);
+            
+        }
+        //ERROR: this is incorrectly returning nulls for the currUser usestate -> not getting it fast enough
+        //console.log("stored user id on refresh:", userID);
 
-        //this is incorrectly returning nulls for reputation, credibility, insur
-        console.log("stored user on refresh:", storedUser);
-
-        if (storedUser) {
-            setCurrUser(JSON.parse(storedUser));
+        if (currUser) {
             fetchHirerApplications();
             getShortlistedVenues();
             setVenueApplications(venueApplications.filter((app: Application) => (currUser?.applications?.includes(app.id))));
@@ -154,7 +162,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const updateDatabase = async () => {
                     await userAPI.updateUser(currUser.id, updatedUser);
                     setCurrUser(updatedUser);
-                    localStorage.setItem("currUser", JSON.stringify(updatedUser));
+                    //localStorage.setItem("currUser", JSON.stringify(updatedUser));
 
             };
             updateDatabase();
@@ -179,10 +187,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             if (data) {
                 //store current to local storage. use this for other pages
+                localStorage.setItem("userID", data.id);
 
                 //set the use state
                 const user: User = data;
                 setCurrUser(user);
+                
+                //ERROR: CURRUSER IS NOT UPDATING???
+                console.log("user in useState after login is " + currUser);
 
                 //use this over link cuz this is properly pushing the user instead of loading smth new
                 router.push('/');
@@ -198,7 +210,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     //logout functionality - remove user from LS, push to homepage
     const logout = () => {
         //remove user from local storage
-        //localStorage.removeItem("currUser");
+        localStorage.removeItem("userID");
         setCurrUser(null);
         showNotif("You have successfully logged out.", 'success');
         router.push('/');
@@ -216,7 +228,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         //update the currUser in use state
         const user = await userAPI.getUserById(updatedUser.id);
         setCurrUser(updatedUser);
-        localStorage.setItem("currUser", JSON.stringify(updatedUser));
+        //localStorage.setItem("currUser", JSON.stringify(updatedUser));
 
     }
 
