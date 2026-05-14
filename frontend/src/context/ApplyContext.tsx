@@ -14,7 +14,6 @@ interface ApplyContextType {
     setBooking: (id: number, set: boolean | undefined) => void,
     setRepRating: (id: number, rate: number) => void,
     shortlist: (id: number, rank: number) => void,
-    delist: (id: number) => void,
 }
 
 
@@ -31,15 +30,6 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         fetchAllApps();
     }, []);
-
-
-    // update localStorage with the updated set of venues whenever a new one is added
-    // useEffect(() => {
-    //     if (allApplications.length > 0) {
-    //         localStorage.setItem("applications", JSON.stringify(allApplications));
-    //     }
-
-    // }, [allApplications])
 
 
     // API call to get all the applications in the database
@@ -90,13 +80,6 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
             console.error("Error adding notes to application (Context): ", error);
         }
-
-        // allApplications.map((app: Application) => (
-        //     // changes the array
-        //     app.id === id ? (app.notes = newNotes) : app.notes
-        // ))
-        // // update in local storage
-        // localStorage.setItem("applications", JSON.stringify(allApplications));
     }
 
 
@@ -110,11 +93,6 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
             console.error("Error altering booking status on application (Context): ", error);
         }
-
-        // allApplications.map((app: Application) => (
-        //     app.id === id ? (app.isAccepted = set) : app.isAccepted
-        // ))
-        // localStorage.setItem("applications", JSON.stringify(allApplications));
     }
 
 
@@ -128,14 +106,10 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
             console.error("Error setting vendor rating on application (Context): ", error);
         }
-
-        // allApplications.map((app: Application) => (
-        //     app.id === id ? (app.vendorRating = rate) : app.vendorRating
-        // ))
-        // localStorage.setItem("applications", JSON.stringify(allApplications));
     }
 
     // shortlist a venue - MUST have a rank
+    // to delist, the rank will be set to 0
     const shortlist = async (id: number, rank: number) => {
         const updatedObj : Partial<Application> = { rank: rank };
         try {
@@ -145,38 +119,12 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
             console.error("Error shortlisting application (Context): ", error);
         }
-
-        // allApplications.map((app: Application) => (
-        //     // changes the array
-        //     app.id === id ? (app.rank = rank) : app.rank
-        // ))
-        // // update in local storage
-        // localStorage.setItem("applications", JSON.stringify(allApplications));
-    }
-
-    // remove an application from the shortlist
-    const delist = async (id: number) => {
-        const updatedObj : Partial<Application> = { rank: undefined };
-        try {
-            const result = await applicationAPI.updateApp(id, updatedObj);
-            // update the applications array
-            fetchAllApps();
-        } catch (error) {
-            console.error("Error unshortlisting application (Context): ", error);
-        }
-
-        // allApplications.map((app: Application) => (
-        //     // changes the array
-        //     app.id === id ? (app.rank = undefined) : app.rank
-        // ))
-        // // update in local storage
-        // localStorage.setItem("applications", JSON.stringify(allApplications));
     }
 
 
     //return provider
     return (
-        <ApplyContext.Provider value={{ allApplications, addApp, removeApp, addNotes, setBooking, setRepRating, shortlist, delist }}>
+        <ApplyContext.Provider value={{ allApplications, addApp, removeApp, addNotes, setBooking, setRepRating, shortlist }}>
             {children}
         </ApplyContext.Provider>
     );

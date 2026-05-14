@@ -52,12 +52,8 @@ export default function Home() {
                 </Button>
               </div>
               {
-                // TODO: double check if there is a double error message
-                <Carousel type="shortlistedVenues" ranked={false}
-                  carouselItems={vendorVenues} />
-                // allVenues.filter((venue: Venue) => venue.ownerID === currUser.id).length > 0 &&
-                // <Carousel type="shortlistedVenues" ranked={false} 
-                // carouselItems = {allVenues.filter((venue: Venue) => venue.ownerID === currUser.id)} />
+                // TODO: double check if there is a double error message - i think it should be ok
+                <Carousel type="all" ranked={false} carouselItems={vendorVenues} />
               }
               {
                 vendorVenues.length === 0 &&

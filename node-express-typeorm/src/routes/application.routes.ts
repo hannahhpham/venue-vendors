@@ -19,6 +19,10 @@ router.get("/hirers/:hirerID", async (req, res) => {
     await appController.allByHirer(req, res);
 });
 
+router.get("/hirers/past/:hirerID", async (req, res) => {
+    await appController.allPastByHirer(req, res);
+});
+
 router.get("/:appID", async (req, res) => {
     await appController.getOneApp(req, res);
 });

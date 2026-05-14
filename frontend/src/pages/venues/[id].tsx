@@ -71,8 +71,7 @@ export default function VenuePage() {
   };
 
   // get all the shortlisted applications for the venue
-  const [shortListItems, setShortList] = useState<Application[]>(currApps.filter(
-    (app: Application) => app.rank));
+  const [shortListItems, setShortList] = useState<Application[]>(currApps.filter((app: Application) => app.rank !== undefined && app.rank !== 0));
 
   // get the unavailable times for this venue
   const [blocked, setBlocked] = useState<Unavailable[]>(allBlocked.filter(
@@ -83,20 +82,22 @@ export default function VenuePage() {
     setBlocked(allBlocked.filter((b: Unavailable) => (b.venueID === Number(id) && (b.date < Date()))));
   }, [allBlocked]);
 
-  // will update the order off the shortlist shown on the screen
-  // but, it's not instant, you need to do something else before you see it
-    // (e.g. press view venue details)
-  // same for shortlisting an event, it will update on page refresh
-  useEffect(() => {
-    setCurrApps(allApplications.filter((app: Application) => app.venueID === Number(id)));
-    setShortList(currApps.filter((app: Application) => app.rank));
-  }, [allApplications]);
-
   // to deal with viewing the details of the venue
   const [popupDet, setPopupDet] = useState<boolean>(false);
 
   // to deal with the date to show application for
   const [dateStr, setDateStr] = useState<string>("");
+
+  // will update the order off the shortlist shown on the screen
+  // but, it's not instant, you need to do something else before you see it
+    // (e.g. press view venue details)
+  // same for shortlisting an event, it will update on page refresh
+  useEffect(() => {
+    // have a look at this
+    setCurrApps(allApplications.filter((app: Application) => app.venueID === Number(id)));
+    setShortList(currApps.filter((app: Application) => app.rank !== undefined && app.rank !== 0));
+    console.log("shortlisted apps: " + JSON.stringify(shortListItems));
+  }, [allApplications, dateStr]);
 
   // to block the venue
   const [blockDate, setBlockDate] = useState<string>("");
@@ -327,7 +328,7 @@ export default function VenuePage() {
                       (app.date < Date() || app.date === Date())).length > 0 &&
                       currApps.filter((app: Application) => app.isAccepted && 
                       (app.date < Date() || app.date === Date())).map((app: Application) => (
-                        <ApplicationsCard app={app} history={true} />
+                        <ApplicationsCard key={app.id} app={app} history={true} />
                       ))
                     }
                     {

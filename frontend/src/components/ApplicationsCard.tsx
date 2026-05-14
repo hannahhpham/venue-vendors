@@ -18,7 +18,7 @@ interface appCardProps {
 const ApplicationsCard = ({ app, history }: appCardProps) => {
 
     const { allUsers, getRepRating } = useAuth();
-    const { allApplications, addNotes, setRepRating, setBooking, shortlist, delist } = useApplications();
+    const { allApplications, addNotes, setRepRating, setBooking, shortlist } = useApplications();
 
     const hirer: User | undefined = allUsers.find((u: User) => u.id === app.hirerID);
 
@@ -27,7 +27,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
     const [notes, setNotes] = useState<string>(app.notes);
 
     const handleAddNotes = (id: number) => {
-        addNotes(id, notes);
+        addNotes(id, notes.trim());
         setPopupNotes(false);
         setNotes("");
         setNotes(app.notes);
@@ -36,7 +36,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
     // get the status of the application
     const getStatus = () : string => {
         if (app.isAccepted === true) {
-            return "isAccepted";
+            return "Accepted";
         } else if (app.isAccepted === false) {
             return "Rejected";
         } else {
@@ -126,11 +126,11 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                 </div>
                                 <div className="overflow-x-hidden overflow-y-auto">
                                     <h2 className="text-sm font-normal">My Notes:<br />
-                                    <i>{app.notes !== "" ? app.notes : "Nothing found"}</i></h2>
+                                    <i>{app.notes !== "" && app.notes !== null ? app.notes : "Nothing found"}</i></h2>
                                 </div>
                                 <div className="row-span-2">
                                     <button title="Shortlist Application" className="p-2 hover:bg-blue-100 hover:shadow-lg rounded-full" 
-                                        onClick={() => (!app.rank ? shortlist(app.id, 1) : delist(app.id))}>
+                                        onClick={() => ((app.rank === undefined || app.rank === 0) ? shortlist(app.id, 1) : shortlist(app.id, 0))}>
                                         {app.rank ? (<img src="../shortlisted.png" />) : (<img src="../shortlist.png" />)}
                                     </button><br/>
                                     <button title="Reject Application" className={"p-2 hover:bg-red-100 hover:shadow-lg rounded-full " + (app.isAccepted === false ? "bg-red-200" : "")} 
@@ -138,7 +138,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                         <img src="../deleteBin.png" />
                                     </button><br/>
                                     <button title="Approve Application" className={"p-2 hover:bg-green-100 hover:shadow-lg rounded-full " + (app.isAccepted === true ? "bg-green-200" : "")} 
-                                        onClick={() => (!app.rank ? setBooking(app.id, true) : app.isAccepted)}>
+                                        onClick={() => ((app.isAccepted === false || app.isAccepted === undefined) ? setBooking(app.id, true) : app.isAccepted)}>
                                         <img src="../tick.png" />
                                     </button>
                                 </div>

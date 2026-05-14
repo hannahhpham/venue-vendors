@@ -118,7 +118,7 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
 
             // get the ids of all unshortlisted applicants
             const allShortlistApps: number[] = currApps.filter((app: Application) => 
-                app.rank === undefined).map((app: Application) => app.hirerID);
+                app.rank === undefined || app.rank === 0).map((app: Application) => app.hirerID);
 
             // get the distinct set of unshortlisted ids
             const distShortlistApps = new Set<number>(allShortlistApps);

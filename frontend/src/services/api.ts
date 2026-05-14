@@ -133,6 +133,11 @@ export const applicationAPI = {
     return response.data;
   },
 
+  getPastHirerApps: async (hirerID : number) => {
+    const response = await api.get(`/applications/hirers/past/${hirerID}`);
+    return response.data;
+  },
+
   getApp: async (appID : number) => {
     const response = await api.get(`/applications/${appID}`);
     return response.data;
