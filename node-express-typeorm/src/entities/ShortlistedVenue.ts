@@ -29,7 +29,10 @@ export class ShortlistedVenue {
     hirer: User;
 
     //this gets the shortlisted venue's venue
-    @ManyToOne(() => Venue, (venue) => venue.shortlistedVenues, {nullable: false})
+    @ManyToOne(() => Venue, (venue) => venue.shortlistedVenues, {
+        nullable: false,
+        onDelete: "CASCADE"
+})
     @JoinColumn({
             name: "venueID", //name in this table
             referencedColumnName: "id", //name in venue table

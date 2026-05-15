@@ -21,7 +21,10 @@ export class Unavailable {
     @Column({type: "int"})
     venueID: number;
 
-    @ManyToOne(() => Venue, (venue) => venue.unavailable, {nullable: false})
+    @ManyToOne(() => Venue, (venue) => venue.unavailable, {
+        nullable: false,
+        onDelete: "CASCADE"
+    })
     @JoinColumn({
             name: "venueID", //name in this table
             referencedColumnName: "id", //name in venue table

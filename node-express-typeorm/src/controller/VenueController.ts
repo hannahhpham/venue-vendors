@@ -178,9 +178,12 @@ export class VenueController {
      * @returns 204 status on success or 404 if venue not found
      */
     async deleteVenue(req: Request, res: Response) {
+
+        const id = parseInt(req.params.venueID as string);
+
         /** Delete the venue from the database */
         const result = await this.venueRepository.delete({
-            id: parseInt(req.params.id as string),
+            id: id,
         });
 
         /** Check if the profile was deleted, if not, return a 404 error */

@@ -74,7 +74,10 @@ export class Application {
     hirer: User;
 
     //get the venueID
-    @ManyToOne(() => Venue, (venue) => venue.applications, {nullable: false})
+    @ManyToOne(() => Venue, (venue) => venue.applications, {
+        nullable: false,
+        onDelete: "CASCADE"
+    })
     @JoinColumn({
             name: "venueID", //name in apps table
             referencedColumnName: "id", //name in venue table

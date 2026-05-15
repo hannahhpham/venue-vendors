@@ -460,7 +460,7 @@ export default function VenuePage() {
                                 <div className="grid grid-cols-2">
                                   <div>
                                     <h3 className="text-lg">{new Date(u.date).toDateString()}</h3>
-                                    <p>{u.startTime} to {u.endTime}</p>
+                                    <p>{u.startTime.slice(0,5)} to {u.endTime.slice(0,5)}</p>
                                   </div>
                                   <Button className="px-5 py-2 bg-red-500 hover:bg-red-600 rounded-lg"
                                    onClick={() => unblockVenue(u.id)} text="Unblock"></Button>

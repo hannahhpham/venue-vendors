@@ -20,5 +20,7 @@ Shared Notion (DELETE B4 SUBMITTING): [Here](https://www.notion.so/assignment-2-
 - Typeorm.io. (2025). Entities | TypeORM. [online] Available at: https://typeorm.io/docs/entity/entities/ [Accessed 1 May 2026].
 ‌- Typeorm.io. (2026). Decorator reference | TypeORM. [online] Available at: https://typeorm.io/docs/help/decorator-reference/ [Accessed 1 May 2026].
 ‌- Typeorm.io. (2026). Many-to-many relations | TypeORM. [online] Available at: https://typeorm.io/docs/relations/many-to-many-relations [Accessed 6 May 2026].
-‌
+
+‌- Ben Awad (2019) 'Cascade Delete TypeORM' [video], YouTube website, accessed 14 May 2026. https://www.youtube.com/watch?v=S1pxdAL2Dz8
+
 ‌

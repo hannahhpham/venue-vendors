@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Popup from "./Popup";
 import Card from "./Card";
 import Button from './Button';
@@ -9,6 +9,7 @@ import { User } from "../types/users";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useApplications } from "../context/ApplyContext";
+import { userAPI } from '../services/api';
 
 interface appCardProps {
     app: Application;
@@ -20,7 +21,18 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
     const { allUsers, getRepRating } = useAuth();
     const { allApplications, addNotes, setRepRating, setBooking, shortlist } = useApplications();
 
-    const hirer: User | undefined = allUsers.find((u: User) => u.id === app.hirerID);
+    // const hirer: User | undefined = allUsers.find((u: User) => u.id === app.hirerID);
+    const [hirer, setHirer] = useState<User>(); 
+
+    // not sure we really need this
+    useEffect(() => {
+        getHirer();
+    }, [app]);
+
+    const getHirer = async () => {
+        const data = await userAPI.getUserById(app.hirerID);
+        setHirer(data);
+    }
 
     // to deal with adding notes to an application
     const [popupNotes, setPopupNotes] = useState<boolean>(false);
@@ -78,7 +90,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                     <h4 className="text-xs">Credibility Rating: {getHirerCredibility()} stars</h4>
                                 </div>
                                 <div className="">
-                                    <h2 className="text-sm font-normal">Date: {app.date}</h2>
+                                    <h2 className="text-sm font-normal">Date: {new Date(app.date).toDateString()}</h2>
                                     <h2 className="text-sm font-normal">Duration: {utils.elapsedTime(app.startTime, app.endTime)} hours</h2>
                                     <h2 className="text-sm font-normal">Number of Guests: {app.guests}</h2>
                                 </div>
@@ -120,7 +132,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                     <h4 className="text-xs">Hiring Credibility: {getHirerCredibility()} stars</h4>
                                 </div>
                                 <div className="">
-                                    <h2 className="text-sm font-normal">Timings: {app.startTime} to {app.endTime}</h2>
+                                    <h2 className="text-sm font-normal">Timings: {app.startTime.slice(0, 5)} to {app.endTime.slice(0, 5)}</h2>
                                     <h2 className="text-sm font-normal">Duration: {utils.elapsedTime(app.startTime, app.endTime)} hours</h2>
                                     <h2 className="text-sm font-normal">Number of Guests: {app.guests}</h2>
                                 </div>
@@ -133,12 +145,14 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                         onClick={() => ((app.rank === undefined || app.rank === 0) ? shortlist(app.id, 1) : shortlist(app.id, 0))}>
                                         {app.rank ? (<img src="../shortlisted.png" />) : (<img src="../shortlist.png" />)}
                                     </button><br/>
-                                    <button title="Reject Application" className={"p-2 hover:bg-red-100 hover:shadow-lg rounded-full " + (app.isAccepted === false ? "bg-red-200" : "")} 
-                                        onClick={() => ((app.isAccepted === true || app.isAccepted === undefined) ? setBooking(app.id, false) : app.isAccepted)}>
+                                    <button title="Reject Application"
+                                     className={"p-2 hover:bg-red-100 hover:shadow-lg rounded-full " + (app.isAccepted === false ? "bg-red-200" : "")} 
+                                        onClick={() => setBooking(app.id, false)}>
                                         <img src="../deleteBin.png" />
                                     </button><br/>
-                                    <button title="Approve Application" className={"p-2 hover:bg-green-100 hover:shadow-lg rounded-full " + (app.isAccepted === true ? "bg-green-200" : "")} 
-                                        onClick={() => ((app.isAccepted === false || app.isAccepted === undefined) ? setBooking(app.id, true) : app.isAccepted)}>
+                                    <button title="Approve Application"
+                                     className={"p-2 hover:bg-green-100 hover:shadow-lg rounded-full " + (app.isAccepted === true ? "bg-green-200" : "")} 
+                                        onClick={() => setBooking(app.id, true)}>
                                         <img src="../tick.png" />
                                     </button>
                                 </div>
@@ -152,7 +166,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                     {
                                         popupNotes &&
                                         <Popup onClose={() => setPopupNotes(false)}>
-                                            <div className="h-100 max-w-19/20">
+                                            <div className="h-100 w-19/20">
                                                 <h3>Event Name: {app.eventName}</h3>
                                                 <h3 className='font-normal'><i>Status: {getStatus()}</i></h3>
                                                 <h4>Description:<br></br>{app.description}</h4>
@@ -204,8 +218,8 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                                         }
                                                 </Card>
                                                 <h4>Number of Guests: {app.guests}</h4>
-                                                <h4>Start Time: {app.startTime}</h4>
-                                                <h4>End Time: {app.endTime}</h4>
+                                                <h4>Start Time: {app.startTime.slice(0, 5)}</h4>
+                                                <h4>End Time: {app.endTime.slice(0, 5)}</h4>
                                                 <h4>Duration: {utils.elapsedTime(app.startTime, app.endTime)} hours</h4>
                                                 <label className="font-semibold">
                                                     My Notes

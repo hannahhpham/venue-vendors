@@ -145,7 +145,7 @@ export default function SubmitApplication() {
                                     <input className="block p-2 outline outline-black bg-neutral-50 rounded w-100"
                                      type="textarea" value={desc} onChange={(e) => setDesc(e.target.value)} required />
                                 </label>
-                                <Button className="px-10 p-3 mt-5 bg-gray-200 rounded-md font-medium"
+                                <Button className="px-10 p-3 mt-5 rounded-md font-medium"
                                  type="submit" text="Submit"></Button>
                             </form>
 
