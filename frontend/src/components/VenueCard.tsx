@@ -11,7 +11,7 @@ const VenueCard = ({children, onClick, linkToPage} : VenueProps) => {
  
   //use template string
   const divClass = `carouselText h-[92%] truncate border border-[#e0e0e0] rounded-md m-2 p-5 
-                    ${linkToPage ? "hover:bg-sky-100 hover:drop-shadow transition" : ""}`;
+                    ${linkToPage ? "hover:bg-sky-100 hover:drop-shadow " : ""}`;
 
   return (
      <div className={divClass} onClick={onClick}>

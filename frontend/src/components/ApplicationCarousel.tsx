@@ -5,6 +5,7 @@ import { Venue } from "../types/venues";
 import { useVenues } from "../context/VenueContext";
 import {Application} from '../types/apply'
 import * as utils from '../utils/utils'
+import Popup from './Popup'
 
 interface ApplicationCarouselType {
   type: 'pastVenues' | 'applications'
@@ -16,6 +17,8 @@ interface ApplicationCarouselType {
 const ApplicationCarousel = ({type, carouselItems} : ApplicationCarouselType) => {
   //get only initial starting index - calculate others as offset
   const [itemIndex, setItemIndex] = useState<number>(0);
+  const [popup, setPopup] = useState<boolean>(false);
+  const [appClicked, setAppClicked] = useState<Application | null>(null);
   const {allVenues} = useVenues(); 
   
   //----------- CALCULATE WHAT DATA IS SHOWN IN CAROUSEL ------------------------
@@ -45,7 +48,36 @@ const ApplicationCarousel = ({type, carouselItems} : ApplicationCarouselType) =>
   }
 
   return (
-    <div className="flex justify-between items-center w-full min-w-0">
+
+    <div className="flex justify-between items-center w-full min-w-0 ">
+
+      {popup && 
+        <Popup onClose={()=> { setPopup(false); setAppClicked(null) }}>
+          <h2>Application Details</h2>
+    
+          {appClicked ?
+          <div className="">
+              <p className=""><span className="font-bold">Venue: </span> 
+                {allVenues.filter((venue: Venue) => venue.id === appClicked.venueID)
+                .map((venue: Venue) => venue.name)}
+              </p> 
+            
+
+            <p className=""><span className="font-bold">Date: </span> {appClicked?.date}, {appClicked.startTime}</p>
+            <p className=""><span className="font-bold">Duration: </span> {utils.elapsedTime(appClicked.startTime, appClicked.endTime)} hours</p>
+            <p className=""><span className="font-bold">Guests: </span> {appClicked.guests}</p>
+
+          </div>
+          : null}
+
+          <br/>
+          {appClicked?.notes ? 
+          <p className="break-words max-w-100"><span className="font-bold">Notes received from vendor: </span>{appClicked.notes}</p>
+          : null
+          }
+        </Popup>
+        
+      }
         
         {/* decide whether arrow is rendered depending on # items */}
 
@@ -57,32 +89,16 @@ const ApplicationCarousel = ({type, carouselItems} : ApplicationCarouselType) =>
         
 
         {/* div containing the items */}
-        <div className="flex w-full min-w-0 overflow-hidden mr-2">
+        <div className={`flex w-full min-w-0 overflow-hidden mr-2 ${popup ? 'pointer-events-none' : ''}`}>
           {visibleItems.length > 0 ? visibleItems.map((application, index) => (
-            <div key={index} className=" flex-1 min-w-0 w-full overflow-hidden mr-2">
-              <VenueCard linkToPage={false} onClick={() => {}}>
+            <div key={index} className=" flex-1 min-w-0 w-full overflow-hidden  ">
+              <VenueCard linkToPage={true} onClick={() => {setPopup(true); setAppClicked(application)}}>
                 {/* get details of application and venue */}
                 <p className="font-bold">{application.eventName}</p>
-                <p className="italic text-xs"><span className="font-bold">Date: </span> {application.date}, {application.startTime}</p>
-                <p className="italic text-xs"><span className="font-bold">Duration: </span> {utils.elapsedTime(application.startTime, application.endTime)} hours</p>
-                <p className="italic text-xs"><span className="font-bold">Guests: </span> {application.guests}</p>
-                <p className="italic text-xs"><span className="font-bold">Venue: </span> {allVenues
-                                                                                         .filter((venue: Venue) => venue.id === application.venueID)
-                                                                                    .map((venue: Venue) => venue.name)}</p>
 
                 
-                {utils.compareTime(application.date) && application.isAccepted === true ? 
-                (<span>
-                    <p className="italic text-xs"><span className="font-bold">Address: </span> {allVenues
-                      .filter((venue: Venue) => venue.id === application.venueID)
-                      .map((venue: Venue) => venue.address)}</p>      
-                 <p className="italic text-xs"><span className="font-bold">Rating Received: </span> {application.vendorRating}</p>
+                                                                
                 
-                </span>) :
-               
-                (<div/>)}                                                  
-                
-
                 <div className="flex italic text-xs">
                     <p className="font-bold pr-1">Status: </p> 
                         {typeof application.isAccepted === 'boolean' ? 
