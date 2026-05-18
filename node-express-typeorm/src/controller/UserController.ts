@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../entities/User";
+//import * as argon2 from 'argon2';
 
 // this ENTIRE page has been copied from week 8's lab 'UserController.ts'
 // with minor modifications
@@ -65,9 +66,13 @@ export class UserController {
      */
     async save(request: Request, response: Response) {
         const { email, password, type, firstName, lastName, phoneNumber } = request.body;
+
+        //const hash = await argon2.hash(password);
+
         const user = Object.assign(new User(), {
             email,
-            password,
+            password, //: hash,
+            type,
             firstName,
             lastName,
             phoneNumber

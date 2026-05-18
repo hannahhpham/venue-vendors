@@ -17,6 +17,7 @@ export type User = {
   pastVenues? : number[], //links to the apply.ts data types THANK U ANANYA AWW NW <3
   applications? : number [], //links to apply.ts data type 
   registrationCert?: string,
+  createdAt?: string,
   ABN?: string
   
 

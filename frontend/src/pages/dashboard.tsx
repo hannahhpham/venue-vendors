@@ -86,9 +86,10 @@ export default function Dashboard() {
 
 
               <Sidebar type='dashboard'>
-                <aside className="m-3">
+                {/* <aside className="m-3">
                   <UserDetails edit={true} />
-                </aside>
+                </aside> */}
+                <p>user details now in header. what do u think we should put here...</p>
               </Sidebar>
             </div>
           )
@@ -140,12 +141,12 @@ export default function Dashboard() {
 
               <Sidebar type='dashboard'>
                 <h3>My Star Rating</h3>
-                <Stars type="hirerRating" /> <br />
+                <Stars type="hirerRating" /> <br /><br/>
 
                 <h3>My Credibility Score</h3>
                 <Stars type="hirerCredibility" /> <br />
 
-                <UserDetails edit={true} />
+                {/* <UserDetails edit={true} /> */}
 
                 <br />
 

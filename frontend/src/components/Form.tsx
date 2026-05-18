@@ -10,7 +10,8 @@ interface formProps {
   signup : boolean;
   //login or signup pages will give specific function represented here
   onSubmit : (email: string, password: string, type?: string,
-              firstName?: string, lastName?: string, phoneNumber?: string
+              firstName?: string, lastName?: string, phoneNumber?: string,
+              confirmPassword?: string,
   ) => void;
 }
 
@@ -20,6 +21,7 @@ const Form = ({title, altLoc, signup, altMsg, onSubmit}: formProps) => {
   // TODO: use useReducer instead?
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   // signup specific
   const [type, setType] = useState<string>("vendor");
@@ -33,7 +35,7 @@ const Form = ({title, altLoc, signup, altMsg, onSubmit}: formProps) => {
     e.preventDefault(); //prevent reloading of page immediately
 
     if (signup) {
-      onSubmit(email, password, type, firstName, lastName, number); //this will call handleSignup
+      onSubmit(email, password, type, firstName, lastName, number, confirmPassword); //this will call handleSignup
     }
     else {
       onSubmit( email, password, type); //this will call handleLogin
@@ -61,28 +63,67 @@ const Form = ({title, altLoc, signup, altMsg, onSubmit}: formProps) => {
         <h1 className="text-3xl font-bold m-auto text-center">{title}</h1>
         <form className="block mt-5" onSubmit={handleFormSubmit}>
 
+         {signup && 
+         <div>
+            <label className="block font-medium">User type</label>
+            <select className=" p-2.5  outline outline-black bg-neutral-50 rounded w-full" 
+                    onChange={(e)=>setType(e.target.value)}
+                    required>
+              <option value="vendor">Vendor</option>
+              <option value="hirer">Hirer</option>
+            </select>
+         </div>
+         }
+        
         <div className='flex items-start'>
 
           {/* if user is signing up then add a field for the type of user */}
-          {signup && 
-            (<div className="w-1/2 mr-2 mb-2 ">
-                  <label className="block font-medium">User type</label>
-                  <select className=" p-2.5  outline outline-black bg-neutral-50 rounded w-full" 
-                          onChange={(e)=>setType(e.target.value)}
-                          required>
-                    <option value="vendor">Vendor</option>
-                    <option value="hirer">Hirer</option>
-                  </select>
 
-                  <label className="block font-medium">First Name</label>
-                  <input className="block p-2 outline outline-black bg-neutral-50 rounded w-full" 
-                        type="text" 
-                        pattern="[A-Za-z ]+"
-                        required
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)} //e.target.value is the input entered. e is the event object created when smth happens
-                  />
+         {/* left div */}
+          <div>   
+            {signup && 
+              (<div className=" mt-1.5 ">
+    
+                <label className="block font-medium">First Name</label>
+                <input className="block p-2 outline outline-black bg-neutral-50 rounded w-full" 
+                      type="text" 
+                      pattern="[A-Za-z ]+"
+                      required
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)} //e.target.value is the input entered. e is the event object created when smth happens
+                />   
 
+              </div>)
+            }
+
+            <div className="grid-template-rows-2 ">
+              <label className="block font-medium">Email</label>
+              <input className= {`block p-2 outline outline-black bg-neutral-50 rounded ${signup ? "w-full " : "w-100"}`}
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)} //e.target.value is the input entered. e is the event object created when smth happens
+              />
+            </div>
+
+
+            <div className="grid-template-rows-2 mb-2">
+              <label className="block font-medium">Password</label>
+              <input className={`block p-2 outline outline-black bg-neutral-50 rounded ${signup ? "w-full " : "w-100"}`}
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    />
+            </div>
+          </div>
+          
+          
+              <div className="w-1/2 ml-2 ">
+
+              
+                {signup &&
+                <div>
                   <label className="mt-1.5 block font-medium">Last Name</label>
                   <input className="block p-2 outline outline-black bg-neutral-50 rounded w-full" 
                         type="text" 
@@ -91,40 +132,27 @@ const Form = ({title, altLoc, signup, altMsg, onSubmit}: formProps) => {
                         onChange={(e) => setLastName(e.target.value)} //e.target.value is the input entered. e is the event object created when smth happens
                   />
 
-              </div>)
-          }
-              <div className="w-1/2 ml-2 ">
-                {signup &&
-                <div>
                   <label className="block font-medium">Phone Number</label>
-                    <input className="block p-2 outline outline-black bg-neutral-50 rounded w-full" 
-                          type="text" 
-                          pattern="[0-9]{10}" 
-                          required
-                          value={number}
-                          onChange={(e) => setNumber(e.target.value)} //e.target.value is the input entered. e is the event object created when smth happens
-                    />
+                  <input className="block p-2 outline outline-black bg-neutral-50 rounded w-full" 
+                        type="text" 
+                        pattern="[0-9]{10}" 
+                        required
+                        value={number}
+                        onChange={(e) => setNumber(e.target.value)} //e.target.value is the input entered. e is the event object created when smth happens
+                  />
+
+                  
+                  <label className="block font-medium">Confirm Password</label>
+                  <input className={`block p-2 outline outline-black bg-neutral-50 rounded ${signup ? "w-full " : "w-100"}`}
+                        type="password"
+                        required
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                
                 </div>
                 }
-                <div className="grid-template-rows-2 mb-2">
-                    <label className="block font-medium">Email</label>
-                    <input className= {`block p-2 outline outline-black bg-neutral-50 rounded ${signup ? "w-full " : "w-100"}`} 
-                          type="email" 
-                          required
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)} //e.target.value is the input entered. e is the event object created when smth happens
-                    />
-                </div>
-
-                <div className="grid-template-rows-2 mb-2">
-                    <label className="block font-medium">Password</label>
-                    <input className={`block p-2 outline outline-black bg-neutral-50 rounded ${signup ? "w-full " : "w-100"}`} 
-                          type="password"
-                          required 
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          />
-                </div>
+                
                 
                 
               </div>

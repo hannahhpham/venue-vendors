@@ -9,12 +9,13 @@ export default function Signup() {
   const {showNotif} = useNotif();
 
   const handleSignup = async (email: string, password: string, type?: string, 
-                        firstName?: string, lastName?: string, phoneNumber?: string) => {
+                        firstName?: string, lastName?: string, phoneNumber?: string,
+                        confirmPassword?: string) => {
     //MAKE API CALL HERE TO SIGN THE USER UP
 
      //check we have no missing parameters
-    if (type != null && firstName != null && lastName!= null && phoneNumber!=null) {
-      if (type.trim() && firstName.trim( ) && lastName.trim() && phoneNumber.trim() && email.trim() && password.trim()) {
+    if (type != null && firstName != null && lastName!= null && phoneNumber!=null && confirmPassword!=null) {
+      if (type.trim() && firstName.trim( ) && lastName.trim() && phoneNumber.trim() && email.trim() && password.trim() && confirmPassword.trim()) {
        
         //regex stuff https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test
         const capitalChar = /[A-Z]/
@@ -29,6 +30,9 @@ export default function Signup() {
         else if (!capitalChar.test(password.trim()) || !specialChar.test(password.trim())
                  || !number.test(password.trim())) { //special characters
           showNotif("Password must include special characters.", "fail");
+        }
+        else if (password.trim() != confirmPassword.trim()) {
+          showNotif("Passwords must match.", "fail");
         }
         else {
             await userAPI.createUser(email, password, type, firstName, lastName, phoneNumber);

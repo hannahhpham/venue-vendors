@@ -5,7 +5,7 @@ import Button from '../components/Button'
 
 
 interface headerProps {
-  active: "none" | "login" | "dashboard" | "search";
+  active: "none" | "login" | "dashboard" | "search" | "profile";
 }
 
 
@@ -40,8 +40,19 @@ const Header = ({active}: headerProps) => {
             {currUser ? 
               (
               <div className="flex items-center  ">
+                <Link href='/profile'>
+                  <li className={"hover:underline rounded-3xl p-2 px-5 mr-2 " + 
+                      (active == "profile" && "text-black bg-white font-medium")}>
+                    Profile
+                  </li>
+
+                </Link>
                 <Link href="/dashboard">
-                  <li className={"hover:underline rounded-3xl p-2 px-5 mr-2 " + (active == "dashboard" && "text-black bg-white font-medium")}><img src="person.png" className={"inline mr-2 " + (active !== "dashboard" && "invert")}></img>Dashboard</li>
+                  <li className={"hover:underline rounded-3xl p-2 px-5 mr-2 " + 
+                      (active == "dashboard" && "text-black bg-white font-medium")}>
+                    <img src="person.png" className={"inline mr-2 " + (active !== "dashboard" && "invert")}></img>
+                    Dashboard
+                  </li>
                 </Link>
                 <Button text="Logout" onClick={logout}/>
               </div>

@@ -10,6 +10,7 @@ import { useApplications } from "../../../context/ApplyContext";
 import { Unavailable } from "../../../types/unavail";
 import { useUnavail } from "../../../context/UnavailContext";
 import { useNotif } from '../../../context/NotifContext';
+import {useVenues} from '../../../context/VenueContext';
 import { Venue } from '../../../types/venues';
 import * as utils from '../../../utils/utils';
 
@@ -18,6 +19,7 @@ export default function SubmitApplication() {
     const { currUser, shortlistedVenues, fetchHirerApplications } = useAuth();
     const { addApp } = useApplications();
     const { allBlocked } = useUnavail();
+    const {allVenues} = useVenues();
     const {showNotif} = useNotif();
     const { id } = router.query;
 
@@ -35,9 +37,7 @@ export default function SubmitApplication() {
         const [file, setFile] = useState<File>();
         const [fileStr, setFileStr] = useState<string>("");
 
-        //const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
         const [unavailPopup, setUnavailPopup] = useState<boolean>(false);
-        const [notShortlistedPopup, setNotShortlistedPopup] = useState<boolean>(false);
 
 
         const handleSubmitApp = (e: React.FormEvent) => {
@@ -68,53 +68,58 @@ export default function SubmitApplication() {
             }
 
             else {
+
+                const thisVenue: Venue | null = allVenues.find((venue: Venue) => venue.id == Number(id)) || null;
+
                 if (!shortlistedVenues.includes(Number(id))) {
-                    setNotShortlistedPopup(true); //REPLACE THIS with showNotif
-
-                } else {
-                    // valid application
-
-                    const newApp: Partial<Application> = {
-                        eventName: eventName,
-                        startTime: startTime,
-                        endTime: endTime,
-                        date: date,
-                        guests: Number(guests),
-                        description: desc,
-                        notes: "",
-                        hirerID: currUser.id,
-                        venueID: Number(id),
-                    // }
-                        // not sure whether to keep this or not
-                    // if (hirerType === "company") {
-                        abn: abn.trim() === "" ? undefined : abn,
-                        file: fileStr.trim() === "" ? undefined : fileStr,
-                    }
-
-                    //console.log("filestr:\n" + fileStr);
-
-                    // add the application to localStorage
-                    addApp(newApp);
-
-                    // update the hirer's dashboard with their most up to date applications
-                    fetchHirerApplications();
-
-                    // reset all states to defaults
-                    setEventName("");
-                    setStartTime("");
-                    setEndTime("");
-                    setDate("");
-                    setGuests(0);
-                    setDesc("");
-                    setFileStr("");
-                    setABN("");
-
-                    showNotif("You have successfully submitted your application!", "success");
-                    router.push("/dashboard");
-
-                    // style this nicely
-                    //setConfirmPopup(true);
+                    showNotif("You have not shortlisted this venue. Please shortlist before applying", "fail");
                 }
+                //validate properties here
+                else if (thisVenue) {
+                    if (guests > thisVenue.capacity) {
+                        showNotif("Number of guests entered exceeds capacity.", "fail");
+                    }
+                    else {
+                        // valid application
+                        const newApp: Partial<Application> = {
+                            eventName: eventName,
+                            startTime: startTime,
+                            endTime: endTime,
+                            date: date,
+                            guests: Number(guests),
+                            description: desc,
+                            notes: "",
+                            hirerID: currUser.id,
+                            venueID: Number(id),
+                        // }
+                            // not sure whether to keep this or not
+                        // if (hirerType === "company") {
+                            abn: abn.trim() === "" ? undefined : abn,
+                            file: fileStr.trim() === "" ? undefined : fileStr,
+                        }
+
+                        //console.log("filestr:\n" + fileStr);
+
+                        // add the application to localStorage
+                        addApp(newApp);
+
+                        // update the hirer's dashboard with their most up to date applications
+                        fetchHirerApplications();
+
+                        // reset all states to defaults
+                        setEventName("");
+                        setStartTime("");
+                        setEndTime("");
+                        setDate("");
+                        setGuests(0);
+                        setDesc("");
+                        setFileStr("");
+                        setABN("");
+
+                        showNotif("You have successfully submitted your application!", "success");
+                        router.push("/dashboard");
+                    }
+                } 
             }
         }
 
@@ -134,21 +139,6 @@ export default function SubmitApplication() {
 
                     </Popup>
                 }
-
-                {notShortlistedPopup &&
-                    <Popup onClose={() => {
-                        setNotShortlistedPopup(false);
-                        router.push(`/venues/${id}`);
-                    }}>
-                        <div className="h-40">
-                            <h3>You have not yet shortlisted this venue.</h3>
-                            <p>Please shortlist this venue before applying to hire.</p>
-                        </div>
-
-                    </Popup>
-                }
-
-
 
                 <title>Application</title>
 
