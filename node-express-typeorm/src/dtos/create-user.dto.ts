@@ -1,4 +1,4 @@
-import {IsEmail} from 'class-validator'
+import {IsEmail, IsString, IsNotEmpty} from 'class-validator'
 // THIS IS AN EXAMPLE based on lectorial 9
 
 
@@ -7,5 +7,28 @@ import {IsEmail} from 'class-validator'
 export class createUserDTO {
 
     @IsEmail() //needs to pass this
-    email: string 
+    @IsNotEmpty()
+    @IsString()
+    email: string;
+
+    @IsNotEmpty()
+    @IsString()
+    password: string;
+
+    @IsNotEmpty()
+    @IsString()
+    type: string;
+
+    @IsNotEmpty()
+    @IsString()
+    firstName: string;
+
+    @IsNotEmpty()
+    @IsString()
+    lastName: string;
+
+    @IsNotEmpty()
+    @IsString()
+    phoneNumber: string;
+
 }

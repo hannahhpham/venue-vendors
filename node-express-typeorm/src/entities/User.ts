@@ -22,13 +22,13 @@ export class User {
     password: string;
 
     // wait why do we need this nullable?
-    @Column({type: "varchar", length: 20, nullable: true}) //made nullable cuz its added after creation
+    @Column({type: "varchar", length: 20}) //made nullable cuz its added after creation
     firstName: string;
 
-    @Column({type: "varchar", length: 20, nullable: true})
+    @Column({type: "varchar", length: 20})
     lastName: string;
 
-    @Column({type: "varchar", length: 10, nullable: true})
+    @Column({type: "varchar", length: 10})
     phoneNumber: string;
 
     @Column({type: "varchar"})

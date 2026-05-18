@@ -34,11 +34,13 @@ export const userAPI = {
       return response.data;
     },
 
-    createUser: async (user: Partial<User>) => { //idk what Partial is but lab 8 had it
-        const response = await api.post("/users", user);
+    createUser: async (email: string, password: string, type: string,  //this used to be Partial<User> (lectorial 8)
+                       firstName: string, lastName: string, phoneNumber: string) => {
+        const response = await api.post("/users", {email, password, type, firstName, lastName, phoneNumber});
         return response.data;
     },
 
+    
     updateUser: async (id: number, user: Partial<User>) => {
       const response = await api.put(`/users/${id}`, user);
       return response.data;

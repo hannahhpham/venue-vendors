@@ -186,6 +186,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const data = await userAPI.getUserByEmail(email);
 
             if (data) {
+                
                 //store current to local storage. use this for other pages
                 localStorage.setItem("userID", data.id);
 
@@ -198,7 +199,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
                 //use this over link cuz this is properly pushing the user instead of loading smth new
                 router.push('/');
-                showNotif("You have successfully signed in.", 'success');
+                showNotif("Welcome, " + user.firstName, 'success');
             }
         } catch (error) {
             console.log("Error getting all users: ", error);

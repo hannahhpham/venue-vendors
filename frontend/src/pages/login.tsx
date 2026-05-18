@@ -3,7 +3,7 @@ import Form from "../components/Form";
 import Main from '../components/Main';
 import {useRouter } from 'next/router';
 import {useAuth} from "../context/AuthContext";
-import {userApi} from '../services/api'
+import {userAPI} from '../services/api'
 
 
 export default function Login() {
@@ -13,7 +13,6 @@ export default function Login() {
   //call function from auth context file
   const handleLogin = (email: string, password: string) => {
     login(email, password);
-
   };
 
   return (

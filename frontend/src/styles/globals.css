@@ -19,7 +19,7 @@
   }
 
   input {
-  @apply border border-[#e0e0e0] block p-2 rounded;
+  @apply block border border-[#e0e0e0] inline p-2 rounded ;
 }
 }
 

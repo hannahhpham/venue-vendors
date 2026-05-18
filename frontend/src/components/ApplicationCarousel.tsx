@@ -66,6 +66,8 @@ const ApplicationCarousel = ({type, carouselItems} : ApplicationCarouselType) =>
             <p className=""><span className="font-bold">Date: </span> {appClicked?.date}, {appClicked.startTime}</p>
             <p className=""><span className="font-bold">Duration: </span> {utils.elapsedTime(appClicked.startTime, appClicked.endTime)} hours</p>
             <p className=""><span className="font-bold">Guests: </span> {appClicked.guests}</p>
+            
+            { appClicked.vendorRating ? <p className=""><span className="font-bold">Vendor Rating: </span> {appClicked.vendorRating}</p>: null}
 
           </div>
           : null}
