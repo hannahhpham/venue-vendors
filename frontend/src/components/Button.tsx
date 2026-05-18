@@ -16,7 +16,6 @@ const Button = ( {text, type, className, children, onLeft, onClick} : buttonProp
 
   const handleButtonClick = (e: any) => {
     //call parent function
-    e.preventDefault();
     onClick?.(); // ? means that the function is only called if it exists
   }
 

@@ -64,10 +64,13 @@ export class UserController {
      * @returns JSON response containing the created user or error message
      */
     async save(request: Request, response: Response) {
-        const { email, password } = request.body;
+        const { email, password, type, firstName, lastName, phoneNumber } = request.body;
         const user = Object.assign(new User(), {
             email,
             password,
+            firstName,
+            lastName,
+            phoneNumber
         });
         try {
             const savedUser = await this.userRepository.save(user);
@@ -78,6 +81,7 @@ export class UserController {
                 .json({ message: "Error creating user", error });
         }
     }
+    
 
     /** do we even need this...no right...
      * Deletes a user from the database by their ID
