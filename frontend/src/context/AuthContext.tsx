@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const getShortlistedVenues = async () => {
         //console.log("currUser in shortlistedVenues is " + currUser);
-
+       
         if (currUser) {
             let shortlistedVenues = await shortlistedVenueAPI.getShortlistedVenues(currUser.id);
 
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             shortlistedVenues = shortlistedVenues.map((data: shortlistedVenueType) => data.venueID);
             
             setShortlistedVenues(shortlistedVenues);
-            // console.log("shortlistedVenues:", shortlistedVenues);
+    
             return shortlistedVenues;
         }
     }

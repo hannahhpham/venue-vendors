@@ -11,6 +11,7 @@ export interface Venue {
   rate: number,
   stars: number,
   description: string,
+  suitability?: string,
   ownerID: number
   keywords?: string
 };

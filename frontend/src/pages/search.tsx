@@ -20,6 +20,7 @@ export default function Search() {
   //see if filter/sort has been used
   const [searchFiltered, setSearchFiltered] = useState<boolean>(false);
   const [searchSort, setSearchSort] = useState<boolean>(false);
+  const [searchSuitability, setSearchSuitability] = useState<boolean>(false);
 
   //save the search results, so when users click a venue and back their old search is saved
   const [searchResults, setSearchResults] = useState<Venue[]>([]);
@@ -35,10 +36,13 @@ export default function Search() {
   //set sorting useState
   const [sortValue, setSortValue] = useState<string>("");
 
+  const [suitabilityValue, setSuitabilityValue] = useState<string>("");
+
   //function to filter and sort. if not sorting/filtering allVenues array is returned
   //default parameter: https://stackoverflow.com/questions/23314806/setting-default-value-for-typescript-object-passed-as-argument
   //                   can use this to make the parameter whatver the state is rn
-  const searchVenues = (currSortValue = sortValue) => {
+  const searchVenues = (currSortValue = sortValue, currSearchSort = searchSort, 
+                        currSuitability = suitabilityValue, currSearchSuitability = searchSuitability) => {
     if (allVenues.length === 0 || !allVenues) return;
 
     //if rate and capacity are 0 then ignore those values
@@ -70,6 +74,24 @@ export default function Search() {
         else if (currSortValue === 'alphabetical') {
             result = result.sort((a, b) => a.name > b.name ? 1 : -1);
         }
+    }
+
+    //suitability
+
+    if (currSearchSuitability) {
+        if (currSuitability == "casual") {
+            result = result.filter((venue: Venue) => venue?.suitability?.includes("casual"));
+        }
+        else if (currSuitability == "formal") {
+            result = result.filter((venue: Venue) => venue?.suitability?.includes("formal"));
+        }
+        else if (currSuitability == "corporate") {
+            result = result.filter((venue: Venue) => venue?.suitability?.includes("corporate"));
+        }
+        else if (currSuitability == "party") {
+            result = result.filter((venue: Venue) => venue?.suitability?.includes("party"));
+        }
+
     }
     
     
@@ -103,36 +125,42 @@ export default function Search() {
                 <form className="border border-[#e0e0e0] rounded-md p-2 bg-white flex flex-col items-center" onSubmit={(e) => e.preventDefault()}>
                     <h3 className="text-center">Filter</h3>
                     {/* FIX THE STYLING OF THE LABEL ITS NOT ALIGNED TO THE INPUT*/}
-                    <div className="m-3">  
-                        <div className="flex justify-center items-center">
-                            <label className="">Capacity</label>
-                            <input className="w-[25%] mr-2" type="number" 
-                                onChange={(e)=>setMinCapacity(Number(e.target.value))}
+                    <div className="ml-5 justify-center items-center">  
+                        <div className="">
+                            <label className="block font-bold">Capacity</label>
+                            <div className="flex items-center">
+                                <input className="w-[40%] mr-2" type="number" 
+                                    onChange={(e)=>setMinCapacity(Number(e.target.value))}
                                 ></input> 
-                            <p> to </p>
-                            <input className="w-[25%] ml-2" type="number" 
-                                onChange={(e)=>setMaxCapacity(Number(e.target.value))}></input>
+                                <p> to </p>
+                                <input className="w-[40%] ml-2" type="number" 
+                                    onChange={(e)=>setMaxCapacity(Number(e.target.value))}></input>
+                            </div>
                         </div>
                     </div>
 
                     {/* FIX THE STYLING OF THE LABEL ITS NOT ALIGNED TO THE INPUT*/}
-                    <div className="m-3 ">  
-                            <div className="flex justify-center items-center">
-                                <label className="">Rate (per hour)</label>
-                                <input className="w-[25%] mr-2" type="number" 
-                                        onChange={(e)=> {setMinRate(Number(e.target.value))}}/> 
-                                <p> to </p>
-                                <input className="w-[25%] ml-2" type="number" 
-                                        onChange={(e)=>{setMaxRate(Number(e.target.value))}}/>
+                    <div className="">  
+                            <div className="ml-5 justify-center items-center">
+                                <label className="block font-bold">Rate (per hour)</label>
+
+                                <div className="flex items-center">
+                                    <input className="w-[40%] mr-2" type="number" 
+                                            onChange={(e)=> {setMinRate(Number(e.target.value))}}/> 
+                                    <p> to </p>
+                                    <input className="w-[40%] ml-2" type="number" 
+                                            onChange={(e)=>{setMaxRate(Number(e.target.value))}}/>
+                                </div>
+
                             </div>
                     </div>
 
-                    <div className="flex items-center">
+                    <div className="">
                         {/* https://stackoverflow.com/questions/11246758/how-to-get-unique-values-in-an-array */}
-                        <label>Suburb</label>
+                        <label className="font-bold block">Suburb</label>
                         <select onChange={(e) => setLocation(e.target.value)}
                                 value={location}
-                                className="border border-[#e0e0e0] block p-2 rounded">
+                                className="w-[100%] border border-[#e0e0e0] block p-2 rounded">
                             <option value="">None selected</option>
                             {[...new Set(allVenues.map((venue: Venue) => venue.suburb))].map(
                                 (suburb : string) => <option value={suburb}>{suburb}</option>
@@ -175,19 +203,53 @@ export default function Search() {
                     
                     <div className="flex">
                     <Button text="Sort" onClick={() => {setSearchSort(true)
-                                                        searchVenues(sortValue);
+                                                        searchVenues(sortValue, true);
                                                         } 
                                                         }/>
                     <Button text="Remove Sort" onClick={() => {setSearchSort(false)
-                                                               searchVenues("remove"); 
+                                                               searchVenues("remove", false); 
                                                                setSortValue("")
                                                                }}/>
                     </div>
-                    
-                </form>
+                </form> <br/>
         
+                {/* suitability */}
+                <form className='border border-[#e0e0e0] rounded-md p-2 bg-white flex flex-col items-center' onSubmit={(e) => e.preventDefault()}>
+                    <h3 className="text-center">Suitability</h3>
 
-                <h3 className="text-center">Suitability</h3>
+                    <div className="flex">
+                        <input className="mr-1 mt-1" value="party" type="radio" name="suitability"
+                            onChange={(e) => {setSuitabilityValue(e.target.value)}}/> 
+                        <label className="">Parties</label>
+                    </div>
+
+                    <div className="flex">
+                        <input className="mr-1 mt-1" value="formal" type="radio" name="suitability"
+                            onChange={(e) => {setSuitabilityValue(e.target.value)}}/> 
+                        <label className="">Formal events</label>
+                    </div>
+
+                    <div className="flex">
+                        <input className="mr-1 mt-1" value="casual" type="radio" name="suitability"
+                            onChange={(e) => {setSuitabilityValue(e.target.value)}}/> 
+                        <label className="">Casual events</label>
+                    </div>
+
+                    <div className="flex">
+                        <input className="mr-1 mt-1" value="corporate" type="radio" name="suitability"
+                            onChange={(e) => {setSuitabilityValue(e.target.value)}}/> 
+                        <label className="">Corporate events</label>
+                    </div>
+
+                    <Button text="Search" onClick={() => {setSearchSuitability(true)
+                                                                searchVenues(sortValue, searchSort, suitabilityValue, true)}}/>
+                    
+                    <Button text="Remove Search" onClick={() => {setSearchSuitability(false)
+                                                               searchVenues("remove", false, "", false); 
+                                                               setSuitabilityValue("")
+                                                               }}/>
+                </form>
+                
 
             
             </Sidebar>

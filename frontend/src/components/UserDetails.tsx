@@ -108,10 +108,6 @@ const Details = ({edit} : detailsType) => {
         <label>Email</label>
         <input className="bg-gray-100 text-sm italic" value={currUser?.email} disabled></input>
         
-        <label>Password</label>
-        <input className="bg-gray-100 text-sm italic" value={currUser?.password} disabled></input>
-        
-        
       </div>
     </div>
   )

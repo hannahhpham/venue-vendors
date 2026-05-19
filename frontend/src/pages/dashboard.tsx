@@ -25,6 +25,7 @@ export default function Dashboard() {
   // const {allApplications} = useApplications();
   const { allVenues, removeVenue } = useVenues();
 
+
   const deleteVenue = (id : number) => {
     removeVenue(id);
 

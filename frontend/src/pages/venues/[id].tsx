@@ -132,6 +132,7 @@ export default function VenuePage() {
 
             showNotif("You have shortlisted this venue.", "success");
             await shortlistedVenueAPI.shortlistVenue(currUser.id, venueID, rankToInsertAt);
+            await getShortlistedVenues(); //update state
             //console.log(result);
           }
           else { //inserting in the middle of the list
@@ -143,9 +144,6 @@ export default function VenuePage() {
             for (let i = shortlistedVenues.length ; i >= rankToInsertAt ; i--) {
               
               shortlistItem = await shortlistedVenueAPI.getShortlistByRank(currUser.id, i);
-
-              console.log("shortlistItem:", shortlistItem);
-              console.log("updating rank from", shortlistItem.rank, "to", shortlistItem.rank + 1);
 
               await shortlistedVenueAPI.updateRank(shortlistItem.hirerID, shortlistItem.venueID, shortlistItem.rank + 1 );
             }
