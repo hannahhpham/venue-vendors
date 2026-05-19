@@ -55,9 +55,8 @@ export class Venue {
     @Column({type: "int"})
     ownerID: number;
 
-
-    // @Column({type: "text", nullable: true})
-    // keywords: string | null;
+    @Column({type: "text", nullable: true})
+    suitability: string | null;
 
     //IMPORTANT!!! check over this. 
     //this will add a new column

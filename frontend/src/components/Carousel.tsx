@@ -27,8 +27,13 @@ const Carousel = ({type, ranked, carouselItems} : carouselType) => {
   if (currUser) {
     //get array of all items
     if (type==="all") { //set up which 5 items are shown
-      for (let i = 0 ; i < 5 ; i++) {
-        visibleItems.push(carouselItems[(itemIndex + i + carouselItems.length) % carouselItems.length]);
+      if (items.length > 5) {
+        for (let i = 0 ; i < 5 ; i++) {
+          visibleItems.push(carouselItems[(itemIndex + i + carouselItems.length) % carouselItems.length]);
+        }
+      }
+      else {
+        visibleItems = items;
       }
     } 
     //get array of just shortlisted stuff
@@ -53,7 +58,7 @@ const Carousel = ({type, ranked, carouselItems} : carouselType) => {
         
         {/* decide whether arrow is rendered depending on # items */}
         
-        {type==='all' ?
+        {type==='all' && carouselItems.length > 5 ?
           (<img src={'/backArrow.png'} data-testid="backButton" onClick={moveBack} className="hover:drop-shadow ml-5"/>) 
           :
           (carouselItems.length > 5 ?
@@ -83,7 +88,7 @@ const Carousel = ({type, ranked, carouselItems} : carouselType) => {
         </div>
 
         {/* if we're showing all items, or if the # of items > 5, show the arrows */}
-        {type==='all' ?
+        {type==='all' && carouselItems.length > 5 ?
           (<img data-testid="forwardButton" src={'/forwardArrow.png'} onClick={moveForward} className="hover:drop-shadow shadow-black mr-5"/>) 
           :
           (carouselItems.length > 5 ?

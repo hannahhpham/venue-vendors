@@ -35,8 +35,24 @@ export default function Signup() {
           showNotif("Passwords must match.", "fail");
         }
         else {
-            await userAPI.createUser(email, password, type, firstName, lastName, phoneNumber);
-            showNotif("User successfully created.", "success");
+          //check there isn't a user with the same email
+            const allUsers = await userAPI.getAllUsers();
+
+            let success: boolean = true;
+            for (let i = 0 ; i < allUsers.length ; i++) {
+              if (allUsers[i].email == email) {
+                success = false;
+              }
+            }
+
+            if (success) {
+              await userAPI.createUser(email, password, type, firstName, lastName, phoneNumber);
+              showNotif("User successfully created.", "success");
+            } 
+            else {
+              showNotif("An account with that username already exists.", "fail");
+            }
+            
         }
    
       }

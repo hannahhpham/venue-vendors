@@ -7,36 +7,22 @@ import { useVenues } from "../context/VenueContext";
 import { Venue } from "../types/venues";
 import Main from '../components/Main'
 import Popup from '../components/Popup'
+import Sidebar from '../components/Sidebar'
 import { venueAPI } from "../services/api";
 
 export default function Search() {
   const router = useRouter();
 
-//   const [allVenues, setAllVenues] = useState<Venue[]>([]);
-
-//   useEffect(() => {
-//     venues();
-//   }, []);
-  
-//   const venues = async () => {
-//     try {
-//         const data = await venueAPI.getAllVenues();
-//         setAllVenues(data);
-//     } catch (error) {
-//         console.log("Error getting all venues: ", error);
-//     }
-//   };
   const { allVenues } = useVenues();
 
   const [search, setSearch] = useState<string>("");
-  const [filterPopup, setFilterPopup] = useState<boolean>(false);
 
   //see if filter/sort has been used
   const [searchFiltered, setSearchFiltered] = useState<boolean>(false);
   const [searchSort, setSearchSort] = useState<boolean>(false);
 
   //save the search results, so when users click a venue and back their old search is saved
-  const [searchResults, setSearchResults] = useState<Venue[]>(allVenues);
+  const [searchResults, setSearchResults] = useState<Venue[]>([]);
 
   //set filter form useStates
   //sheet spec says recommended suitability?? tf does that mean :')
@@ -53,6 +39,7 @@ export default function Search() {
   //default parameter: https://stackoverflow.com/questions/23314806/setting-default-value-for-typescript-object-passed-as-argument
   //                   can use this to make the parameter whatver the state is rn
   const searchVenues = (currSortValue = sortValue) => {
+    if (allVenues.length === 0 || !allVenues) return;
 
     //if rate and capacity are 0 then ignore those values
     //if suburb is 'none selected' ignore that
@@ -70,28 +57,30 @@ export default function Search() {
         
     }
 
-    if (currSortValue === "remove") {
-        result = [...result];
-    }
-    else if (currSortValue === 'rate') {
-        result = [...result].sort((a, b) => a.rate - b.rate);
-    }
-    else if (currSortValue === 'capacity') {
-        result = [...result].sort((a, b) => a.capacity - b.capacity);
-    }
-    else if (currSortValue === 'alphabetical') {
-        result = result.sort((a, b) => a.name > b.name ? 1 : -1);
+    if (searchSort) {
+        if (currSortValue === "remove") {
+            result = [...result];
+        }
+        else if (currSortValue === 'rate') {
+            result = [...result].sort((a, b) => a.rate - b.rate);
+        }
+        else if (currSortValue === 'capacity') {
+            result = [...result].sort((a, b) => a.capacity - b.capacity);
+        }
+        else if (currSortValue === 'alphabetical') {
+            result = result.sort((a, b) => a.name > b.name ? 1 : -1);
+        }
     }
     
+    
     setSearchResults(result);
-    //return result;
 
   }
 
 //when the filter is turned on/off then change the search
   useEffect(() => {
     searchVenues();
-  }, [searchFiltered, sortValue, allVenues])
+  }, [searchFiltered, allVenues])
 
   //show venues as soon as page loads
   useEffect(() => {
@@ -106,38 +95,139 @@ export default function Search() {
 
       <div>
 
-        {/* div encompassing search bar and filtering */}
-        <div className="">
-            <input type="string" placeholder="Search" className="p-5 mx-auto my-3 bg-white w-19/20 rounded-3xl" value={search} onChange={(e) => setSearch(e.target.value)}></input>
-            
-            <div className="flex">
-                <Button text="Filter" onClick={()=>{setFilterPopup(true)}}/>
-                
-                {/* idea: make sort just a dropdown instead of a popup */}
-                <div className="w-[65px] h-[40px]">
-                    <select className="bg-black hover:bg-[#474747] text-white font-bold rounded p-2 m-1 w-full h-full" 
-                            value={sortValue}
-                            onChange={(e) => {setSortValue(e.target.value)}}>
-                        <option hidden>Sort</option>
-                        <option value="rate">Rate (asc)</option>
-                        <option value="capacity">Capacity (asc)</option>
-                        <option value="alphabetical">Alphabetical (asc)</option>
-                        <option value="remove">Remove Sort</option>
-                    </select> 
-                </div>
+        <div className="flex">
+            {/* filter, search, suitability bar */}
+            <Sidebar type='search'>
     
-            </div>
+                {/* filtering */}
+                <form className="border border-[#e0e0e0] rounded-md p-2 bg-white flex flex-col items-center" onSubmit={(e) => e.preventDefault()}>
+                    <h3 className="text-center">Filter</h3>
+                    {/* FIX THE STYLING OF THE LABEL ITS NOT ALIGNED TO THE INPUT*/}
+                    <div className="m-3">  
+                        <div className="flex justify-center items-center">
+                            <label className="">Capacity</label>
+                            <input className="w-[25%] mr-2" type="number" 
+                                onChange={(e)=>setMinCapacity(Number(e.target.value))}
+                                ></input> 
+                            <p> to </p>
+                            <input className="w-[25%] ml-2" type="number" 
+                                onChange={(e)=>setMaxCapacity(Number(e.target.value))}></input>
+                        </div>
+                    </div>
+
+                    {/* FIX THE STYLING OF THE LABEL ITS NOT ALIGNED TO THE INPUT*/}
+                    <div className="m-3 ">  
+                            <div className="flex justify-center items-center">
+                                <label className="">Rate (per hour)</label>
+                                <input className="w-[25%] mr-2" type="number" 
+                                        onChange={(e)=> {setMinRate(Number(e.target.value))}}/> 
+                                <p> to </p>
+                                <input className="w-[25%] ml-2" type="number" 
+                                        onChange={(e)=>{setMaxRate(Number(e.target.value))}}/>
+                            </div>
+                    </div>
+
+                    <div className="flex items-center">
+                        {/* https://stackoverflow.com/questions/11246758/how-to-get-unique-values-in-an-array */}
+                        <label>Suburb</label>
+                        <select onChange={(e) => setLocation(e.target.value)}
+                                value={location}
+                                className="border border-[#e0e0e0] block p-2 rounded">
+                            <option value="">None selected</option>
+                            {[...new Set(allVenues.map((venue: Venue) => venue.suburb))].map(
+                                (suburb : string) => <option value={suburb}>{suburb}</option>
+                            )}
+                        </select>
+                    </div>
+
+                    <div className="flex">
+                    <Button text="Filter" onClick={() => {setSearchFiltered(true)
+                                                                searchVenues()} 
+                                                        }/>
+                    <Button text="Remove Filter" onClick={() => {setSearchFiltered(false) 
+                                                                searchVenues()}}/>
+                    </div>
+                    
+                </form>
+                <br/>
+
+                {/* sorting */}
+                <form className="border border-[#e0e0e0] rounded-md p-2 bg-white flex flex-col items-center" onSubmit={(e) => e.preventDefault()}>
+                    <h3 className="text-center">Sort</h3>
+
+                    <div className="flex">
+                        <input className="mr-1 mt-1" value="rate" type="radio" name="sort"
+                            onChange={(e) => {setSortValue(e.target.value)}}/> 
+                        <label className="">Rate (ascending)</label>
+                    </div>
+
+                    <div className="flex">
+                        <input className="mr-1 mt-1" value="capacity" type="radio" name="sort"
+                            onChange={(e) => {setSortValue(e.target.value)}}/> 
+                        <label className="">Capacity (ascending)</label>
+                    </div>
+
+                    <div className="flex">
+                        <input className="mr-1 mt-1" value="alphabetical" type="radio" name="sort"
+                            onChange={(e) => {setSortValue(e.target.value)}}/> 
+                        <label className="">Alphabetical (ascending)</label>
+                    </div>
+                    
+                    <div className="flex">
+                    <Button text="Sort" onClick={() => {setSearchSort(true)
+                                                        searchVenues(sortValue);
+                                                        } 
+                                                        }/>
+                    <Button text="Remove Sort" onClick={() => {setSearchSort(false)
+                                                               searchVenues("remove"); 
+                                                               setSortValue("")
+                                                               }}/>
+                    </div>
+                    
+                </form>
+        
+
+                <h3 className="text-center">Suitability</h3>
+
             
-        </div>
+            </Sidebar>
 
-        <div className="grid grid-cols-3 auto-rows-fr">
-            {
-                search === "" ? (
+            <div className='w-[100%]'>
+                 <input type="string" placeholder="Search" className="p-5 mx-auto my-3 bg-white w-19/20 rounded-3xl" value={search} onChange={(e) => setSearch(e.target.value)}></input>
+           
+           
+            {/* search results */}
+            <div className="flex-1 grid grid-cols-3 auto-rows-fr"> 
+                
+                {
+                    search === "" ? (
 
-                    searchResults.length === 0 ? "No venues match your specifications." : (
-                        searchResults.map((venue: Venue) =>
+                        searchResults.length === 0 ? "No venues match your specifications." : (
+                            searchResults.map((venue: Venue) =>
+                                <div key={venue.id}>
+                                    <button  onClick={() => router.push(`/venues/${venue.id}`)}>
+                                    <Card heading={venue.name} style="hover:bg-sky-100">
+                                        <h3 className="italic text-base font-medium">{venue.address}</h3>
+                                        <p>{venue.description}</p>
+                                    </Card>
+                                    </button>
+                                </div>
+                            )
+                        )
+
+                    ) 
+                    : 
+                    //check if the search comes up empty. if yes, display message and otherwise show contents
+                    //added in the venue description so that keywords like 'weddings' and 'corporate' show up - this helps fulfill 'recommended suitability'
+                    (searchResults.filter((v : Venue) => ((v.name.toLowerCase()).includes(search) || (v.suburb.toLowerCase()).includes(search) || v.postcode === Number(search) 
+                    || v.capacity === Number(search) || v.rate === Number(search) )).length === 0 
+                    ? 
+                        "No venues match your specifications. Please try again. " 
+                        : 
+                        (searchResults.filter((v : Venue) => ((v.name.toLowerCase()).includes(search) || (v.suburb.toLowerCase()).includes(search) || v.postcode === Number(search) 
+                            || v.capacity === Number(search) || v.rate === Number(search) || v.keywords?.includes(search))).map((venue: Venue) =>
                             <div key={venue.id}>
-                                <button  onClick={() => router.push(`/venues/${venue.id}`)}>
+                                <button className="px-5 py-2" onClick={() => router.push(`/venues/${venue.id}`)}>
                                 <Card heading={venue.name} style="hover:bg-sky-100">
                                     <h3 className="italic text-base font-medium">{venue.address}</h3>
                                     <p>{venue.description}</p>
@@ -145,87 +235,15 @@ export default function Search() {
                                 </button>
                             </div>
                         )
-                    )
+                        )
 
-                ) 
-                : 
-                //check if the search comes up empty. if yes, display message and otherwise show contents
-                //added in the venue description so that keywords like 'weddings' and 'corporate' show up - this helps fulfill 'recommended suitability'
-                (searchResults.filter((v : Venue) => ((v.name.toLowerCase()).includes(search) || (v.suburb.toLowerCase()).includes(search) || v.postcode === Number(search) 
-                || v.capacity === Number(search) || v.rate === Number(search) || v.keywords?.includes(search))).length === 0 
-                ? 
-                    "No venues match your specifications. Please try again. " 
-                    : 
-                    (searchResults.filter((v : Venue) => ((v.name.toLowerCase()).includes(search) || (v.suburb.toLowerCase()).includes(search) || v.postcode === Number(search) 
-                        || v.capacity === Number(search) || v.rate === Number(search) || v.keywords?.includes(search))).map((venue: Venue) =>
-                        <div key={venue.id}>
-                            <button className="px-5 py-2" onClick={() => router.push(`/venues/${venue.id}`)}>
-                            <Card heading={venue.name} style="hover:bg-sky-100">
-                                <h3 className="italic text-base font-medium">{venue.address}</h3>
-                                <p>{venue.description}</p>
-                            </Card>
-                            </button>
-                        </div>
                     )
-                    )
-
-                )
-                
-            }
+                    
+                }
+            </div>
+        </div>
         </div>
       </div>
-
-      { filterPopup && 
-        <Popup onClose={()=>{setFilterPopup(false)}}>
-            <form className="flex flex-col items-center" onSubmit={(e) => e.preventDefault()}>
-                <h2>Filter Your Search</h2>
-
-                {/* FIX THE STYLING OF THE LABEL ITS NOT ALIGNED TO THE INPUT*/}
-                <div className="m-3">  
-                        <div className="flex justify-center items-center">
-                            <label className="">Capacity</label>
-                            <input className="w-[25%] mr-2" type="number" 
-                                   onChange={(e)=>setMinCapacity(Number(e.target.value))}
-                                   ></input> 
-                            <p> to </p>
-                            <input className="w-[25%] ml-2" type="number" 
-                                   onChange={(e)=>setMaxCapacity(Number(e.target.value))}></input>
-                        </div>
-                </div>
-
-                {/* FIX THE STYLING OF THE LABEL ITS NOT ALIGNED TO THE INPUT*/}
-                <div className="m-3 ">  
-                        <div className="flex justify-center items-center">
-                            <label className="">Rate (per hour)</label>
-                            <input className="w-[25%] mr-2" type="number" 
-                                    onChange={(e)=> {setMinRate(Number(e.target.value))}}/> 
-                            <p> to </p>
-                            <input className="w-[25%] ml-2" type="number" 
-                                    onChange={(e)=>{setMaxRate(Number(e.target.value))}}/>
-                        </div>
-                </div>
-
-                <div className="flex items-center">
-                    {/* https://stackoverflow.com/questions/11246758/how-to-get-unique-values-in-an-array */}
-                    <label>Suburb</label>
-                    <select onChange={(e) => setLocation(e.target.value)}
-                            value={location}
-                            className="border border-[#e0e0e0] block p-2 rounded">
-                        <option value="">None selected</option>
-                        {[...new Set(allVenues.map((venue: Venue) => venue.suburb))].map(
-                            (suburb : string) => <option value={suburb}>{suburb}</option>
-                        )}
-                    </select>
-                </div>
-
-                <Button text="Filter Results" onClick={() => {setSearchFiltered(true)
-                                                              searchVenues()} 
-                                                      }/>
-                <Button text="Remove Filter" onClick={() => {setSearchFiltered(false) 
-                                                             searchVenues()}}/>
-            </form>
-        </Popup>
-      }
 
     </Main>
 
