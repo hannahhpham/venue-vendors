@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { UserController } from "../controller/UserController";
 
+//BACKEND VALIDATION
+import { validateDto } from "../middlewares/validate";
+import { createUserDTO } from "../dtos/create-user.dto";
+
 const router = Router();
 const userController = new UserController();
 

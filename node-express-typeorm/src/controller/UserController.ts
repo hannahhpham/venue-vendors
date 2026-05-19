@@ -6,6 +6,8 @@ import * as argon2 from 'argon2';
 // this ENTIRE page has been copied from week 8's lab 'UserController.ts'
 // with minor modifications
 
+//crypto-js (based on javascript, not sure if we can use it here) IS AN ALTERNATIVE FOR HASHING SHA256
+
 //TODO:
 // need to change ALL methods to accept the relevant user data
  
@@ -48,13 +50,31 @@ export class UserController {
      */
     async oneByEmail(request: Request, response: Response) {
         const email = request.params.email as string;
+        const {password} = request.query; //get the password the user entered
+
         const user = await this.userRepository.findOne({
             where: {email},
         });
+
+
+
         if (!user) {
             return response.status(404).json({ message: "User not found" });
         }
-        return response.json(user);
+
+        try {
+            if (await argon2.verify(user.password, String(password))) {
+                return response.json(user);
+            }
+            else { //password doesn't match
+                return response.status(404).json({ message: "Password does not match" });
+            }
+        }
+        catch (err) {
+            return response.status(404).json({ message: "Internal error" });
+        }
+        
+        
     }
 
     // TODO: UPDATE THIS
@@ -77,7 +97,7 @@ export class UserController {
             lastName,
             phoneNumber
         });
-        
+
         try {
             const savedUser = await this.userRepository.save(user);
             return response.status(201).json(savedUser);

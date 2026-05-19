@@ -183,7 +183,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const login = async (email: string, password: string) => {
 
         try {
-            const data = await userAPI.getUserByEmail(email);
+            const data = await userAPI.getUserByEmail(email, password);
 
             if (data) {
                 
@@ -201,7 +201,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 router.push('/');
                 showNotif("Welcome, " + user.firstName, 'success');
             }
-        } catch (error) {
+            else {
+                showNotif("Entered password did not match.", "fail");
+            }
+        } catch (error) { //this is being entered if passwords dont match. cuz then api gets an error
             console.log("Error getting all users: ", error);
             showNotif("Incorrect email/password combination entered. Please try again.", 'fail');
         }

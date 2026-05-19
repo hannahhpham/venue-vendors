@@ -29,8 +29,8 @@ export const userAPI = {
 
     //https://stackoverflow.com/questions/79196343/how-to-resolve-route-conflicts-in-express-js-with-similar-route-paths
     //NEED TO DISTINGUISH ROUTES SO THEY DONT CLASH
-    getUserByEmail: async (email: string) => {
-      const response = await api.get(`/users/login/${email}`);
+    getUserByEmail: async (email: string, password: string) => {
+      const response = await api.get(`/users/login/${email}`, {params: {password: password}});
       return response.data;
     },
 
