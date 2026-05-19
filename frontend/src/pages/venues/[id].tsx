@@ -136,7 +136,7 @@ export default function VenuePage() {
             //console.log(result);
           }
           else { //inserting in the middle of the list
-            showNotif("insert in middle", "success");
+            showNotif("You have shortlisted this venue.", "success");
 
             let shortlistItem: shortlistedVenueType;
 

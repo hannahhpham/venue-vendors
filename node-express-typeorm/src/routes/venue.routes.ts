@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { VenueController } from "../controller/VenueController";
 
+//backend validation
+import {createVenueDTO} from '../dtos/create-venue.dto'
+import { validateDto } from "../middlewares/validate";
+import {updateVenueDTO} from '../dtos/update-venue.dto'
 // ADAPTED FROM Week 9 Lecture Example 1 - profile.routes.ts
 
 const router = Router();
@@ -19,11 +23,11 @@ router.get("/users/:vendorID", async (req, res) => {
     await venueController.getByVendor(req, res);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", validateDto(createVenueDTO), async (req, res) => {
     await venueController.createVenue(req, res);
 });
 
-router.put("/:venueID", async (req, res) => {
+router.put("/:venueID", validateDto(updateVenueDTO) , async (req, res) => {
     await venueController.updateVenue(req, res);
 });
 

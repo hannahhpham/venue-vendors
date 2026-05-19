@@ -46,8 +46,13 @@ export default function Signup() {
             }
 
             if (success) {
-              await userAPI.createUser(email, password, type, firstName, lastName, phoneNumber);
-              showNotif("User successfully created.", "success");
+              try {
+                await userAPI.createUser(email, password, type, firstName, lastName, phoneNumber);
+                showNotif("User successfully created.", "success");
+              } catch (error) {
+                showNotif("Failed to create account. Please check your inputted values.", "fail");
+              }
+              
             } 
             else {
               showNotif("An account with that username already exists.", "fail");

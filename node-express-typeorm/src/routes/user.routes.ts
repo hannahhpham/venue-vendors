@@ -4,6 +4,7 @@ import { UserController } from "../controller/UserController";
 //BACKEND VALIDATION
 import { validateDto } from "../middlewares/validate";
 import { createUserDTO } from "../dtos/create-user.dto";
+import { updateUserDTO } from "../dtos/update-user.dto";
 
 const router = Router();
 const userController = new UserController();
@@ -21,11 +22,11 @@ router.get("/users/login/:email", async (req, res) => {
     await userController.oneByEmail(req, res);
 });
 
-router.post("/users", async (req, res) => {
+router.post("/users", validateDto(createUserDTO), async (req, res) => {
     await userController.save(req, res);
 });
 
-router.put("/users/:id", async (req, res) => {
+router.put("/users/:id", validateDto(updateUserDTO), async (req, res) => {
     await userController.update(req, res);
 });
 

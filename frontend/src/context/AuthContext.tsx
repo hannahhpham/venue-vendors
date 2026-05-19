@@ -223,17 +223,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     //for updating user details (name, phone). also for updating the user's shortlisted venues
     // and uploading / updating the user's driver's license and public liability insurance cert
     const updateUser = async (updatedUser: User) => {
-        //update this user in the database
-        await userAPI.updateUser(updatedUser.id, updatedUser);
 
-        //update all the users in use state
-        // await getAllUsers();
-
-        //update the currUser in use state
-        const user = await userAPI.getUserById(updatedUser.id);
-        setCurrUser(updatedUser);
-        //localStorage.setItem("currUser", JSON.stringify(updatedUser));
-
+        try {
+            //update this user in the database
+            await userAPI.updateUser(updatedUser.id, updatedUser);
+            setCurrUser(updatedUser);
+        } catch {
+            showNotif("User failed to update. Please check if your inputs are in correct form.", "fail");
+        }
     }
 
     // calculate the reputation and credibility rating of a hirer

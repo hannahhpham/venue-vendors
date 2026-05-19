@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { UnavailableController } from "../controller/UnavailableController";
 
+import {createBlockDTO} from '../dtos/create-block.dto'
+import { validateDto } from "../middlewares/validate";
+
 // ADAPTED FROM Week 9 Lecture Example 1 - profile.routes.ts
 
 const router = Router();
@@ -19,6 +22,8 @@ router.get("/:blockedID", async (req, res) => {
     await blockedController.getOneBlocked(req, res);
 });
 
+//cant get this one working
+//validateDto(createBlockDTO)
 router.post("/", async (req, res) => {
     await blockedController.block(req, res);
 });

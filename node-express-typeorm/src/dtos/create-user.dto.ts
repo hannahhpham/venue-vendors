@@ -1,6 +1,5 @@
-import {IsEmail, IsString, IsNotEmpty} from 'class-validator'
+import {IsEmail, IsString, IsNotEmpty, Contains} from 'class-validator'
 // THIS IS AN EXAMPLE based on lectorial 9
-
 
 //call these in the routes. 
 //route.post(validateDto(CreateUserDTO), (req, res) => blah blah)
@@ -9,6 +8,7 @@ export class createUserDTO {
     @IsEmail() //needs to pass this
     @IsNotEmpty()
     @IsString()
+    @Contains('@')
     email: string;
 
     @IsNotEmpty()
@@ -29,6 +29,7 @@ export class createUserDTO {
 
     @IsNotEmpty()
     @IsString()
+    @Contains('04')
     phoneNumber: string;
 
 }
