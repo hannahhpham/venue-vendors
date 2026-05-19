@@ -89,6 +89,7 @@ export default function SubmitApplication() {
                             guests: Number(guests),
                             description: desc,
                             notes: "",
+                            rank: 0,
                             hirerID: currUser.id,
                             venueID: Number(id),
                         // }

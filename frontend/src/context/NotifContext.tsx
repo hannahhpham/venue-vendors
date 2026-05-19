@@ -39,7 +39,9 @@ export function NotifProvider({children} : {children : React.ReactNode}) {
             {children}
             {/* this will mean that theres a notification EVERYWHERE. just depends if we decide to show it or not.
                 idk if this is bad practise. */}
-            {visible && <Notification message={message} type={type}/>}
+            {visible && 
+                <div onClick={() => setVisible(false)}><Notification message={message} type={type}/></div>
+            }
         </NotifContext.Provider>
     );
   

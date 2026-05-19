@@ -9,6 +9,13 @@ Shared Notion (DELETE B4 SUBMITTING): [Here](https://www.notion.so/assignment-2-
 
 
 ## Vendor Explanations
+# TO DO:
+- fix the rounding of the stars in applications
+- fix all the repurposed carousels - (home shows 5 never ending venues  |   in the hirer's past applications, it displays error message when none have been hirer)
+- fix up the sorting by reputation
+- merge stuff into the context files to clean up [id].tsx particularly
+- do applications need to be validated bc currently they aren't ...
+- look at file size requirements when it comes to docs - i don't think anything was enforced here
 
 ## Hirer Explanations
 - credibility and reputation explanations here 
@@ -18,9 +25,8 @@ Shared Notion (DELETE B4 SUBMITTING): [Here](https://www.notion.so/assignment-2-
 - lectures week 9
 - MatsT (2010). Creation date column in SQL table. [online] Stack Overflow. Available at: https://stackoverflow.com/questions/2737763/creation-date-column-in-sql-table [Accessed 1 May 2026].
 - Typeorm.io. (2025). Entities | TypeORM. [online] Available at: https://typeorm.io/docs/entity/entities/ [Accessed 1 May 2026].
-‌- Typeorm.io. (2026). Decorator reference | TypeORM. [online] Available at: https://typeorm.io/docs/help/decorator-reference/ [Accessed 1 May 2026].
-‌- Typeorm.io. (2026). Many-to-many relations | TypeORM. [online] Available at: https://typeorm.io/docs/relations/many-to-many-relations [Accessed 6 May 2026].
-
-‌- Ben Awad (2019) 'Cascade Delete TypeORM' [video], YouTube website, accessed 14 May 2026. https://www.youtube.com/watch?v=S1pxdAL2Dz8
+- Typeorm.io. (2026). Decorator reference | TypeORM. [online] Available at: https://typeorm.io/docs/help/decorator-reference/ [Accessed 1 May 2026].
+- ‌Typeorm.io. (2026). Many-to-many relations | TypeORM. [online] Available at: https://typeorm.io/docs/relations/many-to-many-relations [Accessed 6 May 2026].
+- Ben Awad (2019) 'Cascade Delete TypeORM' [video], YouTube website, accessed 14 May 2026. https://www.youtube.com/watch?v=S1pxdAL2Dz8
 
 ‌
