@@ -78,7 +78,7 @@ const Details = ({edit} : detailsType) => {
 
                 <div>
                   <label className="">Phone Number</label>
-                  <input value={phoneNumber} pattern="[0-9]{10,}"
+                  <input value={phoneNumber} pattern="[0-9]{10}"
                         onChange={(e)=> {setPhoneNumber(e.target.value)}} type="text" required>
                   </input>
                 </div>

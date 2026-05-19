@@ -18,7 +18,7 @@ export class User {
     @Column({type: "varchar", length: 50, unique: true })
     email: string;
 
-    @Column({type: "varchar", length: 50})
+    @Column({type: "text"}) //change to text so hashing doesnt crash lol
     password: string;
 
     // wait why do we need this nullable?
