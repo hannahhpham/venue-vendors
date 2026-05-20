@@ -1,4 +1,5 @@
-import {IsEmail, IsString, IsNotEmpty, IsNumber, Contains, Length} from 'class-validator'
+import {IsEmail, IsString, IsNotEmpty, IsOptional, 
+        IsNumber, Contains, Length, Min, Max, Matches} from 'class-validator'
 
 export class createVenueDTO {
 
@@ -8,7 +9,8 @@ export class createVenueDTO {
 
     @IsNotEmpty()
     @IsString()
-    @Contains('04')
+    @Length(10)
+    @Matches(/^[0-9]{10}$/) //exactly 10 numbers
     phone: string;
 
     @IsNotEmpty()
@@ -29,7 +31,8 @@ export class createVenueDTO {
     state: "VIC" | "TAS" | "ACT" | "SA" | "WA" | "NSW" | "QLD" | "NT" ;
 
     @IsNotEmpty()
-    @Length(4)
+    @Min(1000)
+    @Max(9999) //postcode needsto be 4 values. LENGTH DOESNT WORK ON NUMBERS
     postcode: number;
 
     @IsNotEmpty()
@@ -44,7 +47,12 @@ export class createVenueDTO {
     @IsString()
     description: string;
 
+    @IsNotEmpty()
+    @IsNumber()
+    ownerID: number;
+
     @IsString()
+    @IsOptional()
     suitability: string | null;
     
 }

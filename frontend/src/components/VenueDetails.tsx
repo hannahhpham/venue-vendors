@@ -2,6 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import { useVenues } from '../context/VenueContext'
 import { Venue } from '../types/venues'
+import {useNotif} from '../context/NotifContext'
 import Popup from './Popup'
 import Button from './Button'
 
@@ -15,6 +16,7 @@ interface VenueDetailsType {
 const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
 
   const { editVenue } = useVenues();
+  const {showNotif} = useNotif();
 
 
   //STATES ARE ONLY USED FOR VENDOR SIDE - NOT HIRER SIDE
@@ -33,24 +35,34 @@ const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
   const [desc, setDesc] = useState<string>(venue.description.trim() || "");
 
 
-  const handleSubmit = (e: React.ChangeEvent) => {
+  const handleSubmit = async (e: React.ChangeEvent) => {
     e.preventDefault();
 
+    //frontend validation: check fields aren't empty or are just spaces 
+    if (name.trim() && phone.trim() && email.trim() && address.trim() && suburb.trim()
+        && state.trim() && postcode!=0 && cap!=0 && rate!=0 && desc.trim()) {
+    
       const updatedVenue: Partial<Venue> = {
-        name: name,
-        phone: phone,
-        email: email,
-        address: address,
-        suburb: suburb,
-        state: "VIC",
-        postcode: postcode,
-        capacity: cap,
-        rate: rate,
-        description: desc.trim(),
+          name: name,
+          phone: phone,
+          email: email,
+          address: address,
+          suburb: suburb,
+          state: "VIC",
+          postcode: postcode,
+          capacity: cap,
+          rate: rate,
+          description: desc.trim(),
       }
 
       // store the edited values
-      editVenue(Number(venue.id), updatedVenue);
+      try {
+        await editVenue(Number(venue.id), updatedVenue);
+      }
+      catch {
+        showNotif("Venue failed to update. Please check your inputs are valid.", "fail");
+      }
+      
 
       // reset all states to defaults
       setName(venue.name || "");
@@ -63,6 +75,13 @@ const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
       setPostcode(venue.postcode || 0);
       setState("VIC");
       setSuburb(venue.suburb || "");
+    
+    }
+    else {
+      showNotif("Please enter non-space characeters into the fields. ", "fail");
+    }
+
+      
 
   }
 

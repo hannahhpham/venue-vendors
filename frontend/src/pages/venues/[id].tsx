@@ -522,7 +522,7 @@ export default function VenuePage() {
                     </div>
                     <div className="grid grid-cols-[2fr_1.5fr_1.5fr]">
                       <label>Date
-                        <input type="date" value={blockDate} onChange={(e) => setBlockDate(e.target.value)} />
+                        <input type="date" min={utils.getCurrDate()} value={blockDate} onChange={(e) => setBlockDate(e.target.value)} />
                       </label>
                       <label>Start
                         <input type="time" value={blockStart} onChange={(e) => setBlockStart(e.target.value)} />
@@ -532,10 +532,28 @@ export default function VenuePage() {
                       </label>
                     </div>
                     <Button className="px-5 py-2 my-2 rounded-xl" onClick={() => {
-                      blockVenue(Number(id), blockDate, blockStart, blockEnd);
-                      setBlockDate("");
-                      setBlockEnd("");
-                      setBlockStart("");
+                      
+                      //blocking date validation
+                      if (blockDate != "" && blockStart != "" && blockEnd != "") { //ensure fields are non-empty
+                        if (blockStart < blockEnd ) {
+                          try {
+                            blockVenue(Number(id), blockDate, blockStart, blockEnd);
+                            setBlockDate("");
+                            setBlockEnd("");
+                            setBlockStart("");
+                          } catch { //catch for if backend validation fails
+                            showNotif("Failed to block venue. Please check your inputs.", 'fail');
+                          }
+                        }
+                        else {
+                          showNotif("Please ensure start time is before end time.", "fail");
+                        }
+                      }
+                      else {
+                        showNotif("Please enter block date and time", 'fail');
+                      }
+                      
+                      
                     }}
                      text="Block Venue" />
 

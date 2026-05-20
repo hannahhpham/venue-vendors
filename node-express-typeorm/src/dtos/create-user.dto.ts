@@ -1,4 +1,4 @@
-import {IsEmail, IsString, IsNotEmpty, Contains} from 'class-validator'
+import {IsEmail, IsString, IsNotEmpty, Contains, Matches} from 'class-validator'
 // THIS IS AN EXAMPLE based on lectorial 9
 
 //call these in the routes. 
@@ -29,7 +29,8 @@ export class createUserDTO {
 
     @IsNotEmpty()
     @IsString()
-    @Contains('04')
+    @Contains('0') //needs the 0 at the start
+    @Matches(/^[0-9]{10}$/)
     phoneNumber: string;
 
 }

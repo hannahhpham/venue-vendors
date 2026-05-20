@@ -71,7 +71,7 @@ export function UnavailProvider({ children }: { children: React.ReactNode }) {
 
     // block a venue on a particular date, between given times
     const blockVenue = async (venueID: number, date: string, start: string, end: string) => {
-        try {
+        //try {
             const newBlock: Partial<Unavailable> = {
                 venueID: venueID,
                 date: date,
@@ -81,9 +81,9 @@ export function UnavailProvider({ children }: { children: React.ReactNode }) {
             const result = await blockedAPI.block(newBlock);
             showNotif(`Venue availability successfully blocked on ${new Date(date).toDateString()}.`, 'success');
             fetchAllBlocked();
-        } catch (error) {
-            console.error("Error creating new blocked period (Context): ", error);
-        }
+        // } catch (error) {
+        //     console.error("Error creating new blocked period (Context): ", error);
+        // }
         //setAllBlocked([...allBlocked, {id : Date.now(), startTime: start, endTime : end, date : date, venueID : venueID }]);
     }
 

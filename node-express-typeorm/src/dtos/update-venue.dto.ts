@@ -1,4 +1,6 @@
-import {IsEmail, IsString, IsNotEmpty, IsNumber, Contains, Length} from 'class-validator'
+import {IsEmail, IsString, IsNotEmpty, IsNumber, Contains, Length,
+        Min, Max, Matches
+} from 'class-validator'
 
 export class updateVenueDTO {
 
@@ -8,7 +10,8 @@ export class updateVenueDTO {
 
     @IsNotEmpty()
     @IsString()
-    @Contains('04')
+    // cant get this working to include spaces
+    @Matches(/^[0-9]{10}$/)
     phone: string;
 
     @IsNotEmpty()
@@ -28,9 +31,10 @@ export class updateVenueDTO {
     // @IsString()
     // state: "VIC" | "TAS" | "ACT" | "SA" | "WA" | "NSW" | "QLD" | "NT" ;
 
-    // @IsNotEmpty()
-    // @Length(4)
-    // postcode: number;
+    @IsNotEmpty()
+    @Min(1000)
+    @Max(9999)
+    postcode: number;
 
     @IsNotEmpty()
     @IsNumber()
@@ -40,9 +44,9 @@ export class updateVenueDTO {
     @IsNumber()
     rate: number;
 
-    // @IsNotEmpty()
-    // @IsString()
-    // description: string;
+    @IsNotEmpty()
+    @IsString()
+    description: string;
 
     //lets not do this cuz its complicated lol. woudl have to update venueDetails component
     // @IsString()

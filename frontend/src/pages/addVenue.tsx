@@ -14,62 +14,79 @@ export default function SubmitApplication() {
     const { addVenue } = useVenues();
     const {showNotif} = useNotif();
 
+    // for the form
+    const [name, setName] = useState<string>("");
+    const [phone, setPhone] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [address, setAddress] = useState<string>("");
+    const [suburb, setSuburb] = useState<string>("");
+    const [state, setState] = useState<string>("VIC");                // bc it is the first value - otherwise, it will be blank for those who don't actually select a value
+    const [postcode, setPostcode] = useState<number>(0);
+    const [cap, setCap] = useState<number>(0);
+    const [rate, setRate] = useState<number>(0);
+    const [desc, setDesc] = useState<string>("");
+
     if (currUser && currUser.type === "vendor") {
         
         if (!currUser) {
             showNotif("Please login to access this page.", "fail");
-            
+            router.push('/');
         }
-        // for the form
-        const [name, setName] = useState<string>("");
-        const [phone, setPhone] = useState<string>("");
-        const [email, setEmail] = useState<string>("");
-        const [address, setAddress] = useState<string>("");
-        const [suburb, setSuburb] = useState<string>("");
-        const [state, setState] = useState<string>("VIC");                // bc it is the first value - otherwise, it will be blank for those who don't actually select a value
-        const [postcode, setPostcode] = useState<number>(0);
-        const [cap, setCap] = useState<number>(0);
-        const [rate, setRate] = useState<number>(0);
-        const [desc, setDesc] = useState<string>("");
 
-        const handleAddVenue = (e: React.FormEvent) => {
+        
+
+        const handleAddVenue = async (e: React.FormEvent) => {
             e.preventDefault();
 
-            const newVenue: Partial<Venue> = {
-                //id: Date.now(),
-                name: name,
-                phone: phone,
-                email: email,
-                address: address,
-                suburb: suburb,
-                state: "VIC",               // FIND A WAY TO FIX THIS
-                postcode: postcode,
-                capacity: cap,
-                rate: rate,
-                //stars: 0,
-                description: desc.trim(),
-                ownerID: currUser.id
+            //frontend validation. checks fields aren't blank
+            if (name.trim() && phone.trim() && email.trim() && address.trim() && suburb.trim()
+                    && state.trim() && postcode!=0 && cap!=0 && rate!=0 && desc.trim()) {
+                
+                        const newVenue: Partial<Venue> = {
+                    //id: Date.now(),
+                    name: name.trim(),
+                    phone: phone.trim(),
+                    email: email.trim(),
+                    address: address.trim(),
+                    suburb: suburb.trim(),
+                    state: "VIC",               // FIND A WAY TO FIX THIS
+                    postcode: postcode,
+                    capacity: cap,
+                    rate: rate,
+                    //stars: 0,
+                    description: desc.trim(),
+                    ownerID: currUser.id
+                }
+
+                try {
+                    // add the venue to the database
+                    await addVenue(newVenue);
+                    
+                    // update the user's venues and all venues
+                    fetchVendorVenues();
+                    
+                    router.push("/dashboard");
+
+                    // reset all states to defaults
+                    setName("");
+                    setAddress("");
+                    setCap(0);
+                    setRate(0);
+                    setDesc("");
+                    setEmail("");
+                    setPhone("");
+                    setPostcode(0);
+                    setState("VIC");
+                    setSuburb("");
+
+                } catch {
+                    showNotif("Failed to add venue. Please check your inputs are valid", "fail");
+                }
+
             }
-
-            // add the venue to the database
-            addVenue(newVenue);
-            
-            // update the user's venues and all venues
-            fetchVendorVenues();
-
-            // reset all states to defaults
-            setName("");
-            setAddress("");
-            setCap(0);
-            setRate(0);
-            setDesc("");
-            setEmail("");
-            setPhone("");
-            setPostcode(0);
-            setState("VIC");
-            setSuburb("");
-
-            router.push("/dashboard");
+            else {
+                showNotif("Please don't leave fields blank/set to 0.", "fail");
+            }        
         }
         
         return (

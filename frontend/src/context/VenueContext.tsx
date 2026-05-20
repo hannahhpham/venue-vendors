@@ -8,9 +8,9 @@ import { venueAPI } from "../services/api";
 
 interface VenueContextType {
     allVenues: Venue[],
-    addVenue: (newVenue: Partial<Venue>) => void,
-    removeVenue: (id: number) => void,
-    editVenue: (id: number, updatedVenue: Partial<Venue>) => void,
+    addVenue: (newVenue: Partial<Venue>) => Promise<void>,
+    removeVenue: (id: number) => Promise<void>,
+    editVenue: (id: number, updatedVenue: Partial<Venue>) => Promise<void>,
 }
 
 
@@ -45,22 +45,17 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
     //     if (allVenues.length > 0) {
     //         localStorage.setItem("venues", JSON.stringify(allVenues));
     //     }
-
+ 
     // }, [allVenues])
 
 
     // add a new venue TO LOCALSTORAGE ONLY
     const addVenue = async (newVenue: Partial<Venue>) => {
         if (newVenue !== null) {
-            // setAllVenues([...allVenues, newVenue]);
-            try {
-                const result = await venueAPI.createVenue(newVenue);
-                // make sure that the venues array is updated
-                fetchVenues();
-                showNotif("New venue successfully added.", 'success');
-            } catch (error) {
-                console.error("Error adding new venue (Context): ", error);
-            }
+            const result = await venueAPI.createVenue(newVenue);
+            // make sure that the venues array is updated
+            fetchVenues();
+            showNotif("New venue successfully added.", 'success');
         }
     }
 
@@ -79,14 +74,15 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
 
     // edit a venue's details - used in VenueDetails component
     const editVenue = async (id: number, updatedVenue: Partial<Venue>) => {
-        try {
+        // try {
             const result = await venueAPI.updateVenue(id, updatedVenue);
             // make sure that the venues array is updated
             fetchVenues();
             showNotif('Venue details edited successfully.', 'success');
-        } catch (error) {
-            console.error("Error updating venue (Context): ", error);
-        }
+        // } catch (error) {
+        //     console.error("Error updating venue (Context): ", error);
+        //     throw error;
+        // }
         // setAllVenues(allVenues.map((venue: Venue) =>
         //     venue.id === id ? updatedVenue : venue
         // ))
