@@ -38,7 +38,7 @@ const Form = ({title, altLoc, signup, altMsg, onSubmit}: formProps) => {
       onSubmit(email, password, type, firstName, lastName, number, confirmPassword); //this will call handleSignup
     }
     else {
-      onSubmit( email, password, type); //this will call handleLogin
+      onSubmit( email, password); //this will call handleLogin
     }
     
   };

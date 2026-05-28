@@ -2,18 +2,24 @@ import Header from "../components/Header";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import { useRouter } from 'next/router';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useVenues } from "../context/VenueContext";
 import { Venue } from "../types/venues";
 import Main from '../components/Main'
-import Popup from '../components/Popup'
 import Sidebar from '../components/Sidebar'
-import { venueAPI } from "../services/api";
+
 
 export default function Search() {
   const router = useRouter();
 
   const { allVenues } = useVenues();
+
+  // to support ease of use, start typing your search straight away with useRef ;)
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    searchRef.current?.focus();
+  })
 
   const [search, setSearch] = useState<string>("");
 
@@ -180,7 +186,7 @@ export default function Search() {
                 <br/>
 
                 {/* sorting */}
-                <form className="border border-[#e0e0e0] rounded-md p-2 bg-white flex flex-col items-center" onSubmit={(e) => e.preventDefault()}>
+                <form className="border border-[#e0e0e0] rounded-md p-2 bg-white flex flex-col items-center justify-center" onSubmit={(e) => e.preventDefault()}>
                     <h3 className="text-center">Sort</h3>
 
                     <div className="flex">
@@ -254,8 +260,9 @@ export default function Search() {
             
             </Sidebar>
 
+            <div className="ml-2">
             <div className='w-[100%]'>
-                 <input type="string" placeholder="Search" className="p-5 mx-auto my-3 bg-white w-19/20 rounded-3xl" value={search} onChange={(e) => setSearch(e.target.value)}></input>
+                 <input type="string" ref={searchRef} placeholder="Search" className="p-5 mx-auto my-3 bg-white w-19/20 rounded-3xl" value={search} onChange={(e) => setSearch(e.target.value)}></input>
            
            
             {/* search results */}
@@ -302,6 +309,7 @@ export default function Search() {
                     )
                     
                 }
+            </div>
             </div>
         </div>
         </div>

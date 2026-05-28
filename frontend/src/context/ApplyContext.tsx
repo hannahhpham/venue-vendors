@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, createContext } from 'react';
 import { Application } from "../types/apply";
-import { applicationAPI } from '@/services/api';
+import { applicationAPI } from '../services/api';
 
 
 // NOTE: Most of this is based off Week 4 Example 3 (Lectures)

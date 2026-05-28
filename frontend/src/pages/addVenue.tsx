@@ -14,13 +14,15 @@ export default function SubmitApplication() {
     const { addVenue } = useVenues();
     const {showNotif} = useNotif();
 
+    type states = 'VIC' | 'NSW' | 'SA' | 'TAS' | 'WA' | 'ACT' | 'NT' | 'QLD';
+
     // for the form
     const [name, setName] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [address, setAddress] = useState<string>("");
     const [suburb, setSuburb] = useState<string>("");
-    const [state, setState] = useState<string>("VIC");                // bc it is the first value - otherwise, it will be blank for those who don't actually select a value
+    const [state, setState] = useState<states>("VIC" as states);                // bc it is the first value - otherwise, it will be blank for those who don't actually select a value
     const [postcode, setPostcode] = useState<number>(0);
     const [cap, setCap] = useState<number>(0);
     const [rate, setRate] = useState<number>(0);
@@ -48,7 +50,7 @@ export default function SubmitApplication() {
                     email: email.trim(),
                     address: address.trim(),
                     suburb: suburb.trim(),
-                    state: "VIC",               // FIND A WAY TO FIX THIS
+                    state: state as states,               // FIND A WAY TO FIX THIS
                     postcode: postcode,
                     capacity: cap,
                     rate: rate,
@@ -76,7 +78,7 @@ export default function SubmitApplication() {
                     setEmail("");
                     setPhone("");
                     setPostcode(0);
-                    setState("VIC");
+                    setState("VIC" as states);
                     setSuburb("");
                     setSuitability("");
 
@@ -132,7 +134,7 @@ export default function SubmitApplication() {
                                 <label className="mb-2">
                                     State
                                     <select className="block p-2 outline outline-black bg-neutral-50 rounded w-100"
-                                     required value={state} onChange={(e) => setState(e.target.value)}>
+                                     required value={state} onChange={(e) => setState(e.target.value as states)}>
                                         <option value="VIC">Victoria</option>
                                         <option value="NSW">New South Wales</option>
                                         <option value="TAS">Tasmania</option>

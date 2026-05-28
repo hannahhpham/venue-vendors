@@ -78,8 +78,13 @@ export function UnavailProvider({ children }: { children: React.ReactNode }) {
                 startTime: start,
                 endTime: end
             }
+
             const result = await blockedAPI.block(newBlock);
-            showNotif(`Venue availability successfully blocked on ${new Date(date).toDateString()}.`, 'success');
+
+            if (result.affected) {
+                showNotif(`Venue availability successfully blocked on ${new Date(date).toDateString()}.`, 'success');
+            }
+            
             fetchAllBlocked();
         // } catch (error) {
         //     console.error("Error creating new blocked period (Context): ", error);
@@ -92,7 +97,9 @@ export function UnavailProvider({ children }: { children: React.ReactNode }) {
         try {
             const result = await blockedAPI.unblock(venueID);
             fetchAllBlocked();
-            showNotif("Venue availability successfully unblocked.", 'success');
+            if (result.affected) {
+                showNotif("Venue availability successfully unblocked.", 'success');
+            }
         } catch (error) {
             console.error("Error deleting blocked period (Context): ", error);
         }

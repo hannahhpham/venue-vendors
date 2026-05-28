@@ -4,6 +4,7 @@ import Main from '../components/Main';
 import {useState} from 'react'
 import {userAPI} from '../services/api'
 import {useNotif} from '../context/NotifContext'
+import { User } from "../types/users";
 
 export default function Signup() {
   const {showNotif} = useNotif();
@@ -38,12 +39,15 @@ export default function Signup() {
           //check there isn't a user with the same email
             const allUsers = await userAPI.getAllUsers();
 
-            let success: boolean = true;
-            for (let i = 0 ; i < allUsers.length ; i++) {
-              if (allUsers[i].email == email) {
-                success = false;
-              }
-            }
+            // source (23/05): https://medium.com/poka-techblog/simplify-your-javascript-use-some-and-find-f9fb9826ddfd
+            const success : boolean = allUsers.some((user : User) => user.email === email);
+
+            // let success: boolean = true;
+            // for (let i = 0 ; i < allUsers.length ; i++) {
+            //   if (allUsers[i].email == email) {
+            //     success = false;
+            //   }
+            // }
 
             if (success) {
               try {

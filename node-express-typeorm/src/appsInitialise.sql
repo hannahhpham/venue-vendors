@@ -22,8 +22,8 @@ VALUES
         34,
         'A children''s birthday party',
         '',
-        1,
-        16
+        47,
+        40
     ),
 
     (
@@ -37,8 +37,8 @@ VALUES
         'Long duration. Plenty of people. Good way to showcase the restaurant as well and spread the word.',
         -- rank: 1,
         -- vendorRating: 5,
-        1,
-        16
+        47,
+        40
     ),
 
     (
@@ -49,8 +49,8 @@ VALUES
         50,
         'A mid-semester General Meeting for all member of the club. This will be followed by a catered party so that members can unwind, network and enjoy!',
         '',
-        6,
-        16
+        52,
+        40
     ),
 
     (
@@ -61,8 +61,8 @@ VALUES
         50,
         'An event filled with keynote speakers from various tech organisations such as Telstra, the ASD and Commbank. Will include limited external catering, booths from different organisations and a networking area.',
         '',
-        7,
-        16
+        53,
+        40
     ),
 
     (
@@ -73,8 +73,8 @@ VALUES
         50,
         'A wedding for my cousins, will get catering from the in house restaurant. Want to make use of the beautiful rooftop views.',
         'Long duration. Plenty of people. Good way to showcase the restaurant as well and possibly get promotional pics.',
-        6,
-        16
+        52,
+        40
     ),
 
     (
@@ -85,8 +85,8 @@ VALUES
         50,
         'An anniversary celebration for my in-laws. Includes a grand ball and lunch at the restaurant.',
         '',
-        6,
-        16
+        52,
+        40
     ),
 
     (
@@ -97,8 +97,8 @@ VALUES
         120,
         'A formal evening event to raise funds for a local charity, including auctions, speeches, and dinner.',
         'High guest count but well-organised. Great exposure for venue and potential repeat clients.',
-        6,
-        23
+        52,
+        46
     ),
 
     (
@@ -109,8 +109,8 @@ VALUES
         40,
         'An intimate engagement celebration with family and friends, including a sit-down dinner and speeches.',
         'Smaller group, easier logistics.',
-        6,
-        24
+        52,
+        47
     ),
     (
         'Birthday Dinner Celebration',
@@ -120,6 +120,6 @@ VALUES
         25,
         'A private birthday dinner with close friends and family, featuring a customised menu and decorations.',
         '',
-        7,
-        22
+        53,
+        45
     )

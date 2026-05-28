@@ -5,6 +5,7 @@ import { VenueController } from "../controller/VenueController";
 import {createVenueDTO} from '../dtos/create-venue.dto'
 import { validateDto } from "../middlewares/validate";
 import {updateVenueDTO} from '../dtos/update-venue.dto'
+
 // ADAPTED FROM Week 9 Lecture Example 1 - profile.routes.ts
 
 const router = Router();

@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Venue } from "../entities/Venue";
 import { User } from "../entities/User";
-import { Application } from "../entities/Application";
-import { Unavailable } from "../entities/Unavailable";
 
 // using Lecture 9 Example 1
 
@@ -12,8 +10,6 @@ export class VenueController {
     private venueRepository = AppDataSource.getRepository(Venue);
 
     private userRepository = AppDataSource.getRepository(User);
-
-    private applicationRepository = AppDataSource.getRepository(Application);
 
     /**
      * Retrieves all venues from the database
@@ -84,24 +80,6 @@ export class VenueController {
     async createVenue(req: Request, res: Response) {
         /** Create a new Venue object from the request body */
         const venue = this.venueRepository.create(req.body);
-        // const { name, phone, email, address,
-        //      suburb, state, postcode, capacity,
-        //       rate, description, ownerID } = req.body;
-        // const venue = Object.assign(new Venue(), {
-        //     name: name, 
-        //     phone: phone, 
-        //     email: email, 
-        //     address: address, 
-        //     suburb: suburb, 
-        //     state: state, 
-        //     postcode: postcode, 
-        //     capacity: capacity, 
-        //     rate: rate, 
-        //     description: description, 
-        //     ownerID: ownerID
-        // });
-
-        // const data = this.venueRepository.create(venue);
 
         /** Save the new venue to the database */
         try {
@@ -124,37 +102,15 @@ export class VenueController {
     async updateVenue(req: Request, res: Response) {
         /** Retrieve the venue from the database */
         const id: number = parseInt(req.params.venueID as string);
-        // const { name, phone, email, address,
-        //      suburb, state, postcode, capacity,
-        //       rate, description } = req.body;
-
-        // console.log("id: ", id);
         
         let venue = await this.venueRepository.findOne({
             where : {id : id},
         });
 
-        // console.log("venue found is ", venue);
-
         /** Check if the venue exists, if not, return a 404 error */
         if (!venue) {
             return res.status(404).json({ message: "Venue not found" });
         }
-
-        // const body = Object.assign(new Venue(), {
-        //     id: id,
-        //     name: name, 
-        //     phone: phone, 
-        //     email: email, 
-        //     address: address, 
-        //     suburb: suburb, 
-        //     state: state, 
-        //     postcode: postcode, 
-        //     capacity: capacity, 
-        //     rate: rate, 
-        //     description: description,
-        //     ownerID: venue.ownerID
-        // });
 
         /** Merge the existing venue with the new data from the request body */
         this.venueRepository.merge(venue, req.body);
