@@ -1,5 +1,5 @@
 import {IsEmail, IsString, IsNotEmpty, IsNumber, Contains, Length,
-        Min, Max, Matches
+        Min, Max, Matches, IsOptional
 } from 'class-validator'
 
 export class updateVenueDTO {
@@ -49,7 +49,9 @@ export class updateVenueDTO {
     description: string;
 
     //lets not do this cuz its complicated lol. woudl have to update venueDetails component
-    // @IsString()
-    // suitability: string | null;
+    //nvm we're doing it
+    @IsNotEmpty()
+    @IsString()
+    suitability: string;
     
 }

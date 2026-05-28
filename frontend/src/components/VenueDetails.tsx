@@ -5,6 +5,7 @@ import { Venue } from '../types/venues'
 import {useNotif} from '../context/NotifContext'
 import Popup from './Popup'
 import Button from './Button'
+import { venueAPI } from "../services/api";
 
 // define types needed for the whole component
 interface VenueDetailsType {
@@ -13,9 +14,9 @@ interface VenueDetailsType {
 }
 
 
-const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
+const VenueDetails = ({ edit, venue}: VenueDetailsType) => {
 
-  const { editVenue } = useVenues();
+  const { editVenue, fetchVenues } = useVenues();
   const {showNotif} = useNotif();
 
 
@@ -33,7 +34,7 @@ const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
   const [cap, setCap] = useState<number>(venue.capacity || 0);
   const [rate, setRate] = useState<number>(venue.rate || 0);
   const [desc, setDesc] = useState<string>(venue.description.trim() || "");
-
+  const [suitability, setSuitability] = useState<string>(venue.suitability || "");
 
   const handleSubmit = async (e: React.ChangeEvent) => {
     e.preventDefault();
@@ -53,11 +54,13 @@ const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
           capacity: cap,
           rate: rate,
           description: desc.trim(),
+          suitability: suitability,
       }
 
       // store the edited values
       try {
         await editVenue(Number(venue.id), updatedVenue);
+        //await fetchVenues();
       }
       catch {
         showNotif("Venue failed to update. Please check your inputs are valid.", "fail");
@@ -75,6 +78,7 @@ const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
       setPostcode(venue.postcode || 0);
       setState("VIC");
       setSuburb(venue.suburb || "");
+      setSuitability(venue.suitability || "");
     
     }
     else {
@@ -153,6 +157,39 @@ const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
                     <input className="block p-2 outline outline-black bg-neutral-50 rounded w-10/10" type="textarea" value={desc} onChange={(e) => setDesc(e.target.value)} required></input>
                   </label>
 
+                  <label className="block">Suitability</label>
+
+                  <div className="p-2 outline outline-black bg-neutral-50 rounded w-100">
+                      <div className="flex">
+                          <input className="mr-1 mt-1" value="party" type="radio" name="suitability"
+                              onChange={(e) => {setSuitability(e.target.value)}}
+                              checked={suitability === "party"} /> 
+                          <label className="">Parties</label>
+                      </div>
+
+                      <div className="flex">
+                          <input className="mr-1 mt-1" value="formal" type="radio" name="suitability"
+                              checked={suitability === "formal"}
+                              onChange={(e) => {setSuitability(e.target.value)}}/> 
+                          <label className="">Formal events</label>
+                      </div>
+
+                      <div className="flex">
+                          <input className="mr-1 mt-1" value="casual" type="radio" name="suitability"
+                              checked={suitability === "casual"}
+                              onChange={(e) => {setSuitability(e.target.value)}}/> 
+                          <label className="">Casual events</label>
+                      </div>
+
+                      <div className="flex">
+                          <input className="mr-1 mt-1" value="corporate" type="radio" name="suitability"
+                              checked={suitability === "corporate"}
+                              onChange={(e) => {setSuitability(e.target.value)}}/> 
+                          <label className="">Corporate events</label>
+                      </div>
+                  </div>
+                          
+
                   <Button text="Submit" className="m-5" />
                 </form>
 
@@ -162,34 +199,41 @@ const VenueDetails = ({ edit, venue }: VenueDetailsType) => {
           : (<div />)}
       </div>
 
-      <div className="details flex bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
+      <div className="details bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
 
-        <div className="flex-1 flex flex-col mr-2">
-          <label>Venue Name</label>
-          <input data-testid="name" value={venue.name} disabled></input>
+        <div className= "flex">
+          <div className="flex-1 flex flex-col mr-2">
+            <label>Venue Name</label>
+            <input data-testid="name" value={venue.name} disabled></input>
 
-          <label>Company Phone Number</label>
-          <input data-testid="number" value={venue.phone} disabled></input>
+            <label>Company Phone Number</label>
+            <input data-testid="number" value={venue.phone} disabled></input>
 
-          <label>Company Email</label>
-          <input data-testid="email" value={venue.email} disabled></input>
+            <label>Company Email</label>
+            <input data-testid="email" value={venue.email} disabled></input>
+          </div>
+
+          <div className="flex-1 flex flex-col">
+            <label>Venue Address</label>
+            <input data-testid="address" value={venue.address + ", " + venue.suburb + ", " + venue.state + ", " + venue.postcode} disabled></input>
+
+            <label>Venue Capacity</label>
+            <input data-testid="capacity" value={`${venue.capacity} people`} disabled></input>
+
+            <label>Venue Rate (per hour)</label>
+            <input data-testid="rate" value={`$${venue.rate}`} disabled></input>
+          </div>
         </div>
-
-        <div className="flex-1 flex flex-col">
-          <label>Venue Address</label>
-          <input data-testid="address" value={venue.address + ", " + venue.suburb + ", " + venue.state + ", " + venue.postcode} disabled></input>
-
-          <label>Venue Capacity</label>
-          <input data-testid="capacity" value={`${venue.capacity} people`} disabled></input>
-
-          <label>Venue Rate (per hour)</label>
-          <input data-testid="rate" value={`$${venue.rate}`} disabled></input>
+        
+        <div className="w-full">
+          <label className="details">Suitability</label>
+          <input className="block w-130" value={`${venue.suitability}`} disabled></input>  
         </div>
-
-
-
 
       </div>
+
+      
+
     </div>
   )
 }

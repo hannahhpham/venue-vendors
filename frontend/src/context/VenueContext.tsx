@@ -11,6 +11,7 @@ interface VenueContextType {
     addVenue: (newVenue: Partial<Venue>) => Promise<void>,
     removeVenue: (id: number) => Promise<void>,
     editVenue: (id: number, updatedVenue: Partial<Venue>) => Promise<void>,
+    fetchVenues: () => void,
 }
 
 
@@ -91,7 +92,7 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
 
     //return provider
     return (
-        <VenContext.Provider value={{ allVenues, addVenue, removeVenue, editVenue }}>
+        <VenContext.Provider value={{ allVenues, addVenue, removeVenue, editVenue, fetchVenues }}>
             {children}
         </VenContext.Provider>
     );

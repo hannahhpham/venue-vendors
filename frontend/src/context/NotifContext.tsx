@@ -3,7 +3,6 @@ import Notification from '../components/Notification'
 
 interface NotifContextType {
     showNotif: (message: string, type: 'success' | 'fail' | 'other') => void,
-    // hideNotif: () => void,
 }
 
 //create context!!! to be used in consumer

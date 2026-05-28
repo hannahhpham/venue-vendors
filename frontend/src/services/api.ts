@@ -63,7 +63,7 @@ export const venueAPI = {
 
   getByVendor: async (vendorID: number) => {
     const response = await api.get(`/venues/users/${vendorID}`);
-    return response.data;
+    return response.data; 
   },
 
   createVenue: async (venue: Partial<Venue>) => {

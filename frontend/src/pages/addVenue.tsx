@@ -25,6 +25,7 @@ export default function SubmitApplication() {
     const [cap, setCap] = useState<number>(0);
     const [rate, setRate] = useState<number>(0);
     const [desc, setDesc] = useState<string>("");
+    const [suitability, setSuitability] = useState<string>("");
 
     if (currUser && currUser.type === "vendor") {
         
@@ -32,8 +33,6 @@ export default function SubmitApplication() {
             showNotif("Please login to access this page.", "fail");
             router.push('/');
         }
-
-        
 
         const handleAddVenue = async (e: React.FormEvent) => {
             e.preventDefault();
@@ -55,7 +54,8 @@ export default function SubmitApplication() {
                     rate: rate,
                     //stars: 0,
                     description: desc.trim(),
-                    ownerID: currUser.id
+                    ownerID: currUser.id,
+                    suitability: suitability,
                 }
 
                 try {
@@ -78,6 +78,7 @@ export default function SubmitApplication() {
                     setPostcode(0);
                     setState("VIC");
                     setSuburb("");
+                    setSuitability("");
 
                 } catch {
                     showNotif("Failed to add venue. Please check your inputs are valid", "fail");
@@ -162,6 +163,37 @@ export default function SubmitApplication() {
                                     <input className="block p-2 outline outline-black bg-neutral-50 rounded w-100"
                                      type="textarea" value={desc} onChange={(e) => setDesc(e.target.value)} required />
                                 </label>
+
+                        
+                                <label>Suitability</label>
+
+                                <div className="p-2 outline outline-black bg-neutral-50 rounded w-100">
+                                    <div className="flex">
+                                        <input className="mr-1 mt-1" value="party" type="radio" name="suitability"
+                                            onChange={(e) => {setSuitability(e.target.value)}}/> 
+                                        <label className="">Parties</label>
+                                    </div>
+
+                                    <div className="flex">
+                                        <input className="mr-1 mt-1" value="formal" type="radio" name="suitability"
+                                            onChange={(e) => {setSuitability(e.target.value)}}/> 
+                                        <label className="">Formal events</label>
+                                    </div>
+
+                                    <div className="flex">
+                                        <input className="mr-1 mt-1" value="casual" type="radio" name="suitability"
+                                            onChange={(e) => {setSuitability(e.target.value)}}/> 
+                                        <label className="">Casual events</label>
+                                    </div>
+
+                                    <div className="flex">
+                                        <input className="mr-1 mt-1" value="corporate" type="radio" name="suitability"
+                                            onChange={(e) => {setSuitability(e.target.value)}}/> 
+                                        <label className="">Corporate events</label>
+                                    </div>
+                                </div>
+                            
+
                                 <Button className="px-10 p-3 mt-5 rounded-md font-medium"
                                  type="submit" text="Submit"></Button>
                             </form>
