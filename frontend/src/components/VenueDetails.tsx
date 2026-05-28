@@ -11,10 +11,11 @@ import { venueAPI } from "../services/api";
 interface VenueDetailsType {
   edit: boolean,
   venue: Venue,
+  onUpdate?: () => void,
 }
 
 
-const VenueDetails = ({ edit, venue}: VenueDetailsType) => {
+const VenueDetails = ({ edit, venue, onUpdate}: VenueDetailsType) => {
 
   const { editVenue, fetchVenues } = useVenues();
   const {showNotif} = useNotif();
@@ -60,7 +61,11 @@ const VenueDetails = ({ edit, venue}: VenueDetailsType) => {
       // store the edited values
       try {
         await editVenue(Number(venue.id), updatedVenue);
-        //await fetchVenues();
+        
+        if (onUpdate) {
+          onUpdate();
+          //console.log("suitability in venuedetails is ", suitability);
+        }
       }
       catch {
         showNotif("Venue failed to update. Please check your inputs are valid.", "fail");
@@ -68,17 +73,17 @@ const VenueDetails = ({ edit, venue}: VenueDetailsType) => {
       
 
       // reset all states to defaults
-      setName(venue.name || "");
-      setAddress(venue.address || "");
-      setCap(venue.capacity || 0);
-      setRate(venue.rate || 0);
-      setDesc(venue.description.trim() || "");
-      setEmail(venue.email || "");
-      setPhone(venue.phone || "");
-      setPostcode(venue.postcode || 0);
+      setName(updatedVenue.name || "");
+      setAddress(updatedVenue.address || "");
+      setCap(updatedVenue.capacity || 0);
+      setRate(updatedVenue.rate || 0);
+      setDesc(updatedVenue.description || "");
+      setEmail(updatedVenue.email || "");
+      setPhone(updatedVenue.phone || "");
+      setPostcode(updatedVenue.postcode || 0);
       setState("VIC");
-      setSuburb(venue.suburb || "");
-      setSuitability(venue.suitability || "");
+      setSuburb(updatedVenue.suburb || "");
+      setSuitability(updatedVenue.suitability || "");
     
     }
     else {

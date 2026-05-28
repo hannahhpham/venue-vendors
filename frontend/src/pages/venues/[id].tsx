@@ -247,7 +247,7 @@ export default function VenuePage() {
                     popupDet &&
                     <Popup onClose={() => setPopupDet(false)}>
                       <div className="h-100 w-9/10">
-                        <VenueDetails edit={true} venue={thisVenue}></VenueDetails>
+                        <VenueDetails edit={true} venue={thisVenue} onUpdate={fetchVenue}></VenueDetails>
                       </div>
                     </Popup>
 
