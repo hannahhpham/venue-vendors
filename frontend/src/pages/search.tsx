@@ -14,12 +14,12 @@ export default function Search() {
 
   const { allVenues } = useVenues();
 
-  // to support ease of use, start typing your search straight away with useRef ;)
-  const searchRef = useRef<HTMLInputElement>(null);
+//   // to support ease of use, start typing your search straight away with useRef ;)
+//   const searchRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    searchRef.current?.focus();
-  })
+//   useEffect(() => {
+//     searchRef.current?.focus();
+//   })
 
   const [search, setSearch] = useState<string>("");
 
@@ -186,7 +186,7 @@ export default function Search() {
                 <br/>
 
                 {/* sorting */}
-                <form className="border border-[#e0e0e0] rounded-md p-2 bg-white flex flex-col items-center justify-center" onSubmit={(e) => e.preventDefault()}>
+                <form className="border border-[#e0e0e0] rounded-md p-2 bg-white flex flex-col items-center" onSubmit={(e) => e.preventDefault()}>
                     <h3 className="text-center">Sort</h3>
 
                     <div className="flex">
@@ -250,7 +250,7 @@ export default function Search() {
                     <Button text="Search" onClick={() => {setSearchSuitability(true)
                                                                 searchVenues(sortValue, searchSort, suitabilityValue, true)}}/>
                     
-                    <Button text="Remove Search" onClick={() => {setSearchSuitability(false)
+                    <Button text="Remove Filter" onClick={() => {setSearchSuitability(false)
                                                                searchVenues("remove", false, "", false); 
                                                                setSuitabilityValue("")
                                                                }}/>
@@ -260,10 +260,10 @@ export default function Search() {
             
             </Sidebar>
 
-            <div className="ml-2">
+            
             <div className='w-[100%]'>
-                 <input type="string" ref={searchRef} placeholder="Search" className="p-5 mx-auto my-3 bg-white w-19/20 rounded-3xl" value={search} onChange={(e) => setSearch(e.target.value)}></input>
-           
+                 <input type="string"  placeholder="Search" className="p-5 mx-auto my-3 bg-white w-19/20 rounded-3xl" value={search} onChange={(e) => setSearch(e.target.value)}></input>
+           {/* ref={searchRef} */}
            
             {/* search results */}
             <div className="flex-1 grid grid-cols-3 auto-rows-fr"> 
@@ -311,7 +311,7 @@ export default function Search() {
                 }
             </div>
             </div>
-        </div>
+        
         </div>
       </div>
 

@@ -5,9 +5,12 @@ import {useState} from 'react'
 import {userAPI} from '../services/api'
 import {useNotif} from '../context/NotifContext'
 import { User } from "../types/users";
+import {useRouter } from 'next/router'
 
 export default function Signup() {
   const {showNotif} = useNotif();
+
+  const router = useRouter();
 
   const handleSignup = async (email: string, password: string, type?: string, 
                         firstName?: string, lastName?: string, phoneNumber?: string,
@@ -49,10 +52,11 @@ export default function Signup() {
             //   }
             // }
 
-            if (success) {
+            if (!success) {
               try {
                 await userAPI.createUser(email, password, type, firstName, lastName, phoneNumber);
                 showNotif("User successfully created.", "success");
+                router.push('/login');
               } catch (error) {
                 showNotif("Failed to create account. Please check your inputted values.", "fail");
               }
