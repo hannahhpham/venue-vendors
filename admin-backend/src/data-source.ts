@@ -23,7 +23,7 @@ export const AppDataSource = new DataSource({
     options: {
         encrypt: false,
     },
-    synchronize: false, //set to false IN PRODUCTION to prevent data loss
+    synchronize: true, //set to false IN PRODUCTION to prevent data loss
     logging: true,
     entities: ["src/entities/**/*.{js,ts}"], //add entities here
     migrations: [],
