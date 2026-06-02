@@ -18,7 +18,7 @@ export const AppDataSource = new DataSource({
     type: "mssql",
     host: "dipto-database.cn2ems8y2mfe.ap-southeast-2.rds.amazonaws.com",
     username: "s4164624",
-    password: "s_4164624",
+    password: "Password_1",
     database: "s4164624", //or username??
     options: {
         encrypt: false,

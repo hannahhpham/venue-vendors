@@ -57,8 +57,6 @@ export const typeDefs = gql`
         description: String!
         suitability: String
         ownerID: Int!
-        keywords: String
-    
     }
 
     type ShortlistedVenue {
@@ -97,6 +95,7 @@ export const typeDefs = gql`
 
     type Query {
         venues: [Venue!]!
+        venue(id: ID!): Venue
     }
 
 `;

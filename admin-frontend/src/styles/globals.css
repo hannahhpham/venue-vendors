@@ -1,1 +1,39 @@
 @import "tailwindcss";
+/* for basic tags EVERYWHERE regardless of component */
+@layer base {
+
+  h1 {
+    font-weight: bold;
+    font-size: 40px;
+  }
+
+  h2 {
+    @apply text-2xl font-medium;
+  }
+
+  h3 {
+    @apply text-xl font-medium;
+    
+  }
+
+  input {
+  @apply block border border-[#e0e0e0] inline p-2 rounded ;
+}
+}
+
+
+/* for anything in components */
+@layer components {
+  .carouselText p {
+    @apply truncate;
+    
+
+    /* this is how u can style with tailwind styling */
+    /* @apply [tailwind styling here] */
+  }
+
+  .details label {
+    @apply text-sm font-bold ;
+  }
+
+}
