@@ -47,7 +47,7 @@ export class Application {
     @Column({type: "int", nullable: true})
     vendorRating?: number;
 
-    @Column({type: "int", nullable: true})
+    @Column({type: "int"})
     rank?: number;
 
     @Column({type: "int"})

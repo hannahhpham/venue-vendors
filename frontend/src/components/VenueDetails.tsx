@@ -5,7 +5,6 @@ import { Venue } from '../types/venues'
 import {useNotif} from '../context/NotifContext'
 import Popup from './Popup'
 import Button from './Button'
-import { venueAPI } from "../services/api";
 
 // define types needed for the whole component
 interface VenueDetailsType {
@@ -20,6 +19,7 @@ const VenueDetails = ({ edit, venue, onUpdate}: VenueDetailsType) => {
   const { editVenue, fetchVenues } = useVenues();
   const {showNotif} = useNotif();
 
+  type states = 'VIC' | 'NSW' | 'SA' | 'TAS' | 'WA' | 'ACT' | 'NT' | 'QLD';
 
   //STATES ARE ONLY USED FOR VENDOR SIDE - NOT HIRER SIDE
   const [popup, setPopup] = useState<boolean>(false);
@@ -30,7 +30,7 @@ const VenueDetails = ({ edit, venue, onUpdate}: VenueDetailsType) => {
   const [email, setEmail] = useState<string>(venue.email || "");
   const [address, setAddress] = useState<string>(venue.address || "");
   const [suburb, setSuburb] = useState<string>(venue.suburb ||"");
-  const [state, setState] = useState<string>("VIC");                // bc it is the first value - otherwise, it will be blank for those who don't actually select a value
+  const [state, setState] = useState<string>(venue.state);                // bc it is the first value - otherwise, it will be blank for those who don't actually select a value
   const [postcode, setPostcode] = useState<number>(venue.postcode || 0);
   const [cap, setCap] = useState<number>(venue.capacity || 0);
   const [rate, setRate] = useState<number>(venue.rate || 0);
@@ -50,7 +50,7 @@ const VenueDetails = ({ edit, venue, onUpdate}: VenueDetailsType) => {
           email: email,
           address: address,
           suburb: suburb,
-          state: "VIC",
+          state: state as states,
           postcode: postcode,
           capacity: cap,
           rate: rate,
@@ -81,7 +81,7 @@ const VenueDetails = ({ edit, venue, onUpdate}: VenueDetailsType) => {
       setEmail(updatedVenue.email || "");
       setPhone(updatedVenue.phone || "");
       setPostcode(updatedVenue.postcode || 0);
-      setState("VIC");
+      setState(updatedVenue.state as states);
       setSuburb(updatedVenue.suburb || "");
       setSuitability(updatedVenue.suitability || "");
     
@@ -134,7 +134,7 @@ const VenueDetails = ({ edit, venue, onUpdate}: VenueDetailsType) => {
                   </label>
                   <label className="mb-2">
                     State
-                    <select className="block p-2 outline outline-black bg-neutral-50 rounded w-10/10" required value={state} onChange={(e) => setState(e.target.value)}>
+                    <select className="block p-2 outline outline-black bg-neutral-50 rounded w-10/10" required value={state} onChange={(e) => setState(e.target.value as states)}>
                       <option value="VIC">Victoria</option>
                       <option value="NSW">New South Wales</option>
                       <option value="TAS">Tasmania</option>

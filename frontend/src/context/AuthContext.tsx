@@ -244,7 +244,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 return total
             }
         }, 0) / (myApps.length);
-        rating = Number.isNaN(rating) ? 0 : rating;
+        rating = Number.isNaN(rating) ? 0 : Math.round(rating);
         return rating;
     }
 

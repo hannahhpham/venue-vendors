@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Application } from "../types/apply";
 import { User } from "../types/users";
 import { useAuth } from "../context/AuthContext";
@@ -10,14 +10,12 @@ import {
     PointElement,
     LineElement,
     BarElement,
-    ArcElement,
-    RadialLinearScale,
     Title,
     Tooltip,
     Legend,
     Filler
 } from "chart.js";
-import { Line, Bar, Pie, Radar } from "react-chartjs-2";
+import { Line, Bar, Pie } from "react-chartjs-2";
 
 interface analyticsProps {
     // pass in currApps from [id].tsx
@@ -45,8 +43,6 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
             PointElement,
             LineElement,
             BarElement,
-            ArcElement,
-            RadialLinearScale,
             Title,
             Tooltip,
             Legend,
@@ -57,6 +53,12 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
         const chartOptions = {
             indexAxis: 'y' as const,
             responsive: true,
+            scales: {
+                x: {
+                    min: 0,
+                    max: 100
+                }
+            },
             plugins: {
                 legend: {
                     position: "top" as const,
@@ -87,7 +89,7 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
                     }
                 }
                 // percentage rating
-                numOfChosenApps.set(hirer, Math.round((count / allChosenApplicants.length)));
+                numOfChosenApps.set(hirer, Math.round((count / allChosenApplicants.length)*100));
             }
             // sort in descending order ==> highest % at start
             const arrayMap: number[][] = Array.from(numOfChosenApps).sort(
@@ -103,13 +105,9 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
                 labels: labels,
                 datasets: [
                     {
-                        labels: [finalMap.map((group: number[]) => (allUsers.find((user: User) => user.id === group[0])?.firstName))],
-                        data: [finalMap.map((group: number[]) => group[1])],
-                        backgroundColor: [
-                            "rgba(255, 99, 132, 0.5)",
-                            "rgba(75, 192, 192, 0.5)",
-                            "rgba(255, 159, 64, 0.5)",
-                        ],
+                        label: "Most Chosen Applicant",
+                        data: finalMap.map((group: number[]) => group[1]),
+                        backgroundColor: "rgba(75, 192, 192, 0.5)",
                     },
                 ],
             };
@@ -222,12 +220,8 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
 
     }
 
-    //https://stackoverflow.com/questions/69687530/how-to-build-dynamically-class-names-with-tailwind-css
-    //dynamic styling with tailwind classes doesn't work cuz we need the full class by compile time but dynamic stuff is runtime,
-
-    //https://www.w3schools.com/react/react_css.asp
-    //solution is to use style prop which has the WHOLE styling done at compile time.
-
 };
 
-export default Analytics;
+// memo to make sure that the component only re renders upon a change in the props
+// essentially, the change in the props is like an event listener
+export default memo(Analytics);

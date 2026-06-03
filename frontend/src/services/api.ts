@@ -1,8 +1,8 @@
 import axios from "axios";
 import { Venue } from "../types/venues";
 import { User } from '../types/users'
-import { Application } from "@/types/apply";
-import { Unavailable } from "@/types/unavail";
+import { Application } from "../types/apply";
+import { Unavailable } from "../types/unavail";
 
 //REFERENCES:
 //FSD Lectorial 8 code archive

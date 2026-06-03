@@ -142,8 +142,8 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                 </div>
                                 <div className="row-span-2">
                                     <button title="Shortlist Application" className="p-2 hover:bg-blue-100 hover:shadow-lg rounded-full" 
-                                        onClick={() => ((app.rank === undefined || app.rank === 0) ? shortlist(app.id, 1) : shortlist(app.id, 0))}>
-                                        {app.rank ? (<img src="../shortlisted.png" />) : (<img src="../shortlist.png" />)}
+                                        onClick={() => (app.rank === -1 ? shortlist(app.id, 1) : shortlist(app.id, -1))}>
+                                        {app.rank !== -1 ? (<img src="../shortlisted.png" />) : (<img src="../shortlist.png" />)}
                                     </button><br/>
                                     <button title="Reject Application"
                                      className={"p-2 hover:bg-red-100 hover:shadow-lg rounded-full " + (app.isAccepted === false ? "bg-red-200" : "")} 
