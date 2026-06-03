@@ -5,7 +5,7 @@ import Button from '../components/Button'
 
 
 interface headerProps {
-  active: "none" | "login" | "dashboard";
+  active: "none" | "login" | "dashboard" | "addVenue";
 }
 
 
@@ -17,9 +17,16 @@ const Header = ({active}: headerProps) => {
     <div className="text-white">
         <div className="flex bg-blue-950 p-2 items-center">
           
-          <div className="">
+          <div className="flex items-center">
             <Link href="/" className='flex items-center'>
               <h1 className="font-bold p-3 text-xl">Venue Vendors Administration</h1>
+            </Link>
+
+            <Link href='/addVenue'>
+              <p className={"hover:underline rounded-3xl p-2 px-5 mr-2 " + 
+                      (active == "addVenue" && "text-black bg-white font-medium")}>
+                    Add Venue
+              </p>
             </Link>
           </div>
 

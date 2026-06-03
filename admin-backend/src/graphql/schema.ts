@@ -96,6 +96,7 @@ export const typeDefs = gql`
     type Query {
         venues: [Venue!]!
         venue(id: ID!): Venue
+        getUsers: [User!]!
     }
         
     type Mutation {
@@ -113,6 +114,23 @@ export const typeDefs = gql`
             description: String!
             suitability: String
         ): Venue!
+
+        createVenue(
+            name: String!
+            phone: String!
+            email: String!
+            address: String!
+            suburb: String!
+            state: VenueState!
+            postcode: Int!
+            capacity: Int!
+            rate: Int!
+            description: String!
+            ownerID: Int!
+            suitability: String
+        ): Venue!
+
+        deleteVenue(id: ID!): Boolean! 
     
     }
 

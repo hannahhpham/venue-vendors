@@ -44,10 +44,16 @@ export default function VenuePage() {
   // we probably need to use a different hook (?)
   // hannahL is it useMemo and useCallback's time to shine....
   useEffect( () => {
-    if (id) {
-      fetchVenue();
-      fetchCurrApps();
+    try {
+      if (id) {
+        fetchVenue();
+        fetchCurrApps();
+      }
     }
+    catch {
+      router.push('/dashboard');
+    }
+    
   }, [id]);
 
   const fetchVenue = async () => {
@@ -56,6 +62,7 @@ export default function VenuePage() {
       setThisVenue(data);
     } catch (error) {
       console.error("Error fetching venue ([id].tsx): ", error);
+      router.push('/dashboard');
     }
   };
 

@@ -44,27 +44,48 @@ const VenueDetails = ({ edit, venue, onUpdate}: VenueDetailsType) => {
     //frontend validation: check fields aren't empty or are just spaces 
     if (name.trim() && phone.trim() && email.trim() && address.trim() && suburb.trim()
         && state.trim() && postcode!=0 && cap!=0 && rate!=0 && desc.trim()) {
-
-      //check more validation
-
-      // store the edited values
-      try {
-        await editVenue(venue.id, name, phone, email, address, suburb, state, postcode, cap, rate, desc, suitability);
         
-        if (onUpdate) {
-          onUpdate();
+        let validation_passed: boolean = true; 
+        
+        //common regex patterns taken from: https://www.convex.dev/typescript/core-concepts/functions-methods/typescript-regex
+        //frontend validation
+        const number_regex = /[0-9]{10}/;
+        const email_regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        const string_only = /^[a-zA-Z]+$/;
+
+        //validate fields
+        if (!number_regex.test(phone)) {
+          validation_passed = false;
+          showNotif("Phone number must be 10 digits.", "fail");
+        }
+        if (!email_regex.test(email)) {
+          validation_passed = false;
+          showNotif("Email is in incorrect format", "fail");
+        }
+        if (!string_only.test(suburb)) {
+          validation_passed = false;
+          showNotif("Suburb must contain only letters.", "fail");
         }
 
+
+      // store the edited values
+      if (validation_passed) {
+          try {
+          await editVenue(venue.id, name, phone, email, address, suburb, state, postcode, cap, rate, desc, suitability);
+          
+          if (onUpdate) {
+            onUpdate();
+          }
+        }
+        catch {
+          showNotif("Venue failed to update. Please check your inputs are valid.", "fail");
+        }
       }
-      catch {
-        showNotif("Venue failed to update. Please check your inputs are valid.", "fail");
-      }
+      
     }
     else {
       showNotif("Please enter non-space characeters into the fields. ", "fail");
     }
-
-      
 
   }
 
@@ -125,11 +146,11 @@ const VenueDetails = ({ edit, venue, onUpdate}: VenueDetailsType) => {
                   </label>
                   <label className="mb-2">
                     Capacity
-                    <input className="block p-2 outline outline-black bg-neutral-50 rounded w-10/10" type="number" value={cap} onChange={(e) => setCap(Number(e.target.value))} required></input>
+                    <input className="block p-2 outline outline-black bg-neutral-50 rounded w-10/10" type="number" min={1} value={cap} onChange={(e) => setCap(Number(e.target.value))} required></input>
                   </label>
                   <label className="mb-2">
                     Rate
-                    <input className="block p-2 outline outline-black bg-neutral-50 rounded w-10/10" type="number" value={rate} onChange={(e) => setRate(Number(e.target.value))} required></input>
+                    <input className="block p-2 outline outline-black bg-neutral-50 rounded w-10/10" type="number" min={1} value={rate} onChange={(e) => setRate(Number(e.target.value))} required></input>
                   </label>
                   <label className="mb-2">
                     Description

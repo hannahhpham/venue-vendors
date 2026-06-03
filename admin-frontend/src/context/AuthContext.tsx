@@ -2,11 +2,13 @@ import React, { useState, useEffect, useContext, createContext } from 'react';
 import {useNotif} from '../context/NotifContext'
 import { useRouter } from 'next/router';
 import { User } from "../types/types";
+import {UserService} from '../services/api'
 
 // import { useNotif } from './NotifContext'
 
 interface AuthContextType {
     currUser: boolean,
+    allUsers: User[],
     loading: boolean,
     login: (email: string, password: string) => void;
     logout: () => void,
@@ -16,7 +18,6 @@ interface AuthContextType {
 //create context!!! to be used in consumer
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-
 //custom provider component for consumers
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {showNotif} = useNotif();
@@ -25,11 +26,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const [currUser, setCurrUser] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
+    //for select dropdown
+    const [allUsers, setAllUsers] = useState<User[]>([]);
 
 
     //THIS NEEDS TO STAY SO USERS STAY LOGGED IN UPON REFRESH
     //this is taking too long and this part causes slight flicker
     useEffect( () => {
+        try {
+            getAllUsers();
+        } catch {
+            console.log("failed to fetch");
+        }
         
         const admin = localStorage.getItem("admin");
         setLoading(true);
@@ -39,6 +47,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         setLoading(false);
     }, []);
+
+    const getAllUsers = async (): Promise<void> => {
+        const users = await UserService.getAllUsers();
+        if (users) {
+            setAllUsers(users);
+        }
+    }
 
     // login functionality.
     const login = async (username: string, password: string) => {
@@ -68,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // NOTE; lec2example6 also returns all users array + login function
         //this authContext provides context to all its kids (aka everything)
         <AuthContext.Provider value={{
-            currUser, loading, login, logout
+            currUser, allUsers, loading, login, logout
         }}>
             {children}
         </AuthContext.Provider>

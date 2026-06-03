@@ -43,6 +43,18 @@ export const GET_VENUE = gql`
     }
 `;
 
+export const GET_USERS = gql`
+    query GetUsers {
+        getUsers {
+        id
+        email
+        firstName
+        lastName
+        type
+        }
+    }
+`;
+
 //mutate venue details
 export const UPDATE_VENUE = gql`
     mutation UpdateVenue(
@@ -77,6 +89,7 @@ export const UPDATE_VENUE = gql`
             name
             phone
             email
+            address
             suburb
             state
             postcode
@@ -89,6 +102,58 @@ export const UPDATE_VENUE = gql`
 `;
 
 //delete venue
+export const DELETE_VENUE = gql`
+    mutation DeleteVenue($id: ID!) {
+        deleteVenue(id: $id)
+    }
+`;
+
+//create venue
+export const ADD_VENUE = gql`
+    mutation AddVenue(
+        $name: String!
+        $phone: String!
+        $email: String!
+        $address: String!
+        $suburb: String!
+        $state: VenueState!
+        $postcode: Int!
+        $capacity: Int!
+        $rate: Int!
+        $description: String!
+        $ownerID: Int!
+        $suitability: String!
+    ) {
+        addVenue(
+            name: $name
+            phone: $phone
+            email: $email
+            address: $address
+            suburb: $suburb
+            state: $state
+            postcode: $postcode
+            capacity: $capacity
+            rate: $rate
+            description: $description
+            ownerID: $ownerID
+            suitability: $suitability
+        ) {
+            id
+            name
+            phone
+            email
+            address
+            suburb
+            state
+            postcode
+            capacity
+            rate
+            description
+            ownerID
+            suitability
+        }
+    }
+`;
 
 //update owner
 

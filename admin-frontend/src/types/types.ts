@@ -4,19 +4,12 @@
 export type User = {
   id: number,
   type: "hirer" | "vendor",
-  email: string,
+  email?: string,
   firstName: string,
   lastName: string,
-  phoneNumber : string, //vendors dont really need to view this info at all? remove?
+  phoneNumber? : string, //vendors dont really need to view this info at all? remove?
                         //hirers do tho! i think we make it optional
-  drivLic? : string,    // our base64 string - this is a jpg
-  insur? : string,      // our base64 string - this is a pdf
-  
-  //HIRER SPECIFIC
-  credibility?: number,
-  reputation?: number //calculate from apply.ts 
-  registrationCert?: string,
-  createdAt?: string,
+
 };
 
 export interface Venue {

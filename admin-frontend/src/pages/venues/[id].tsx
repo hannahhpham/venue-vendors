@@ -16,13 +16,15 @@ import VenueDetails from '../../components/VenueDetails'
 
 export default function VenuePage() {
   const router = useRouter();
-  const { allVenues, editVenue } = useVenues();
-  const { currUser, loading } = useAuth();
+  const { allVenues, editVenue, removeVenue, fetchVenues } = useVenues();
+  const { currUser, loading, allUsers } = useAuth();
   const { showNotif } = useNotif();
   const { id } = router.query; // this is a string - the venue id
 
   // the following code is based on [id].tsx, profile, frontend, Lecture 9 Example 1
   const [thisVenue, setThisVenue] = useState<Venue | undefined>(undefined);
+  const [vendorId, setVendorId] = useState<Number>(0);
+  const [popup, setPopup] = useState<boolean>(false);
 
   // the problem with this is that there is a delay in displaying the page
   // in this gap, it shows that "This venue does not exist"
@@ -32,7 +34,6 @@ export default function VenuePage() {
   useEffect( () => {
     if (id) {
       fetchVenue();
-      console.log("venue id is", id);
     }
   }, [id]);
 
@@ -61,6 +62,12 @@ export default function VenuePage() {
     return (
         <div>
 
+          {popup && <Popup onClose={() => {setPopup(false)}}>
+            <p>Are you sure you want to delete this venue?</p>
+
+          <Button text="Yes" onClick={() => {removeVenue(thisVenue.id); fetchVenues()}}/>
+            </Popup>}
+
             <title>{thisVenue.name}</title>
 
             <Header active="none" />
@@ -83,15 +90,41 @@ export default function VenuePage() {
               {/* sidebar */}
               <div className="w-[30%] bg-sky-50 min-h-80">
                 <Sidebar type="hirerVenue">
-                  <h3>Feature this Venue</h3>
+                  
+                  <div className="flex flex-col items-center">
+                     <h3>Feature this venue</h3>
+                      <div className="flex flex-col w-[100%] items-center bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
+                        <p>Featuring this venue will boost it to hirers.</p>
+                        <Button text="Feature" onClick={() => {}}></Button>
+                      </div>
+                  </div> <br/>
 
-                  <br/>
+                  <div className="flex flex-col items-center">
+                     <h3>Re-assign this venue</h3>
+                      <div className="flex flex-col w-[100%] items-center bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
+                        
+                        <label className="mb-2">New vendor of this venue</label>
+                        <select className="block p-2 outline outline-black bg-neutral-50 rounded" 
+                            onChange={(e) => {setVendorId(Number(e.target.value))}}>
+                            {
+                                allUsers.map((user: User) => 
+                                    <option value={user.id}>{user.firstName} {user.lastName}</option>
+                                )
+                            }
+                        </select>
 
-                  <h3>Re-assign this Venue</h3>
+                        <Button text="Re-assign" onClick={() => {}}></Button>
+                      </div>
+                  </div> <br/>
 
-                  <br/>
-
-                  <h3>Delete this Venue</h3>
+                 
+                  <div className="flex flex-col items-center">
+                     <h3>Delete this Venue</h3>
+                      <div className="flex flex-col w-[100%] items-center bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
+                        <p>WARNING: Deleting this venue will delete all venue information related to this vendor.</p>
+                        <Button text="Delete" onClick={() => {setPopup(true)}}></Button>
+                      </div>
+                  </div>
 
                   <br/>
                 </Sidebar>
