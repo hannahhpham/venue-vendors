@@ -63,7 +63,7 @@ const Carousel = ({ranked, carouselItems} : carouselType) => {
         <div className="flex w-full min-w-0 overflow-hidden mr-2">
           {items.length > 0 ? visibleItems.map((item, index) => (
             <div key={index} className="flex-1 min-w-0 overflow-hidden">
-              <VenueCard linkToPage={true} onClick={() => router.push(`../venues/${item.id}`)}>
+              <VenueCard linkToPage={true} onClick={() => router.push(`/venues/${item.id}`)}>
                 <p className=" font-bold">{ranked ? (index+1) + ". " + item.name : (item.name)}</p>
                 <p className="italic text-sm">{item.address}</p>
               </VenueCard>

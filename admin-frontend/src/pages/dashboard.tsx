@@ -8,6 +8,7 @@ import {useState, useEffect} from 'react'
 import {useNotif} from '../context/NotifContext'
 import {useVenues} from '../context/VenueContext'
 import {VenueService} from '../services/api'
+import Button from '../components/Button'
 
 const dashboard = () => {
   const {currUser, loading} = useAuth();
@@ -18,7 +19,7 @@ const dashboard = () => {
   //check if there's a user
   useEffect(() => {
     if (!loading && !currUser) {
-      router.replace('/login');
+      router.replace('/');
     }
   }, [loading, currUser]);
 
@@ -44,17 +45,50 @@ const dashboard = () => {
           </div>
 
           {/* div holding main and sidebar */}
-          <div className="">
+          <div className="flex">
             
             {/* main div */}
-            <div className="">
-              <Carousel ranked={false} carouselItems={allVenues}/>
+            <div className="w-[80%] min-w-0">
+              {/* carousel showing all venues */}
+              <div className="ml-5">
+                <h2 className="mt-5">All Venues</h2>
+                <Carousel ranked={false} carouselItems={allVenues}/>
+
+                {/* carousel showing the featured venues */}
+                <br/>
+                <h2>Featured Venues</h2>
+                <Carousel ranked={false} carouselItems={allVenues}/>
+                <br/>
+              </div>
+
+            </div>
+            
+            <div className='w-[20%] bg-sky-50 min-h-80'>
+              <Sidebar type="dashboard">
+                <h3>Report</h3>
+
+                <p>Top 3 most popular venues:</p>
+                <ol>
+                  <li>x</li>
+                  <li>x</li>
+                  <li>x</li>
+                </ol>
+
+                <br/>
+
+                <p>Top 3 most active applicants:</p>
+                <ol>
+                  <li>x</li>
+                  <li>x</li>
+                  <li>x</li>
+                </ol>
+
+                <Button text="Download Report"/>
+              </Sidebar>
             </div>
             
 
-            {/* <Sidebar type="dashboard">
-              <p>sidebar</p>
-            </Sidebar> */}
+            {/* sidebar should have button to generate report */}
           
           </div>
           

@@ -10,7 +10,8 @@ interface VenueContextType {
     allVenues: Venue[],
     // addVenue: (newVenue: Partial<Venue>) => Promise<void>,
     // removeVenue: (id: number) => Promise<void>,
-    // editVenue: (id: number, updatedVenue: Partial<Venue>) => Promise<void>,
+    editVenue: (id: number, name: string, phone: string, email: string, address: string, suburb: string, state: string, 
+        postcode: number, capacity: number, rate: number, description: string, suitability: string) => Promise<void>,
     fetchVenues: () => void,
 }
 
@@ -36,7 +37,7 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
     };
 
 
-    // // add a new venue TO LOCALSTORAGE ONLY
+    // // add a new venue
     // const addVenue = async (newVenue: Partial<Venue>) => {
     //     if (newVenue !== null) {
     //         const result = await VenueService.createVenue(newVenue);
@@ -59,26 +60,28 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
     //     //setAllVenues(allVenues.filter((venue: Venue) => venue.id !== id));
     // }
 
-    // // edit a venue's details - used in VenueDetails component
-    // const editVenue = async (id: number, updatedVenue: Partial<Venue>) => {
-    //     // try {
-    //         const result = await VenueService.updateVenue(id, updatedVenue);
-    //         // make sure that the venues array is updated
-    //         fetchVenues();
-    //         showNotif('Venue details edited successfully.', 'success');
-    //     // } catch (error) {
-    //     //     console.error("Error updating venue (Context): ", error);
-    //     //     throw error;
-    //     // }
-    //     // setAllVenues(allVenues.map((venue: Venue) =>
-    //     //     venue.id === id ? updatedVenue : venue
-    //     // ))
-    // }
-
+    // edit a venue's details - used in VenueDetails component
+    const editVenue = async (id: number, name: string, phone: string, email: string, address: string, suburb: string, state: string, 
+        postcode: number, capacity: number, rate: number, description: string, suitability: string) =>  {
+        try {
+            const result = await VenueService.updateVenue(id, name, phone, email, address, suburb, state, postcode, 
+                capacity, rate, description, suitability);
+            
+            // make sure that the venues array is updated
+            fetchVenues();
+            showNotif('Venue details edited successfully.', 'success');
+        } catch (error) {
+            console.error("Error updating venue (Context): ", error);
+            throw error;
+        }
+        // setAllVenues(allVenues.map((venue: Venue) =>
+        //     venue.id === id ? updatedVenue : venue
+        // ))
+    }
 
     //return provider
     return (
-        <VenContext.Provider value={{ allVenues,  fetchVenues }}>
+        <VenContext.Provider value={{ allVenues, editVenue, fetchVenues }}>
             {/* addVenue, removeVenue, editVenue, */}
             {children}
         </VenContext.Provider>

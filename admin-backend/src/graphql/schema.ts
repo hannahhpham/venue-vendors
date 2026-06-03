@@ -97,10 +97,25 @@ export const typeDefs = gql`
         venues: [Venue!]!
         venue(id: ID!): Venue
     }
+        
+    type Mutation {
+        updateVenue(
+            id: ID!
+            name: String!
+            phone: String!
+            email: String!
+            address: String!
+            suburb: String!
+            state: VenueState!
+            postcode: Int!
+            capacity: Int!
+            rate: Int!
+            description: String!
+            suitability: String
+        ): Venue!
+    
+    }
 
 `;
-
-    // type Mutation {
     
-    // }
 

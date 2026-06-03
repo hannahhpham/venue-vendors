@@ -10,7 +10,7 @@ After running npm install, please also use the commands below in each project:
 - main frontend:
 - main backend:
 - admin frontend:
-- admin backend:
+- admin backend: npm install class-validator class-transformer
 
 
 # Database Details
@@ -37,8 +37,8 @@ We are using Hannah Pham's database details for data storage. Details can be fou
 - credibility and reputation explanations here 
 
 ## References for TypeOrm/Database Stuff
-- lab 7 and 8
-- lectures week 9
+- lab week 7 and 8
+- lectures week 9, 11
 - MatsT (2010). Creation date column in SQL table. [online] Stack Overflow. Available at: https://stackoverflow.com/questions/2737763/creation-date-column-in-sql-table [Accessed 1 May 2026].
 - Typeorm.io. (2025). Entities | TypeORM. [online] Available at: https://typeorm.io/docs/entity/entities/ [Accessed 1 May 2026].
 - Typeorm.io. (2026). Decorator reference | TypeORM. [online] Available at: https://typeorm.io/docs/help/decorator-reference/ [Accessed 1 May 2026].

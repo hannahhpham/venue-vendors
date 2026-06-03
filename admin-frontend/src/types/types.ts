@@ -14,10 +14,7 @@ export type User = {
   
   //HIRER SPECIFIC
   credibility?: number,
-  reputation?: number //calculate from apply.ts
-  shortlistedVenues? : number[], //these will store venue id
-  pastVenues? : number[], //links to the apply.ts data types THANK U ANANYA AWW NW <3
-  applications? : number [], //links to apply.ts data type 
+  reputation?: number //calculate from apply.ts 
   registrationCert?: string,
   createdAt?: string,
 };
@@ -37,7 +34,6 @@ export interface Venue {
   description: string,
   suitability?: string,
   ownerID: number
-  keywords?: string
 };
 
 export type Application = {
