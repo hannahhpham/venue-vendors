@@ -48,7 +48,7 @@ export class Application {
     vendorRating?: number;
 
     @Column({type: "int"})
-    rank?: number;
+    rank: number;
 
     @Column({type: "int"})
     hirerID: number;
