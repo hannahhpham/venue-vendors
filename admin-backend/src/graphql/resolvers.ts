@@ -63,6 +63,9 @@ export const resolvers = {
         //update owner
         updateOwner: async(_: any, {id, ownerID} : {id: number, ownerID: number}) => {
 
+            console.log("venue is", id);
+            console.log("owner id is", ownerID);
+            
             await VenueRepository.update(id, {ownerID});
             return await VenueRepository.findOne({where: {id: id}})
         },

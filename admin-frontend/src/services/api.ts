@@ -63,11 +63,13 @@ export const VenueService = {
     },
 
     //update owner
-    updateVenueOwner: async(venueID: number, vendorID: number) => {
+    updateVenueOwner: async(id: number, ownerID: number) => {
+        //console.log("venue id is ", venueID, " vendor id is ", vendorID);
         const {data} = await client.mutate<any>({
             mutation: operation.UPDATE_OWNER,
-            variables: {venueID, vendorID}
-        })
+            variables: {id, ownerID}
+        });
+
 
         return data.venue;
     }

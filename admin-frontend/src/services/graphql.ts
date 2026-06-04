@@ -157,7 +157,7 @@ export const ADD_VENUE = gql`
 
 //update owner
 export const UPDATE_OWNER = gql`
-    mutation UpdateOwner($id: ID!, $ownerID: Int!) {
+    mutation UpdateOwner($id: ID!, $ownerID: ID!) {
         updateOwner(
             id: $id
             ownerID: $ownerID

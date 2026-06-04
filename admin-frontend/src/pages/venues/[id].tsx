@@ -16,14 +16,14 @@ import VenueDetails from '../../components/VenueDetails'
 
 export default function VenuePage() {
   const router = useRouter();
-  const { allVenues, editVenue, removeVenue, fetchVenues } = useVenues();
+  const { allVenues, editVenue, removeVenue, updateVenueOwner, fetchVenues } = useVenues();
   const { currUser, loading, allUsers } = useAuth();
   const { showNotif } = useNotif();
   const { id } = router.query; // this is a string - the venue id
 
   // the following code is based on [id].tsx, profile, frontend, Lecture 9 Example 1
   const [thisVenue, setThisVenue] = useState<Venue | undefined>(undefined);
-  const [vendorId, setVendorId] = useState<Number>(thisVenue?.ownerID ?? 0);
+  const [vendorId, setVendorId] = useState<number>(thisVenue?.ownerID ?? 0);
   const [popup, setPopup] = useState<boolean>(false);
 
   // the problem with this is that there is a delay in displaying the page
@@ -34,6 +34,10 @@ export default function VenuePage() {
   useEffect( () => {
     if (id) {
       fetchVenue();
+      if (thisVenue) {
+        setVendorId(thisVenue.ownerID);
+      }
+      
     }
   }, [id]);
 
@@ -51,6 +55,7 @@ export default function VenuePage() {
       if (id) {
         const venue = await VenueService.getVenue(String(id));
         setThisVenue(venue);
+        setVendorId(venue.ownerID);
       }
     
     } catch (error) {
@@ -104,7 +109,7 @@ export default function VenuePage() {
                       <div className="flex flex-col w-[100%] items-center bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
                         
                         <label className="mb-2">New vendor of this venue</label>
-                        <select className="block p-2 outline outline-black bg-neutral-50 rounded" value={String(thisVenue.ownerID)}
+                        <select className="block p-2 outline outline-black bg-neutral-50 rounded" value={String(vendorId)}
                             onChange={(e) => {setVendorId(Number(e.target.value))}}>
                             {
                                 allUsers.map((user: User) => 
@@ -113,7 +118,7 @@ export default function VenuePage() {
                             }
                         </select>
 
-                        <Button text="Re-assign" onClick={() => {}}></Button>
+                        <Button text="Re-assign" onClick={async () => {await updateVenueOwner(thisVenue.id, vendorId)}}></Button>
                       </div>
                   </div> <br/>
 

@@ -14,6 +14,7 @@ interface VenueContextType {
     removeVenue: (id: number) => Promise<void>,
     editVenue: (id: number, name: string, phone: string, email: string, address: string, suburb: string, state: string, 
         postcode: number, capacity: number, rate: number, description: string, suitability: string) => Promise<void>,
+    updateVenueOwner: (id: number, ownerID: number) => Promise<void>,
     fetchVenues: () => void,
 }
 
@@ -83,9 +84,26 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    //change venue owner
+    const updateVenueOwner = async(id: number, ownerID: number) => {
+        try {
+            const result = await VenueService.updateVenueOwner(id, ownerID);
+            fetchVenues();
+            showNotif("Venue owner successfully updated.", "success");
+        } catch {
+            showNotif("Failed to update the owner of this venue.", "fail");
+        }
+        
+
+    }
+
+    //feature venue
+
+    //unfeature venue
+
     //return provider
     return (
-        <VenContext.Provider value={{ allVenues, addVenue, removeVenue, editVenue, fetchVenues }}>
+        <VenContext.Provider value={{ allVenues, addVenue, removeVenue, editVenue, updateVenueOwner, fetchVenues }}>
             {/* addVenue, removeVenue, editVenue, */}
             {children}
         </VenContext.Provider>
