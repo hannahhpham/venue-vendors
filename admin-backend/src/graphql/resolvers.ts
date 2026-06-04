@@ -70,9 +70,12 @@ export const resolvers = {
             return await VenueRepository.findOne({where: {id: id}})
         },
 
-        //feature venue
-
-        //unfeature venue
+        //feature/unfeature venue
+        featureVenue: async(_: any, {id, isFeatured}: {id: number, isFeatured: boolean}) => {
+            
+            await VenueRepository.update(id, {isFeatured});
+            return await VenueRepository.findOne({where: {id: id}});
+        },
 
     }
 

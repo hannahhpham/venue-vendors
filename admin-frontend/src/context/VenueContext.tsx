@@ -16,6 +16,7 @@ interface VenueContextType {
         postcode: number, capacity: number, rate: number, description: string, suitability: string) => Promise<void>,
     updateVenueOwner: (id: number, ownerID: number) => Promise<void>,
     fetchVenues: () => void,
+    featureVenue: (id: number, isFeatured: boolean) => Promise<void>,
 }
 
 // create the context to be used
@@ -84,6 +85,28 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const featureVenue = async (id: number, isFeatured: boolean) => {
+        try {
+            const result = await VenueService.featureVenue(id, isFeatured);
+
+            if (isFeatured) {
+                showNotif('Venue featured successfully.', 'success');
+            }
+            else {
+                showNotif('Venue unfeatured successfully.', 'success');
+            }
+            
+        } catch {
+            if (isFeatured) {
+                showNotif('Venue was not able to be featured.', 'fail');
+            }
+            else {
+                 showNotif('Venue was not able to be unfeatured.', 'fail');
+            }
+            
+        }
+    }
+
     //change venue owner
     const updateVenueOwner = async(id: number, ownerID: number) => {
         try {
@@ -94,16 +117,11 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
             showNotif("Failed to update the owner of this venue.", "fail");
         }
         
-
     }
-
-    //feature venue
-
-    //unfeature venue
 
     //return provider
     return (
-        <VenContext.Provider value={{ allVenues, addVenue, removeVenue, editVenue, updateVenueOwner, fetchVenues }}>
+        <VenContext.Provider value={{ allVenues, addVenue, removeVenue, editVenue, updateVenueOwner, fetchVenues, featureVenue }}>
             {/* addVenue, removeVenue, editVenue, */}
             {children}
         </VenContext.Provider>

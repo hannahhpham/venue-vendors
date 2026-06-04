@@ -26,7 +26,8 @@ export interface Venue {
   stars: number,
   description: string,
   suitability?: string,
-  ownerID: number
+  ownerID: number,
+  isFeatured?: boolean,
 };
 
 export type Application = {

@@ -56,6 +56,9 @@ export class Venue {
     @Column({type: "text", nullable: true})
     suitability: string | null;
 
+    @Column({type: "bit", nullable: true})
+    isFeatured?: boolean;
+
     //IMPORTANT!!! check over this. 
     //this will add a new column
     //logic: each venue is owned by 1 user. 

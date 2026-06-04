@@ -72,11 +72,18 @@ export const VenueService = {
 
 
         return data.venue;
+    },
+
+    //feature/UNFEATURE venue
+    featureVenue: async(id: number, isFeatured: boolean) => {
+        const { data } = await client.mutate<any>({
+            mutation: operation.FEATURE_VENUE,
+            variables: {id, isFeatured}
+        })
+
+        return data.featureVenue;
     }
 
-    //feature venue
-
-    //unfeature venue
 }
 
 export const UserService = {

@@ -16,7 +16,7 @@ import VenueDetails from '../../components/VenueDetails'
 
 export default function VenuePage() {
   const router = useRouter();
-  const { allVenues, editVenue, removeVenue, updateVenueOwner, fetchVenues } = useVenues();
+  const { allVenues, editVenue, removeVenue, updateVenueOwner, fetchVenues, featureVenue } = useVenues();
   const { currUser, loading, allUsers } = useAuth();
   const { showNotif } = useNotif();
   const { id } = router.query; // this is a string - the venue id
@@ -50,17 +50,20 @@ export default function VenuePage() {
 
   //this gets the venue data for rendering information
   const fetchVenue = async () => {
-    try {
-      //call api
-      if (id) {
-        const venue = await VenueService.getVenue(String(id));
-        setThisVenue(venue);
-        setVendorId(venue.ownerID);
-      }
-    
-    } catch (error) {
-      console.error("Error fetching venue ([id].tsx): ", error);
+    // try {
+
+    if (!id) {
+      return;
     }
+
+      //call api
+      const venue = await VenueService.getVenue(String(id));
+      setThisVenue(venue);
+      setVendorId(venue.ownerID);
+    
+    // } catch (error) {
+    //   console.error("Error fetching venue ([id].tsx): ", error);
+    // }
   };
   
   if (thisVenue && currUser) {
@@ -95,14 +98,48 @@ export default function VenuePage() {
               {/* sidebar */}
               <div className="w-[30%] bg-sky-50 min-h-80">
                 <Sidebar type="hirerVenue">
+
+                  {
+                      thisVenue.isFeatured ? 
+                      <div className="flex flex-col items-center">
+                        <h3>Unfeature this venue</h3>
+                        <div className="flex flex-col w-[100%] items-center bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
+                          <p>Unfeaturing this venue will remove it from the featured list.</p>
+                          <Button text="Remove" onClick={async () => {
+                              await featureVenue(thisVenue.id, false); 
+                              const updatedVenue = {
+                                ...thisVenue,
+                                isFeatured: false
+                              }
+                              setThisVenue(updatedVenue);
+                          }}></Button>
+                        </div>
+                        <br/>
+                      </div> 
+
+                      :
+
+                      <div className="flex flex-col items-center">
+                        <h3>Feature this venue</h3>
+                          <div className="flex flex-col w-[100%] items-center bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
+                            <p>Featuring this venue will boost it to hirers.</p>
+                            <Button text="Add" onClick={
+                              async () => {
+                                await featureVenue(thisVenue.id, true); 
+                                const updatedVenue = {
+                                  ...thisVenue,
+                                  isFeatured: true
+                                }
+                                setThisVenue(updatedVenue);
+                              }
+                            }></Button>
+                          </div>
+                          <br/>
+                      </div> 
+      
+                  }
                   
-                  <div className="flex flex-col items-center">
-                     <h3>Feature this venue</h3>
-                      <div className="flex flex-col w-[100%] items-center bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
-                        <p>Featuring this venue will boost it to hirers.</p>
-                        <Button text="Feature" onClick={() => {}}></Button>
-                      </div>
-                  </div> <br/>
+                  
 
                   <div className="flex flex-col items-center">
                      <h3>Re-assign this venue</h3>

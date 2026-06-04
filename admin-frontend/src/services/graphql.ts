@@ -18,6 +18,7 @@ export const GET_VENUES = gql`
             description
             suitability
             ownerID
+            isFeatured
         }
     }
 `;
@@ -39,6 +40,7 @@ export const GET_VENUE = gql`
             description
             suitability
             ownerID
+            isFeatured
         }
     }
 `;
@@ -169,9 +171,18 @@ export const UPDATE_OWNER = gql`
 
 `;
 
-//feature venue
+//feature/unfeature venue
+export const FEATURE_VENUE = gql`
+    mutation FeatureVenue($id: ID!, $isFeatured: Boolean!) {
+        featureVenue(
+            id: $id
+            isFeatured: $isFeatured
+        ) {
+            isFeatured
+        }
+    }
+`;
 
-//unfeature venue
 
 //template
 // export const UPDATE_VENUE = gql`

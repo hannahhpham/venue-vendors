@@ -57,6 +57,7 @@ export const typeDefs = gql`
         description: String!
         suitability: String
         ownerID: Int!
+        isFeatured: Boolean
     }
 
     type ShortlistedVenue {
@@ -133,6 +134,8 @@ export const typeDefs = gql`
         deleteVenue(id: ID!): Boolean! 
 
         updateOwner(id: ID!, ownerID: ID!): Venue!
+
+        featureVenue(id: ID!, isFeatured: Boolean!): Venue!
     
     }
 
