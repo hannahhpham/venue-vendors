@@ -23,7 +23,7 @@ export default function VenuePage() {
 
   // the following code is based on [id].tsx, profile, frontend, Lecture 9 Example 1
   const [thisVenue, setThisVenue] = useState<Venue | undefined>(undefined);
-  const [vendorId, setVendorId] = useState<Number>(0);
+  const [vendorId, setVendorId] = useState<Number>(thisVenue?.ownerID ?? 0);
   const [popup, setPopup] = useState<boolean>(false);
 
   // the problem with this is that there is a delay in displaying the page
@@ -104,11 +104,11 @@ export default function VenuePage() {
                       <div className="flex flex-col w-[100%] items-center bg-white border border-[#e0e0e0] rounded-md m-2 p-2">
                         
                         <label className="mb-2">New vendor of this venue</label>
-                        <select className="block p-2 outline outline-black bg-neutral-50 rounded" 
+                        <select className="block p-2 outline outline-black bg-neutral-50 rounded" value={String(thisVenue.ownerID)}
                             onChange={(e) => {setVendorId(Number(e.target.value))}}>
                             {
                                 allUsers.map((user: User) => 
-                                    <option value={user.id}>{user.firstName} {user.lastName}</option>
+                                    <option key={user.id} value={user.id}>{user.firstName} {user.lastName}</option>
                                 )
                             }
                         </select>

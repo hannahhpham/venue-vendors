@@ -41,30 +41,69 @@ export default function SubmitApplication() {
             if (name.trim() && phone.trim() && email.trim() && address.trim() && suburb.trim()
                     && state.trim() && postcode!=0 && cap!=0 && rate!=0 && desc.trim()) {
                 
-                try {
-                    // add the venue to the database
-                    await addVenue(name, phone, email, address, suburb, state, postcode, cap,
-                        rate, desc, vendorId, suitability);
-                    
-                    // update the user's venues and all venues
-                    fetchVenues();
+                
+                let validation_passed:boolean = true;
 
-                    // reset all states to defaults
-                    setName("");
-                    setAddress("");
-                    setCap(0);
-                    setRate(0);
-                    setDesc("");
-                    setEmail("");
-                    setPhone("");
-                    setPostcode(0);
-                    setState("VIC" as states);
-                    setSuburb("");
-                    setSuitability("");
-                    setVendorId(0);
+                //frontend validation
+                const number_regex = /[0-9]{10}/;
+                const email_regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+                const string_only = /^[a-zA-Z]+$/;
+                const postcode_regex = /[0-9]{4}/;
 
-                } catch {
-                    showNotif("Failed to add venue. Please check your inputs are valid", "fail");
+                //validate fields
+                if (!number_regex.test(phone)) {
+                    validation_passed = false;
+                    showNotif("Phone number must be 10 digits.", "fail");
+                }
+                if (!email_regex.test(email)) {
+                    validation_passed = false;
+                    showNotif("Email is in incorrect format", "fail");
+                }
+                if (!string_only.test(suburb)) {
+                    validation_passed = false;
+                    showNotif("Suburb must contain only letters.", "fail");
+                }
+                if (!postcode_regex.test(String(postcode))) {
+                    validation_passed = false;
+                    showNotif("Postcode must be 4 numbers.", "fail");
+                }
+                if (cap <= 0) {
+                    validation_passed = false;
+                    showNotif("Capacity must be positive value.", "fail");
+                }
+                if (rate <= 0) {
+                    validation_passed = false;
+                    showNotif("Rate must be a positive value.", "fail");
+                }
+
+                if (validation_passed) {
+                    try {
+                        // add the venue to the database
+                        await addVenue(name, phone, email, address, suburb, state, postcode, cap,
+                            rate, desc, vendorId, suitability);
+                        
+                        // update the user's venues and all venues
+                        fetchVenues();
+
+                        // reset all states to defaults
+                        setName("");
+                        setAddress("");
+                        setCap(0);
+                        setRate(0);
+                        setDesc("");
+                        setEmail("");
+                        setPhone("");
+                        setPostcode(0);
+                        setState("VIC" as states);
+                        setSuburb("");
+                        setSuitability("");
+                        setVendorId(0);
+
+                        showNotif("Venue successfully added.", "success");
+
+                    } catch {
+                        showNotif("Failed to add venue. Please check your inputs are valid", "fail");
+                    }
                 }
 
             }
@@ -154,7 +193,7 @@ export default function SubmitApplication() {
                                     onChange={(e) => {setVendorId(Number(e.target.value))}}>
                                     {
                                         allUsers.map((user: User) => 
-                                            <option value={user.id}>{user.firstName} {user.lastName}</option>
+                                            <option key={user.id} value={user.id}>{user.firstName} {user.lastName}</option>
                                         )
                                     }
                                 </select>

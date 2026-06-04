@@ -58,9 +58,14 @@ export const resolvers = {
             const venue = VenueRepository.create({name, phone, email, address, suburb, state, postcode, capacity,
                 rate, description, ownerID, suitability});
             return await VenueRepository.save(venue);
-        }
+        },
 
         //update owner
+        updateOwner: async(_: any, {id, ownerID} : {id: number, ownerID: number}) => {
+
+            await VenueRepository.update(id, {ownerID});
+            return await VenueRepository.findOne({where: {id: id}})
+        },
 
         //feature venue
 

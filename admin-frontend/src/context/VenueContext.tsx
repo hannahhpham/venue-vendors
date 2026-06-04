@@ -46,7 +46,10 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
             
         const result = await VenueService.createVenue(name, phone, email, address, suburb, state, 
             postcode, capacity, rate, description, ownerID, suitability);
-        console.log("new venue is", result);
+        
+            //returns undefined....thats not right
+            //console.log("new venue is", result);
+
         fetchVenues();
     }
 

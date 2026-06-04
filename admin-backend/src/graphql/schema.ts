@@ -127,10 +127,12 @@ export const typeDefs = gql`
             rate: Int!
             description: String!
             ownerID: Int!
-            suitability: String
+            suitability: String!
         ): Venue!
 
         deleteVenue(id: ID!): Boolean! 
+
+        updateOwner(id: ID!, ownerID: ID!): Venue!
     
     }
 

@@ -36,8 +36,6 @@ export const VenueService = {
             variables: {id, name, phone, email, address, suburb, state, postcode, capacity, rate, description, suitability},
         });
 
-        //console.log("data returned was ", data);
-
         return data.updatedVenue;
     },
 
@@ -59,12 +57,20 @@ export const VenueService = {
             variables: {name, phone, email, address, suburb, state, postcode, capacity, rate, description, ownerID, suitability},
         });
 
-        //console.log("data returned was ", data);
+        console.log("data returned in api.ts was ", data);
 
         return data.newVenue;
     },
 
     //update owner
+    updateVenueOwner: async(venueID: number, vendorID: number) => {
+        const {data} = await client.mutate<any>({
+            mutation: operation.UPDATE_OWNER,
+            variables: {venueID, vendorID}
+        })
+
+        return data.venue;
+    }
 
     //feature venue
 
