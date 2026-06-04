@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { User } from "../../types/users"
 import { Venue, shortlistedVenueType } from "../../types/venues"
 import { Application } from "../../types/apply";
@@ -43,7 +43,7 @@ export default function VenuePage() {
   // hannah: as a (very) temporary fix, i removed the "this venue does not exist" to make it less obvious. same issue still happens
   // we probably need to use a different hook (?)
   // hannahL is it useMemo and useCallback's time to shine....
-  useEffect( () => {
+  useEffect(() => {
     try {
       if (id) {
         fetchVenue();
@@ -51,9 +51,10 @@ export default function VenuePage() {
       }
     }
     catch {
-      router.push('/dashboard');
+      // to also allow for ppl who aren't logged in
+      router.push('/');
     }
-    
+
   }, [id]);
 
   const fetchVenue = async () => {
@@ -73,22 +74,48 @@ export default function VenuePage() {
     try {
       const data = await applicationAPI.getVenueApps(Number(id));
       setCurrApps(data);
+      setShortList(currApps.filter((app: Application) => app.rank !== -1));
     } catch (error) {
       console.error("Error fetching applications ([id].tsx): ", error);
     }
   };
 
+  // this semi works
+  // it doesn't show it in the correct order, but you can see some change
+  // look at 10/4/27
+  // const sort = () : Application[] => {
+  //   const sorted = useMemo(() => {
+  //       [...currApps].sort((a, b) => {
+  //       const aRep = allUsers.find(u => u.id === a.hirerID)?.reputation;
+  //       const bRep = allUsers.find(u => u.id === b.hirerID)?.reputation;
+  //       if (aRep && bRep) {
+  //         if (aRep < bRep) {
+  //           return -1;
+  //         } else if (aRep > bRep) {
+  //           return 1;
+  //         } else {
+  //           return 0;
+  //         }
+  //       } else {
+  //         return 0;
+  //       }
+  //     })
+  //   }, []);
+  //   return sorted ?? [];
+  // }
+
   // get all the shortlisted applications for the venue
-  const [shortListItems, setShortList] = useState<Application[]>(currApps.filter((app: Application) => 
-    app.rank !== undefined && app.rank !== 0));
+  const [shortListItems, setShortList] = useState<Application[]>(currApps.filter((app: Application) =>
+    app.rank !== -1));
 
   // get the unavailable times for this venue
-  const [blocked, setBlocked] = useState<Unavailable[]>(allBlocked.filter((b: Unavailable) => 
+  // CHANGE THIS
+  const [blocked, setBlocked] = useState<Unavailable[]>(allBlocked.filter((b: Unavailable) =>
     b.venueID === Number(id) && !utils.compareTime(b.date)));
 
   // update blocked times when changed
   useEffect(() => {
-    setBlocked(allBlocked.filter((b: Unavailable) => 
+    setBlocked(allBlocked.filter((b: Unavailable) =>
       b.venueID === Number(id) && !utils.compareTime(b.date)));
   }, [allBlocked]);
 
@@ -100,14 +127,14 @@ export default function VenuePage() {
 
   // will update the order off the shortlist shown on the screen
   // but, it's not instant, you need to do something else before you see it
-    // (e.g. press view venue details)
+  // (e.g. press view venue details)
   // same for shortlisting an event, it will update on page refresh
   useEffect(() => {
     // have a look at this
-    setCurrApps(allApplications.filter((app: Application) => app.venueID === Number(id)));
-    setShortList(currApps.filter((app: Application) => app.rank !== 0));
+    fetchCurrApps();
+    setShortList(currApps.filter((app: Application) => app.rank !== -1));
     console.log("shortlisted apps: " + JSON.stringify(shortListItems));
-  }, [allApplications, dateStr]);
+  }, [allApplications]);
 
   // to block the venue
   const [blockDate, setBlockDate] = useState<string>("");
@@ -116,6 +143,28 @@ export default function VenuePage() {
 
   // to deal with the filtering
   const [filterRep, setFilterRep] = useState<boolean>(false);
+
+
+  const sorted = useMemo(() => {
+    const forDate = currApps.filter(a => a.date === dateStr);
+    forDate.sort((a, b) => {
+      const aRep = allUsers.find(u => u.id === a.hirerID)?.reputation;
+      const bRep = allUsers.find(u => u.id === b.hirerID)?.reputation;
+      console.log(aRep + " " + bRep);
+      if (aRep && bRep) {
+        if (aRep < bRep) {
+          return -1;
+        } else if (aRep > bRep) {
+          return 1;
+        } else {
+          return 0;
+        }
+      } else {
+        return 0;
+      }
+    });
+    return forDate;
+  }, [filterRep]);
 
 
   //hirer stuff ------------------------------------------------------------------------------------------------------------
@@ -134,8 +183,8 @@ export default function VenuePage() {
         if (shortlistedVenues.length == 5) { //if shortlist is full
           showNotif("Your shortlist is full! Please remove shortlisted venues to add more.", "fail");
         }
-        else { 
-          if (shortlistedVenues.length  < rankToInsertAt) { //shortlisting at end of list. CHECK
+        else {
+          if (shortlistedVenues.length < rankToInsertAt) { //shortlisting at end of list. CHECK
 
             showNotif("You have shortlisted this venue.", "success");
             await shortlistedVenueAPI.shortlistVenue(currUser.id, venueID, rankToInsertAt);
@@ -148,11 +197,11 @@ export default function VenuePage() {
             let shortlistItem: shortlistedVenueType;
 
             //change ranks of the venues ranking after the added venue
-            for (let i = shortlistedVenues.length ; i >= rankToInsertAt ; i--) {
-              
+            for (let i = shortlistedVenues.length; i >= rankToInsertAt; i--) {
+
               shortlistItem = await shortlistedVenueAPI.getShortlistByRank(currUser.id, i);
 
-              await shortlistedVenueAPI.updateRank(shortlistItem.hirerID, shortlistItem.venueID, shortlistItem.rank + 1 );
+              await shortlistedVenueAPI.updateRank(shortlistItem.hirerID, shortlistItem.venueID, shortlistItem.rank + 1);
             }
 
             //add venue and update state
@@ -161,7 +210,7 @@ export default function VenuePage() {
           }
         }
       }
-      
+
     }
 
     const changeRanking = async (venueID: number, newRanking: number): Promise<void> => {
@@ -171,14 +220,14 @@ export default function VenuePage() {
 
       //move this venue down. shift venues between old rank and new rank up by 1
       if (newRanking > oldRanking && currUser) {
-        for (let i = oldRanking + 1; i <= newRanking ; i++) {
-          await shortlistedVenueAPI.updateRank(currUser.id, shortlistedVenues[i-1], i-1);
+        for (let i = oldRanking + 1; i <= newRanking; i++) {
+          await shortlistedVenueAPI.updateRank(currUser.id, shortlistedVenues[i - 1], i - 1);
         }
       }
       //move this venue up. shift venues between this and newranking down by 1
       else if (newRanking < oldRanking && currUser) {
-        for (let i = newRanking ; i < oldRanking  ; i++) {
-          await shortlistedVenueAPI.updateRank(currUser.id, shortlistedVenues[i-1], i+1);
+        for (let i = newRanking; i < oldRanking; i++) {
+          await shortlistedVenueAPI.updateRank(currUser.id, shortlistedVenues[i - 1], i + 1);
         }
 
       }
@@ -191,10 +240,10 @@ export default function VenuePage() {
       }
       await getShortlistedVenues(); //update state
     }
-    
-    
 
-  
+
+
+
 
     const removeShortlistedVenue = async (venueID: number) => {
       //find the index corresponding to the venueID
@@ -202,14 +251,14 @@ export default function VenuePage() {
       if (currUser) {//delete and shift every venue's rank under this venue up
         let removedVenuePosition: number = 0;
 
-        for (let i = 0 ; i < shortlistedVenues.length ; i++) {
+        for (let i = 0; i < shortlistedVenues.length; i++) {
           if (shortlistedVenues[i] == venueID) {
             removedVenuePosition = i; //this is the index which every venue after should be updated
           }
         }
 
         //for every venue after the removed venue, decrease its rank by 1
-        for (let i = removedVenuePosition + 1 ; i < shortlistedVenues.length ; i++) {
+        for (let i = removedVenuePosition + 1; i < shortlistedVenues.length; i++) {
           await shortlistedVenueAPI.updateRank(currUser.id, shortlistedVenues[i], i);
         }
 
@@ -220,7 +269,7 @@ export default function VenuePage() {
         showNotif("Venue successfully removed from shortlist.", "success");
       }
 
-  
+
     }
 
 
@@ -235,7 +284,7 @@ export default function VenuePage() {
 
 
         {
-          (currUser && (currUser.type === "hirer" || 
+          (currUser && (currUser.type === "hirer" ||
             (currUser.type === "vendor" && thisVenue.ownerID === currUser.id))) ? (
 
             // VENDOR VIEW --------------------------------------------------------------------------------------------------
@@ -246,9 +295,9 @@ export default function VenuePage() {
                 <main>
 
                   <Button className="text-black px-5 py-2 my-5 rounded-md font-medium"
-                   onClick={() => setPopupDet(true)}
+                    onClick={() => setPopupDet(true)}
                     text="View Venue Details" onLeft={true}>
-                      <img src="../eye.png" className="invert inline mr-2" />
+                    <img src="../eye.png" className="invert inline mr-2" />
                   </Button>
                   {
                     popupDet &&
@@ -266,12 +315,12 @@ export default function VenuePage() {
                     <div className="inline flex items-center gap-3">
                       <p className="inline">Showing results for </p>
                       <input type="date" className="inline" value={dateStr}
-                       onChange={(e) => setDateStr(e.target.value)} />
+                        onChange={(e) => setDateStr(e.target.value)} />
                     </div>
 
                     <div className="inline flex items-center">
                       <input type="checkbox" className="inline mr-2"
-                       onChange={() => setFilterRep(!filterRep)} />
+                        onChange={() => setFilterRep(!filterRep)} />
                       <p className="inline">Filter by Reputation Score</p>
                     </div>
                   </div>
@@ -284,25 +333,19 @@ export default function VenuePage() {
                         <div>
                           {
                             currApps.filter((app: Application) => app.date === dateStr).length > 0 &&
-                            currApps.filter((app: Application) => 
+                            currApps.filter((app: Application) =>
                               app.date === dateStr).map((app: Application) => (
                                 <div key={app.id}>
                                   <ApplicationsCard app={app} history={false} />
                                 </div>
-                            ))
-                          }
-                          {
-                            currApps.filter((app: Application) => app.date === dateStr).length === 0 &&
-                            <p>
-                              <i>No applications found for this date. Please check a different date.</i>
-                            </p>
+                              ))
                           }
                         </div>
 
                       ) : (
                         // SORT BY THE REPUTATION
                         <div>
-                          {
+                          {/* {
                             currApps.filter((app: Application) => app.date === dateStr).length > 0 &&
                             currApps.filter((app: Application) => 
                               app.date === dateStr).sort(function (a : Application, b : Application) {
@@ -346,12 +389,14 @@ export default function VenuePage() {
                                 <ApplicationsCard app={app} history={false} />
                               </div>
                             ))
-                          }
+                          } */}
                           {
-                            currApps.filter((app: Application) => app.date === dateStr).length === 0 &&
-                            <p>
-                              <i>No applications found for this date. Please check a different date.</i>
-                            </p>
+                            currApps.filter((app: Application) => app.date === dateStr).length > 0 &&
+                            sorted.map((app: Application) => (
+                              <div key={app.id}>
+                                <ApplicationsCard app={app} history={false} />
+                              </div>
+                            ))
                           }
                         </div>
                       )
@@ -364,16 +409,16 @@ export default function VenuePage() {
                   <h1 className="text-2xl font-bold mt-2">History</h1>
                   <div className="max-h-150 overflow-x-hidden overflow-y-auto">
                     {
-                      currApps.filter((app: Application) => app.isAccepted && 
-                      (utils.compareTime(app.date))).length > 0 &&
-                      currApps.filter((app: Application) => app.isAccepted && 
-                      (utils.compareTime(app.date))).map((app: Application) => (
-                        <ApplicationsCard key={app.id} app={app} history={true} />
-                      ))
+                      currApps.filter((app: Application) => app.isAccepted &&
+                        (utils.compareTime(app.date))).length > 0 &&
+                      currApps.filter((app: Application) => app.isAccepted &&
+                        (utils.compareTime(app.date))).map((app: Application) => (
+                          <ApplicationsCard key={app.id} app={app} history={true} />
+                        ))
                     }
                     {
-                      currApps.filter((app: Application) => app.isAccepted && 
-                      (app.date < Date() || app.date === Date())).length === 0 &&
+                      currApps.filter((app: Application) => app.isAccepted &&
+                        (app.date < Date() || app.date === Date())).length === 0 &&
                       <p><i>No previous hiring history.</i></p>
                     }
                   </div>
@@ -382,31 +427,24 @@ export default function VenuePage() {
 
 
                 <Sidebar type='vendorVenue'>
-                    <h2 className="text-2xl font-bold">Shortlisted Applications</h2>
-                    <div className="flex items-center gap-3 mt-3">
-                      <p className="inline">Showing results for </p>
-                      <input type="date" className="inline" value={dateStr}
-                       onChange={(e) => setDateStr(e.target.value)} />
-                    </div>
-                    <div className="">
-                      {
-                        dateStr !== "" ? (
-                          <div>
-                            <p>
-                              <i>To reflect the changes, please press a button (e.g. filter by reputation) or refresh the browser</i>
-                            </p>
+                  <h2 className="text-2xl font-bold">Shortlisted Applications</h2>
+                  <div className="flex items-center gap-3 mt-3">
+                    <p className="inline">Showing results for </p>
+                    <input type="date" className="inline" value={dateStr}
+                      onChange={(e) => setDateStr(e.target.value)} />
+                  </div>
+                  <div className="">
+                    {
+                      dateStr !== "" ? (
+                        <div>
+                          <p>
+                            <i>To reflect the changes, please press a button (e.g. filter by reputation) or refresh the browser</i>
+                          </p>
 
-                            {
-                              shortListItems.length === 0 &&
-                              <p>
-                                <i>No applications found for this date. Please check a different date.</i>
-                              </p>
-                            }
-
-                            {
-                              shortListItems.length > 0 &&
-                              shortListItems.filter((app: Application) => 
-                                app.date === dateStr).sort(function (a : Application, b : Application) {
+                          {
+                            shortListItems.length > 0 &&
+                            shortListItems.filter((app: Application) =>
+                              app.date === dateStr).sort(function (a: Application, b: Application) {
                                 const aRank: number | undefined = shortListItems.filter(
                                   (i: Application) => i.id === a.id).at(0)?.rank;
                                 const bRank: number | undefined = shortListItems.filter(
@@ -425,7 +463,7 @@ export default function VenuePage() {
                                   <div>
                                     <label>
                                       <input className="inline w-15 mr-2" type="number" defaultValue={app.rank}
-                                       onChange={(e) => shortlist(app.id, Number(e.target.value))} />
+                                        onChange={(e) => shortlist(app.id, Number(e.target.value))} />
                                       {app.eventName}
                                     </label>
                                   </div>
@@ -433,7 +471,7 @@ export default function VenuePage() {
                                     app.isAccepted ? (
                                       <div>
                                         <button className="bg-gray-500 text-white font-medium hover:bg-gray-600 px-3 py-2 rounded-lg"
-                                         onClick={() => setBooking(app.id, undefined)}>
+                                          onClick={() => setBooking(app.id, undefined)}>
                                           <img className="inline invert mr-2" src="../edit_square.png" />Unapprove
                                         </button>
                                       </div>
@@ -444,7 +482,7 @@ export default function VenuePage() {
                                           app.isAccepted === false ? (
                                             <div>
                                               <button className="bg-gray-500 text-white font-medium hover:bg-gray-600 px-3 py-2 rounded-lg"
-                                               onClick={() => setBooking(app.id, undefined)}>
+                                                onClick={() => setBooking(app.id, undefined)}>
                                                 <img className="inline invert mr-2" src="../edit_square.png" />Unreject
                                               </button>
                                             </div>
@@ -452,13 +490,13 @@ export default function VenuePage() {
                                             <div className="grid grid-cols-2">
                                               <div>
                                                 <button className="bg-green-500 text-white font-medium hover:bg-green-600 px-3 py-2 rounded-lg"
-                                                 onClick={() => setBooking(app.id, true)}>
+                                                  onClick={() => setBooking(app.id, true)}>
                                                   <img className="inline invert mr-2" src="../tick.png" />Approve
                                                 </button>
                                               </div>
                                               <div>
                                                 <button className="bg-red-500 text-white font-medium hover:bg-red-600 px-3 py-2 rounded-lg"
-                                                 onClick={() => setBooking(app.id, false)}>
+                                                  onClick={() => setBooking(app.id, false)}>
                                                   <img className="inline invert mr-2" src="../deleteBin.png" />Reject
                                                 </button>
                                               </div>
@@ -472,122 +510,114 @@ export default function VenuePage() {
 
                                 </div>
                               ))
-                            }
-                            {
-                              shortListItems.length === 0 &&
-                              <p><i>No data found. Start shortlisting today!</i></p>
-                            }
-                          </div>
+                          }
+                          {
+                            shortListItems.length === 0 &&
+                            <p><i>No data found. Start shortlisting today!</i></p>
+                          }
+                        </div>
 
-                        ) : (
-                          <p><i>Please select a date to get started.</i></p>
-                        )
+                      ) : (
+                        <p><i>Please select a date to get started.</i></p>
+                      )
+                    }
+                  </div>
+
+                  <hr className="my-10 text-gray-200"></hr>
+
+                  <h2 className="text-2xl font-bold">Unavailability</h2>
+                  <div className="mt-3">
+                    <div className="max-h-50 overflow-y-scroll mb-3">
+                      {
+                        blocked.length > 0 &&
+                        blocked.sort(function (a, b) {
+                          const aDate: string | undefined = blocked.filter((u: Unavailable) =>
+                            u.id === a.id).at(0)?.date;
+                          const bDate: string | undefined = blocked.filter((u: Unavailable) =>
+                            u.id === b.id).at(0)?.date;
+                          if (aDate && bDate) {
+                            if (aDate > bDate) {
+                              return -1;
+                            } else {
+                              return 1;
+                            }
+                          }
+                          return 0;
+                        }).map((u: Unavailable) => (
+                          <div key={u.id}>
+                            <Card heading="">
+                              <div className="grid grid-cols-2">
+                                <div>
+                                  <h3 className="text-lg">{new Date(u.date).toDateString()}</h3>
+                                  <p>{u.startTime.slice(0, 5)} to {u.endTime.slice(0, 5)}</p>
+                                </div>
+                                <Button className="px-5 py-2 bg-red-500 hover:bg-red-600 rounded-lg"
+                                  onClick={() => unblockVenue(u.id)} text="Unblock"></Button>
+                              </div>
+                            </Card>
+                          </div>
+                        ))
+                      }
+                      {
+                        blocked.length === 0 &&
+                        <p><i>Completely available!</i></p>
                       }
                     </div>
 
-                    <hr className="my-10 text-gray-200"></hr>
+                  </div>
+                  <div className="grid grid-cols-[2fr_1.5fr_1.5fr]">
+                    <label>Date<br />
+                      <input type="date" min={utils.getCurrDate()} value={blockDate} onChange={(e) => setBlockDate(e.target.value)} />
+                    </label>
+                    <label>Start
+                      <input type="time" value={blockStart} onChange={(e) => setBlockStart(e.target.value)} />
+                    </label>
+                    <label>End
+                      <input type="time" value={blockEnd} onChange={(e) => setBlockEnd(e.target.value)} />
+                    </label>
+                  </div>
+                  <Button className="px-5 py-2 my-2 rounded-xl" onClick={() => {
 
-                    <h2 className="text-2xl font-bold">Unavailability</h2>
-                    <div className="mt-3">
-                      <div className="max-h-50 overflow-y-scroll mb-3">
-                        {
-                          blocked.length > 0 &&
-                          blocked.sort(function (a, b) {
-                            const aDate: string | undefined = blocked.filter((u: Unavailable) =>
-                               u.id === a.id).at(0)?.date;
-                            const bDate: string | undefined = blocked.filter((u: Unavailable) =>
-                               u.id === b.id).at(0)?.date;
-                            if (aDate && bDate) {
-                              if (aDate > bDate) {
-                                return -1;
-                              } else {
-                                return 1;
-                              }
-                            }
-                            return 0;
-                          }).map((u: Unavailable) => (
-                            <div key={u.id}>
-                              <Card heading="">
-                                <div className="grid grid-cols-2">
-                                  <div>
-                                    <h3 className="text-lg">{new Date(u.date).toDateString()}</h3>
-                                    <p>{u.startTime.slice(0,5)} to {u.endTime.slice(0,5)}</p>
-                                  </div>
-                                  <Button className="px-5 py-2 bg-red-500 hover:bg-red-600 rounded-lg"
-                                   onClick={() => unblockVenue(u.id)} text="Unblock"></Button>
-                                </div>
-                              </Card>
-                            </div>
-                          ))
-                        }
-                        {
-                          blocked.length === 0 &&
-                          <p><i>Completely available!</i></p>
-                        }
-                      </div>
-
-                    </div>
-                    <div className="grid grid-cols-[2fr_1.5fr_1.5fr]">
-                      <label>Date
-                        <input type="date" min={utils.getCurrDate()} value={blockDate} onChange={(e) => setBlockDate(e.target.value)} />
-                      </label>
-                      <label>Start
-                        <input type="time" value={blockStart} onChange={(e) => setBlockStart(e.target.value)} />
-                      </label>
-                      <label>End
-                        <input type="time" value={blockEnd} onChange={(e) => setBlockEnd(e.target.value)} />
-                      </label>
-                    </div>
-                    <Button className="px-5 py-2 my-2 rounded-xl" onClick={() => {
-                      
-                      //blocking date validation
-                      if (blockDate != "" && blockStart != "" && blockEnd != "") { //ensure fields are non-empty
-                        if (blockStart < blockEnd ) {
-                          try {
-                            blockVenue(Number(id), blockDate, blockStart, blockEnd);
-                            setBlockDate("");
-                            setBlockEnd("");
-                            setBlockStart("");
-                          } catch { //catch for if backend validation fails
-                            showNotif("Failed to block venue. Please check your inputs.", 'fail');
-                          }
-                        }
-                        else {
-                          showNotif("Please ensure start time is before end time.", "fail");
+                    //blocking date validation
+                    if (blockDate != "" && blockStart != "" && blockEnd != "") { //ensure fields are non-empty
+                      if (blockStart < blockEnd) {
+                        try {
+                          blockVenue(Number(id), blockDate, blockStart, blockEnd);
+                          setBlockDate("");
+                          setBlockEnd("");
+                          setBlockStart("");
+                        } catch { //catch for if backend validation fails
+                          showNotif("Failed to block venue. Please check your inputs.", 'fail');
                         }
                       }
                       else {
-                        showNotif("Please enter block date and time", 'fail');
+                        showNotif("Please ensure start time is before end time.", "fail");
                       }
-                      
-                      
-                    }}
-                     text="Block Venue" />
-
-                    <hr className="my-10 text-gray-200"></hr>
-
-                    <h2 className="text-2xl font-bold">Analytics</h2>
-                    {
-                      currApps.length > 0 &&
-                      <div>
-                        <h3>Most Chosen Applicant</h3>
-                        <Analytics type="mostAccepted" currApps={currApps} />
-
-                        <hr className="my-10 text-gray-200" />
-
-                        <h3>Most Rejected Applicant</h3>
-                        <Analytics type="mostRejected" currApps={currApps} />
-
-                        <hr className="my-10 text-gray-200" />
-
-                        <h3>Least Shortlisted Applicant</h3>
-                        <Analytics type="leastShortlisted" currApps={currApps} />
-                      </div>
                     }
-                    {
-                      currApps.length === 0 &&
-                      <p><i>No applications for this venue. Unable to generate analytics.</i></p>
+                    else {
+                      showNotif("Please enter block date and time", 'fail');
                     }
+
+
+                  }}
+                    text="Block Venue" />
+
+                  <hr className="my-10 text-gray-200"></hr>
+
+                  <h2 className="text-2xl font-bold">Analytics</h2>
+                  {
+                    currApps.length > 0 &&
+                    <div>
+                      <h3>Most Chosen Applicant</h3>
+                      <Analytics type="mostAccepted" currApps={currApps} />
+                      <hr />
+                      <Analytics type="activeHirers" currApps={currApps} />
+                    </div>
+                  }
+                  {
+                    currApps.length === 0 &&
+                    <p><i>No applications for this venue. Unable to generate analytics.</i></p>
+                  }
 
                 </Sidebar>
               </div>
@@ -643,7 +673,7 @@ export default function VenuePage() {
                           :
                           // if thisVenue isn't in shortlist, show option to add
                           (<div className="flex flex-col items-center">
-                            <Button  text="Shortlist" onClick={() => {shortlistVenue(thisVenue.id, shortlistRank)}} />
+                            <Button text="Shortlist" onClick={() => { shortlistVenue(thisVenue.id, shortlistRank) }} />
                           </div>)
                       }
 
@@ -654,7 +684,7 @@ export default function VenuePage() {
                     <h3>Unavailability</h3>
                     {
                       blocked.length > 0 &&
-                      blocked.filter((u: Unavailable) => u.date < Date()).sort(function (a : Unavailable, b : Unavailable) {
+                      blocked.filter((u: Unavailable) => u.date < Date()).sort(function (a: Unavailable, b: Unavailable) {
                         const aDate: string | undefined = blocked.filter((u: Unavailable) => u.id === a.id).at(0)?.date;
                         const bDate: string | undefined = blocked.filter((u: Unavailable) => u.id === b.id).at(0)?.date;
                         if (aDate && bDate) {
@@ -668,7 +698,7 @@ export default function VenuePage() {
                       }).map((b: Unavailable) => (
                         <div key={b.id}>
                           <Card heading={new Date(b.date).toDateString()}>
-                            <p>{b.startTime.slice(0,5)} to {b.endTime.slice(0,5)}</p>
+                            <p>{b.startTime.slice(0, 5)} to {b.endTime.slice(0, 5)}</p>
                           </Card>
                         </div>
                       ))
@@ -697,36 +727,36 @@ export default function VenuePage() {
                 <VenueDetails edit={false} venue={thisVenue} />
               </div>
               <Sidebar type="hirerVenue">
-                  <h2 className="font-bold">Unavailability</h2>
-                  <div className="mt-3">
-                    <div className="mb-3">
-                      {
-                        blocked.length > 0 &&
-                        blocked.filter((u: Unavailable) => u.date < Date()).sort(function (a : Unavailable, b : Unavailable) {
-                          const aDate: string | undefined = blocked.filter((u: Unavailable) => u.id === a.id).at(0)?.date;
-                          const bDate: string | undefined = blocked.filter((u: Unavailable) => u.id === b.id).at(0)?.date;
-                          if (aDate && bDate) {
-                            if (aDate < bDate) {
-                              return 1;
-                            } else {
-                              return -1;
-                            }
+                <h2 className="font-bold">Unavailability</h2>
+                <div className="mt-3">
+                  <div className="mb-3">
+                    {
+                      blocked.length > 0 &&
+                      blocked.filter((u: Unavailable) => u.date < Date()).sort(function (a: Unavailable, b: Unavailable) {
+                        const aDate: string | undefined = blocked.filter((u: Unavailable) => u.id === a.id).at(0)?.date;
+                        const bDate: string | undefined = blocked.filter((u: Unavailable) => u.id === b.id).at(0)?.date;
+                        if (aDate && bDate) {
+                          if (aDate < bDate) {
+                            return 1;
+                          } else {
+                            return -1;
                           }
-                          return 0;
-                        }).map((b: Unavailable) => (
-                          <div key={b.id}>
-                            <Card heading={new Date(b.date).toDateString()}>
-                              <p>{b.startTime.slice(0,5)} to {b.endTime.slice(0,5)}</p>
-                            </Card>
-                          </div>
-                        ))
-                      }
-                      {
-                        blocked.length === 0 &&
-                        <p><i>Good news! We're fully available to host your next incredible event!</i></p>
-                      }
-                    </div>
+                        }
+                        return 0;
+                      }).map((b: Unavailable) => (
+                        <div key={b.id}>
+                          <Card heading={new Date(b.date).toDateString()}>
+                            <p>{b.startTime.slice(0, 5)} to {b.endTime.slice(0, 5)}</p>
+                          </Card>
+                        </div>
+                      ))
+                    }
+                    {
+                      blocked.length === 0 &&
+                      <p><i>Good news! We're fully available to host your next incredible event!</i></p>
+                    }
                   </div>
+                </div>
               </Sidebar>
             </div>
 
@@ -741,7 +771,7 @@ export default function VenuePage() {
     // if this venue does not exist
     return (
       <div>
-        <title>Unfound</title>
+        <title>Loading...</title>
 
         <Header active="search" />
 
