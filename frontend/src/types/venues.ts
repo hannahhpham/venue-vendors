@@ -14,6 +14,7 @@ export interface Venue {
   suitability?: string,
   ownerID: number
   keywords?: string
+  isFeatured?: boolean
 };
 
 export type shortlistedVenueType = { hirerID: number, venueID: number, rank: number };

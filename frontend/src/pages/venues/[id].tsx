@@ -133,7 +133,7 @@ export default function VenuePage() {
     // have a look at this
     fetchCurrApps();
     setShortList(currApps.filter((app: Application) => app.rank !== -1));
-    console.log("shortlisted apps: " + JSON.stringify(shortListItems));
+    //console.log("shortlisted apps: " + JSON.stringify(shortListItems));
   }, [allApplications]);
 
   // to block the venue
@@ -220,8 +220,11 @@ export default function VenuePage() {
 
       //move this venue down. shift venues between old rank and new rank up by 1
       if (newRanking > oldRanking && currUser) {
-        for (let i = oldRanking + 1; i <= newRanking; i++) {
-          await shortlistedVenueAPI.updateRank(currUser.id, shortlistedVenues[i - 1], i - 1);
+        //find max - the new ranking, or number of shortlisted venues
+        let min = Math.min(newRanking, shortlistedVenues.length);
+        for (let i = oldRanking + 1; i <= min; i++) {
+          await shortlistedVenueAPI.updateRank(currUser.id,  shortlistedVenues[i - 1], i - 1);
+
         }
       }
       //move this venue up. shift venues between this and newranking down by 1

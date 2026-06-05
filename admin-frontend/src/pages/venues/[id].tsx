@@ -73,7 +73,7 @@ export default function VenuePage() {
           {popup && <Popup onClose={() => {setPopup(false)}}>
             <p>Are you sure you want to delete this venue?</p>
 
-          <Button text="Yes" onClick={() => {removeVenue(thisVenue.id); fetchVenues()}}/>
+          <Button text="Yes" onClick={() => {removeVenue(thisVenue.id); router.push('/dashboard');}}/>
             </Popup>}
 
             <title>{thisVenue.name}</title>
@@ -131,6 +131,8 @@ export default function VenuePage() {
                                   isFeatured: true
                                 }
                                 setThisVenue(updatedVenue);
+
+                                await fetchVenues();
                               }
                             }></Button>
                           </div>

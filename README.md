@@ -45,5 +45,6 @@ We are using Hannah Pham's database details for data storage. Details can be fou
 - ‌Typeorm.io. (2026). Many-to-many relations | TypeORM. [online] Available at: https://typeorm.io/docs/relations/many-to-many-relations [Accessed 6 May 2026].
 - Ben Awad (2019) 'Cascade Delete TypeORM' [video], YouTube website, accessed 14 May 2026. https://www.youtube.com/watch?v=S1pxdAL2Dz8
 - npmjs, “class-validator,” npmjs, Feb. 26, 2026. https://www.npmjs.com/package/class-validator (accessed May 19, 2026).
+- https://stackoverflow.com/questions/72801198/apollo-client-refetch-queries
 ‌
 ‌

@@ -2,7 +2,7 @@ import Header from "../components/Header";
 import Button from "../components/Button";
 import { useRouter } from 'next/router';
 import { useAuth } from "../context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Venue, User } from "../types/types";
 import { useVenues } from "../context/VenueContext";
 import { useNotif } from '../context/NotifContext';
@@ -10,7 +10,7 @@ import {UserService, VenueService} from '../services/api'
 
 export default function SubmitApplication() {
     const router = useRouter();
-    const { currUser, allUsers } = useAuth();
+    const { currUser, allUsers } = useAuth(); //allUsers shows all vendors.
     const { addVenue, fetchVenues } = useVenues();
     const {showNotif} = useNotif();
 
@@ -22,7 +22,7 @@ export default function SubmitApplication() {
     const [email, setEmail] = useState<string>("");
     const [address, setAddress] = useState<string>("");
     const [suburb, setSuburb] = useState<string>("");
-    const [state, setState] = useState<states>("VIC" as states);                // bc it is the first value - otherwise, it will be blank for those who don't actually select a value
+    const [state, setState] = useState<states>("VIC");                // bc it is the first value - otherwise, it will be blank for those who don't actually select a value
     const [postcode, setPostcode] = useState<number>(0);
     const [cap, setCap] = useState<number>(0);
     const [rate, setRate] = useState<number>(0);
@@ -30,7 +30,15 @@ export default function SubmitApplication() {
     const [suitability, setSuitability] = useState<string>("");
     
     //new field: give the venue to a vendor
-    const [vendorId, setVendorId] = useState<number>(0);
+    const [vendorId, setVendorId] = useState<number>(-1);
+
+    //populate vendor id after allusers loads
+    useEffect(() => {
+        if (allUsers.length > 0) {
+            setVendorId(allUsers[0].id);
+        }
+       
+    }, [allUsers])
 
     if (currUser) {
         
@@ -39,7 +47,7 @@ export default function SubmitApplication() {
 
             //frontend validation. checks fields aren't blank
             if (name.trim() && phone.trim() && email.trim() && address.trim() && suburb.trim()
-                    && state.trim() && postcode!=0 && cap!=0 && rate!=0 && desc.trim()) {
+                    && state.trim() && postcode!=0 && cap!=0 && rate!=0 && desc.trim() && suitability !=="") {
                 
                 
                 let validation_passed:boolean = true;
@@ -75,12 +83,18 @@ export default function SubmitApplication() {
                     validation_passed = false;
                     showNotif("Rate must be a positive value.", "fail");
                 }
+                if (vendorId===-1) {
+                    validation_passed = false;
+                    showNotif("Please select a vendor", 'fail');
+                }
+                // console.log(vendorId);
 
-                if (validation_passed) {
+                if (validation_passed && vendorId!==-1) {
+                    console.log("submitting with vendorId:", vendorId);
                     try {
                         // add the venue to the database
                         await addVenue(name, phone, email, address, suburb, state, postcode, cap,
-                            rate, desc, vendorId, suitability);
+                            rate, desc, Number(vendorId), suitability);
                         
                         // update the user's venues and all venues
                         fetchVenues();
@@ -94,18 +108,16 @@ export default function SubmitApplication() {
                         setEmail("");
                         setPhone("");
                         setPostcode(0);
-                        setState("VIC" as states);
+                        setState(state);
                         setSuburb("");
                         setSuitability("");
-                        setVendorId(0);
 
                         showNotif("Venue successfully added.", "success");
 
                     } catch {
-                        showNotif("Failed to add venue. Please check your inputs are valid", "fail");
+                        showNotif("Failed to add venue.", "fail");
                     }
                 }
-
             }
             else {
                 showNotif("Please don't leave fields blank/set to 0.", "fail");
@@ -189,7 +201,7 @@ export default function SubmitApplication() {
                                 <label className="mb-2">
                                     Vendor Assigned
                                 </label>
-                                <select className="block p-2 outline outline-black bg-neutral-50 rounded w-100" 
+                                <select className="block p-2 outline outline-black bg-neutral-50 rounded w-100" value={vendorId}
                                     onChange={(e) => {setVendorId(Number(e.target.value))}}>
                                     {
                                         allUsers.map((user: User) => 

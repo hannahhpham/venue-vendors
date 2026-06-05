@@ -9,12 +9,13 @@ import {useNotif} from '../context/NotifContext'
 import {useVenues} from '../context/VenueContext'
 import {VenueService} from '../services/api'
 import Button from '../components/Button'
+import {Venue} from '../types/types'
 
 const dashboard = () => {
   const {currUser, loading} = useAuth();
   const router = useRouter();
   const {showNotif} = useNotif();
-  const {allVenues} = useVenues();
+  const {allVenues, fetchVenues} = useVenues();
 
   //check if there's a user
   useEffect(() => {
@@ -25,11 +26,11 @@ const dashboard = () => {
 
   //get all venues
   useEffect(() => {
-    try {
+      const wrapper = async () => {
+          await fetchVenues();
+      }
+      wrapper();
       
-    } catch {
-      console.log("error getting venues");
-    }
   }, []);
 
 
@@ -57,7 +58,9 @@ const dashboard = () => {
                 {/* carousel showing the featured venues */}
                 <br/>
                 <h2>Featured Venues</h2>
-                <Carousel ranked={false} carouselItems={allVenues}/>
+                <div className="ml-5 mr-5">
+                  <Carousel ranked={false} carouselItems={allVenues.filter(venue => venue.isFeatured === true)} />
+                </div> <br />
                 <br/>
               </div>
 
@@ -87,9 +90,6 @@ const dashboard = () => {
               </Sidebar>
             </div>
             
-
-            {/* sidebar should have button to generate report */}
-          
           </div>
           
         </div>

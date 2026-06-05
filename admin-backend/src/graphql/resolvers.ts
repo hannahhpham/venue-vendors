@@ -54,17 +54,19 @@ export const resolvers = {
         createVenue: async(_: any, {name, phone, email, address, suburb, state, postcode, capacity,
             rate, description, ownerID, suitability} : {name: string, phone: string, email: string, address: string, suburb: string, 
             state: any, postcode: number, capacity: number, rate: number, description: string, ownerID: number, suitability: string}) => {
-           
+           //console.log("venue saved with ownerID ", ownerID);
             const venue = VenueRepository.create({name, phone, email, address, suburb, state, postcode, capacity,
                 rate, description, ownerID, suitability});
+
+            console.log("venue saved with ownerID ", ownerID);
             return await VenueRepository.save(venue);
         },
 
         //update owner
         updateOwner: async(_: any, {id, ownerID} : {id: number, ownerID: number}) => {
 
-            console.log("venue is", id);
-            console.log("owner id is", ownerID);
+            // console.log("venue is", id);
+            // console.log("owner id is", ownerID);
             
             await VenueRepository.update(id, {ownerID});
             return await VenueRepository.findOne({where: {id: id}})

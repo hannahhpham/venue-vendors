@@ -103,6 +103,11 @@ export default function Dashboard() {
               <main className="w-[80%] min-w-0 ">
 
                 <div className="ml-5">
+                  <h2 className="p-2">Featured Venues</h2>
+                  <Carousel type="all" ranked={false} carouselItems={allVenues.filter(venue => venue.isFeatured === true)} />
+                </div> <br />
+                
+                <div className="ml-5">
                   <h2 className="p-2">Recommended Venues</h2>
                   {/* error with api: api access takes longer -> brief moment where getting allVenues hasn;t finished -> error. */}
                   {/* fix: add a fallback option via ??. [] is what is used if allVenues isn't ready yet */}

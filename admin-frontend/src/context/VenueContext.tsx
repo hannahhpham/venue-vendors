@@ -15,7 +15,7 @@ interface VenueContextType {
     editVenue: (id: number, name: string, phone: string, email: string, address: string, suburb: string, state: string, 
         postcode: number, capacity: number, rate: number, description: string, suitability: string) => Promise<void>,
     updateVenueOwner: (id: number, ownerID: number) => Promise<void>,
-    fetchVenues: () => void,
+    fetchVenues: () => Promise<void>,
     featureVenue: (id: number, isFeatured: boolean) => Promise<void>,
 }
 
@@ -29,8 +29,13 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter();
 
     // fetches all venues on load
+    
     useEffect(() => {
-        fetchVenues();
+        const wrapper = async () => {
+            await fetchVenues();
+        }
+        wrapper();
+        
     }, []);
 
     const fetchVenues = async () => {
@@ -60,13 +65,15 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
         try {
             const result = await VenueService.deleteVenue(id);
             // make sure that the venues array is updated
-            fetchVenues();
+            //await fetchVenues();
+
+            const newVenues = allVenues.filter(venue => venue.id !== id);
+            setAllVenues(newVenues);
             showNotif("Venue successfully deleted.", 'success');
-            router.push('/dashboard');
         } catch (error) {
             console.error("Error removing venue (Context): ", error);
         }
-        setAllVenues(allVenues.filter((venue: Venue) => venue.id !== id));
+        //setAllVenues(allVenues.filter((venue: Venue) => venue.id !== id));
     }
 
     // edit a venue's details - used in VenueDetails component
@@ -77,7 +84,7 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
                 capacity, rate, description, suitability);
             
             // make sure that the venues array is updated
-            fetchVenues();
+            await fetchVenues();
             showNotif('Venue details edited successfully.', 'success');
         } catch (error) {
             console.error("Error updating venue (Context): ", error);
@@ -88,6 +95,7 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
     const featureVenue = async (id: number, isFeatured: boolean) => {
         try {
             const result = await VenueService.featureVenue(id, isFeatured);
+            await fetchVenues();
 
             if (isFeatured) {
                 showNotif('Venue featured successfully.', 'success');

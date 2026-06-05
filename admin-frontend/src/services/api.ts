@@ -34,7 +34,13 @@ export const VenueService = {
             const {data} = await client.mutate<any>({
             mutation: operation.UPDATE_VENUE,
             variables: {id, name, phone, email, address, suburb, state, postcode, capacity, rate, description, suitability},
+            refetchQueries: [
+            { query: operation.GET_VENUES }
+            ]
+
         });
+
+        
 
         return data.updatedVenue;
     },
@@ -43,7 +49,10 @@ export const VenueService = {
     deleteVenue: async(id: number): Promise<boolean> => {
         const { data } = await client.mutate<any>({
             mutation: operation.DELETE_VENUE,
-            variables: {id: id}
+            variables: {id: id},
+            refetchQueries: [
+            { query: operation.GET_VENUES }
+            ]
         })
 
         return data.deleteVenue;
@@ -51,13 +60,19 @@ export const VenueService = {
 
     createVenue: async(name: string, phone: string, email: string, address: string, suburb: string, state: string, 
         postcode: number, capacity: number, rate: number, description: string, ownerID: number, suitability: string): Promise<Venue> => {
-        
+
+
             const {data} = await client.mutate<any>({
             mutation: operation.ADD_VENUE,
             variables: {name, phone, email, address, suburb, state, postcode, capacity, rate, description, ownerID, suitability},
+            refetchQueries: [
+            { query: operation.GET_VENUES }
+            ]
+
+            
         });
 
-        console.log("data returned in api.ts was ", data);
+        //console.log("data returned in api.ts was ", data);
 
         return data.newVenue;
     },
@@ -67,7 +82,7 @@ export const VenueService = {
         //console.log("venue id is ", venueID, " vendor id is ", vendorID);
         const {data} = await client.mutate<any>({
             mutation: operation.UPDATE_OWNER,
-            variables: {id, ownerID}
+            variables: {id, ownerID},
         });
 
 
@@ -78,7 +93,10 @@ export const VenueService = {
     featureVenue: async(id: number, isFeatured: boolean) => {
         const { data } = await client.mutate<any>({
             mutation: operation.FEATURE_VENUE,
-            variables: {id, isFeatured}
+            variables: {id, isFeatured},
+            refetchQueries: [
+            { query: operation.GET_VENUES }
+            ]
         })
 
         return data.featureVenue;
