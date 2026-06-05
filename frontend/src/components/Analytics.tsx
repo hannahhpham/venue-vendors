@@ -2,33 +2,28 @@ import React, { memo } from "react";
 import { Application } from "../types/apply";
 import { User } from "../types/users";
 import { useAuth } from "../context/AuthContext";
+import * as utils from "../utils/utils";
 
 // reference: Week 11 Example 3 Lectures
 
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler,
-    ArcElement
+    Chart as ChartJS, CategoryScale, LinearScale, TimeScale,
+    PointElement, LineElement, BarElement,
+    Title, Tooltip, Legend, Filler, ArcElement,
+    scales
 } from "chart.js";
 import { Line, Bar, Pie } from "react-chartjs-2";
+import "chartjs-adapter-date-fns";
 
 interface analyticsProps {
-    // pass in currApps from [id].tsx
+    // pass in currApps from [id].tsx, or the relevant data from dashboard.tsx
     currApps: Application[],
-    // our interpretation of disctinction part i, ii, iii
     type: "mostAccepted" | "totalAccepted" | "activeHirers" | "utilisation",
 }
 
 const Analytics = ({ currApps, type }: analyticsProps) => {
 
+    // to map to names
     const { allUsers } = useAuth();
 
     if (currApps.length === 0) {
@@ -41,26 +36,51 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
 
         // Register ChartJS components
         ChartJS.register(
-            CategoryScale,
-            LinearScale,
-            PointElement,
-            LineElement,
-            ArcElement,
-            BarElement,
-            Title,
-            Tooltip,
-            Legend,
-            Filler
+            CategoryScale, LinearScale, PointElement, TimeScale,
+            LineElement, ArcElement, BarElement,
+            Title, Tooltip, Legend, Filler
         );
 
 
         const chartOptions = {
             indexAxis: 'y' as const,
             responsive: true,
+            plugins: {
+                legend: {
+                    position: "top" as const,
+                },
+            },
+        };
+
+
+        const otherChartOptions = {
+            responsive: true,
             scales: {
-                x: {
-                    min: 0,
-                    max: 100
+                y : {
+                    min: 0
+                }
+            },
+            plugins: {
+                legend: {
+                    position: "top" as const,
+                },
+            },
+        };
+
+        const lineChartOptions = {
+            responsive: true,
+            scales: {
+                x : {
+                    type: "time",
+                    time: {
+                        unit: "day",
+                        displayFormats: {
+                            day: "MMM d",
+                        }
+                    }
+                },
+                y : {
+                    min: 0
                 }
             },
             plugins: {
@@ -71,22 +91,55 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
         };
 
 
-        const pieChartOptions = {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: "top" as const,
-                },
-            },
-        };
-
-
-        // i. Most chosen applicant
-        // we have done this for a given hirer as 
-        // (number of isAccepted applications) / total isAccepted applications * 100 ==> percentage
+        // the number of accepted applications for hirers of this venue
         if (type === "mostAccepted") {
 
-            // get the ids of hirers who have been isAccepted
+            // get the ids of hirers who have been accepted for the given venue
+            const allChosenApplicants: number[] = currApps.filter((app: Application) =>
+                app.isAccepted === true).map((app: Application) => app.hirerID);
+
+            // get the distinct set
+            const distChosenApplicants = new Set<number>(allChosenApplicants);
+
+            // Map (hirerID, #approved applications)
+            let numOfChosenApps = new Map();
+            for (const hirer of distChosenApplicants) {
+                let count: number = 0;
+                for (const h of allChosenApplicants) {
+                    if (h === hirer) {
+                        count++;
+                    }
+                }
+                numOfChosenApps.set(hirer, count);
+            }
+            
+            const arrayMap: number[][] = Array.from(numOfChosenApps);
+
+            const labels = arrayMap.map((group: number[]) => (allUsers.find((user: User) => user.id === group[0])?.firstName));
+
+            const barData = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Most Chosen Applicant",
+                        data: arrayMap.map((group: number[]) => group[1]),
+                        backgroundColor: "rgba(0, 48, 204, 0.75)",
+                    },
+                ],
+            };
+
+            return (
+                arrayMap.length === 0 ? (
+                    <p><i>No accepted applicants found. Unable to generate analytics.</i></p>
+                ) : (
+                    <Bar options={chartOptions} data={barData} />
+                )
+            )
+
+        // the selected applicants across all a vendor's venues - dashboard
+        } else if (type === "totalAccepted") {
+
+            // get the ids of hirers who have been accepted for the given venue
             const allChosenApplicants: number[] = currApps.filter((app: Application) =>
                 app.isAccepted === true).map((app: Application) => app.hirerID);
 
@@ -103,9 +156,9 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
                     }
                 }
                 // percentage rating
-                numOfChosenApps.set(hirer, Math.round((count / allChosenApplicants.length) * 100));
+                numOfChosenApps.set(hirer, count);
             }
-            // sort in descending order ==> highest % at start
+            
             const arrayMap: number[][] = Array.from(numOfChosenApps);
 
 
@@ -127,51 +180,6 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
                     <p><i>No accepted applicants found. Unable to generate analytics.</i></p>
                 ) : (
                     <Bar options={chartOptions} data={barData} />
-                )
-            )
-
-        // ii. Overall Total Accepted (Across All Vendor Venues)
-        // for a given hirer, we have done this as
-        // (number of accepted applications across) / total rejected applications * 100 ==> percentage
-        } else if (type === "totalAccepted") {
-
-            // get all the ids of rejected applicants
-            const allRejectApplicants: number[] = currApps.filter((app: Application) =>
-                app.isAccepted === false).map((app: Application) => app.hirerID);
-
-            // get the distinct set of rejected ids
-            const distRejectApplicants = new Set<number>(allRejectApplicants);
-
-            // Map (hirerID, rejected%)
-            let numOfRejectedApps = new Map();
-            for (const hirer of distRejectApplicants) {
-                let count: number = 0;
-                for (const h of allRejectApplicants) {
-                    if (h === hirer) {
-                        count++;
-                    }
-                }
-                // percentage rating
-                numOfRejectedApps.set(hirer, Math.round((count / allRejectApplicants.length) * 100));
-            }
-            // sort in descending order ==> highest % at the start
-            const arrayMap: number[][] = Array.from(numOfRejectedApps).sort(
-                (a: number[], b: number[]) => b[1] - a[1]);
-
-            // show a max of 3 hirers
-            const finalMap: number[][] = arrayMap.length > 2 ? arrayMap.slice(0, 3) : arrayMap;
-
-
-            return (
-                finalMap.length === 0 ? (
-                    <p><i>No rejected applicants found. Unable to generate analytics.</i></p>
-                ) : (
-                    finalMap.map((group: number[]) => (
-                        <div key={group[0]} className="grid grid-cols-[40%_60%] mb-1">
-                            <p className="ml-auto mr-2">{allUsers.find((user: User) => user.id === group[0])?.firstName} {allUsers.find((user: User) => user.id === group[0])?.lastName}</p>
-                            <div style={{ width: group[1] + "%" }} className={"text-white bg-blue-900"}> {group[1]}%</div>
-                        </div>
-                    ))
                 )
             )
 
@@ -227,48 +235,70 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
                 arrayMap.length === 0 ? (
                     <p><i>No activer hirers found. Unable to generate analytics.</i></p>
                 ) : (
-                    <Pie options={pieChartOptions} data={pieData} />
+                    <Pie options={otherChartOptions} data={pieData} />
                 )
             )
 
+
+        // date graph
         }  else if (type === "utilisation") {
 
-            // get the ids of all unshortlisted applicants
-            const allShortlistApps: number[] = currApps.filter((app: Application) =>
-                app.rank === undefined || app.rank === 0).map((app: Application) => app.hirerID);
+            // get all the dates that the venue has been used (hired)
+            const allChosenApplicants: string[] = currApps.filter((app: Application) =>
+                app.isAccepted === true && utils.compareTime(app.date)).map((app: Application) => app.date);
 
-            // get the distinct set of unshortlisted ids
-            const distShortlistApps = new Set<number>(allShortlistApps);
+            // get the distinct set of dates
+            const distChosenApplicants = new Set<string>(allChosenApplicants);
 
-            // Map(hirerID, unshortlisted%)
-            let numOfShortlisted = new Map();
-            for (const hirer of distShortlistApps) {
+            // Map (hirerID, isAccepted%)
+            let numOfChosenApps = new Map();
+            for (const hirer of distChosenApplicants) {
                 let count: number = 0;
-                for (const h of allShortlistApps) {
+                for (const h of allChosenApplicants) {
                     if (h === hirer) {
                         count++;
                     }
                 }
                 // percentage rating
-                numOfShortlisted.set(hirer, Math.round((count / allShortlistApps.length) * 100));
+                numOfChosenApps.set(hirer, count);
             }
-            // sort in ascending order ==> the lowest % at the start
-            const arrayMap: number[][] = Array.from(numOfShortlisted).sort(
-                (a: number[], b: number[]) => a[1] - b[1]);
+            
+            const arrayMap: [string, number][] = Array.from(numOfChosenApps);
 
-            // show a max of 3 hirers
-            const finalMap: number[][] = arrayMap.length > 2 ? arrayMap.slice(0, 3) : arrayMap;
+
+            console.log("Utilisation array map:", JSON.stringify(arrayMap));
+
+
+            const labels = arrayMap.map((group: [string, number]) => group[0]);
+
+            console.log("Utilisation labels:", JSON.stringify(labels));
+
+            const data = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Utilisation of Venue",
+                        data: arrayMap.map((group: [string, number]) => ({
+                            x: group[0],
+                            y: group[1]
+                        })),
+                        backgroundColor: "rgba(0, 48, 204, 0.75)",
+                    },
+                ],
+                // datasets: [
+                //     {
+                //         label: "Utilisation of Venue",
+                //         data: arrayMap.map((group: [string, number]) => group[1]),
+                //         backgroundColor: "rgba(0, 48, 204, 0.75)",
+                //     },
+                // ],
+            };
 
             return (
-                finalMap.length === 0 ? (
-                    <p><i>No unshortlisted applicants found. Unable to generate analytics.</i></p>
+                arrayMap.length === 0 ? (
+                    <p><i>No accepted applications found. Unable to generate utilisation analytics.</i></p>
                 ) : (
-                    finalMap.map((group: number[]) => (
-                        <div key={group[0]} className="grid grid-cols-[40%_60%] mb-1">
-                            <p className="ml-auto mr-2">{allUsers.find((user: User) => user.id === group[0])?.firstName} {allUsers.find((user: User) => user.id === group[0])?.lastName}</p>
-                            <div style={{ width: group[1] + "%" }} className={`text-white bg-blue-900`}> {group[1]}%</div>
-                        </div>
-                    ))
+                    <Line options={otherChartOptions} data={data} />
                 )
             )
 

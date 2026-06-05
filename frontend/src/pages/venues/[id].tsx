@@ -615,6 +615,8 @@ export default function VenuePage() {
                       <Analytics type="mostAccepted" currApps={currApps} />
                       <hr />
                       <Analytics type="activeHirers" currApps={currApps} />
+                      <hr />
+                      <Analytics type="utilisation" currApps={currApps} />
                     </div>
                   }
                   {
