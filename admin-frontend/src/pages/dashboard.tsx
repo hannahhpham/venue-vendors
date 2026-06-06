@@ -7,6 +7,7 @@ import {useRouter} from 'next/router'
 import {useState, useEffect} from 'react'
 import {useNotif} from '../context/NotifContext'
 import {useVenues} from '../context/VenueContext'
+import {useApplications} from '../context/ApplyContext'
 import {VenueService} from '../services/api'
 import Button from '../components/Button'
 import {Venue} from '../types/types'
@@ -15,6 +16,7 @@ const dashboard = () => {
   const {currUser, loading} = useAuth();
   const router = useRouter();
   const {showNotif} = useNotif();
+  const {allApplications, mostActiveHirers} = useApplications();
   const {allVenues, fetchVenues} = useVenues();
 
   //check if there's a user
@@ -79,11 +81,22 @@ const dashboard = () => {
 
                 <br/>
 
-                <p>Top 3 most active applicants:</p>
-                <ol>
-                  <li>x</li>
-                  <li>x</li>
-                  <li>x</li>
+                <div className="justify-between flex items-center">
+                  <p className="font-bold inline">Top 3 active applicants:</p>
+                  <img className="mr-5 inline hover:drop-shadow w-[15px]" src={"/tooltip.png"} 
+                    title="Percentage ratings are the ratio of accepted applications over all submitted applications.
+                    "/>
+                </div>
+                
+                <ol className="list-decimal list-inside">
+                  {
+                    mostActiveHirers.map((applicant) => 
+                    <li key={applicant.hirer.id}>
+                      {applicant.hirer.firstName} {applicant.hirer.lastName}  
+                       <span className='text-xs'> ({applicant.percentage}%) </span>
+                    </li>
+                    ) 
+                  }
                 </ol>
 
                 <Button text="Download Report"/>

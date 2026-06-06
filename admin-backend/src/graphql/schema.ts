@@ -98,6 +98,9 @@ export const typeDefs = gql`
         venues: [Venue!]!
         venue(id: ID!): Venue
         getUsers: [User!]!
+        getHirers: [User!]!
+        getApplications: [Application!]!
+        
     }
         
     type Mutation {
@@ -132,9 +135,7 @@ export const typeDefs = gql`
         ): Venue!
 
         deleteVenue(id: ID!): Boolean! 
-
         updateOwner(id: ID!, ownerID: ID!): Venue!
-
         featureVenue(id: ID!, isFeatured: Boolean!): Venue!
     
     }

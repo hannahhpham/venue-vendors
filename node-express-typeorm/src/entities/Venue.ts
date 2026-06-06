@@ -58,7 +58,7 @@ export class Venue {
     @Column({type: "text", nullable: true})
     suitability: string | null;
 
-    @Column({type: "boolean", nullable: true})
+    @Column({type: "bit", nullable: true})
     isFeatured?: boolean;
 
     //IMPORTANT!!! check over this. 

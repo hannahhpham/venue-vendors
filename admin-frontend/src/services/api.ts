@@ -109,6 +109,21 @@ export const UserService = {
         const {data} = await client.query<any>({query: operation.GET_USERS});
         
         return data.getUsers;
+    },
+
+    getHirers: async() => {
+        const {data} = await client.query<any>({query: operation.GET_HIRERS});
+        
+        return data.getHirers;
     }
+
+}
+
+export const AppService = {
+
+    getAllApps: async(): Promise<Application[]> => {
+        const {data} = await client.query<any>({query: operation.GET_APPLICATIONS});
+        return data.getApplications;
+    },
 
 }

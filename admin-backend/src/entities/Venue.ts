@@ -9,6 +9,7 @@ import { ShortlistedVenue } from './ShortlistedVenue'
 import { Unavailable } from './Unavailable'
 //there are lots of decorators like IsString() IsNotEmpty()
 // I think we gotta move these into the dtos
+import { IsEmail } from 'class-validator'
 
 //can say what table this entity is based on
 @Entity({name: "venues"})
@@ -26,6 +27,7 @@ export class Venue {
 
     // had to make this longer to accomodate our existing venue emails :'(
     @Column({type: "varchar", length: 35, unique: true})
+    @IsEmail() //first test with class-validator. NEED TO LEARN MORE
     email: string;
 
     @Column({type: "varchar", length: 75})

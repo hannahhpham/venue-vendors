@@ -45,6 +45,7 @@ export const GET_VENUE = gql`
     }
 `;
 
+//this is actually getVendor
 export const GET_USERS = gql`
     query GetUsers {
         getUsers {
@@ -52,7 +53,33 @@ export const GET_USERS = gql`
         email
         firstName
         lastName
-        type
+        }
+    }
+`;
+
+export const GET_HIRERS = gql`
+    query GetUsers {
+        getHirers {
+        id
+        email
+        firstName
+        lastName
+        }
+    }
+`;
+
+export const GET_APPLICATIONS = gql`
+    query GetApplications {
+        getApplications {
+            id
+            startTime
+            endTime
+            date
+
+            isAccepted
+
+            hirerID
+            venueID
         }
     }
 `;

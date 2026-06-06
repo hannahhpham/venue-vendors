@@ -32,6 +32,14 @@ export const resolvers = {
             return await userRepository.find({where: {type: "vendor"}});
         },
 
+        getHirers: async(_: any) => {
+            return await userRepository.find({where: {type: "hirer"}});
+        },
+
+        getApplications: async(_: any) => {
+            return await appRepository.find();
+        }
+
     },
 
     Mutation: { //CREATE UPDATE DELETE
