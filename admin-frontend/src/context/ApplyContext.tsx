@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useContext, createContext } from 'react';
-import { Application, User } from "../types/types";
-import { AppService, UserService } from '../services/api';
+import { Application, User, Venue } from "../types/types";
+import { AppService, UserService, VenueService } from '../services/api';
 import { StringDecoder } from 'string_decoder';
 
 //the logic to calculate the report stuff lies here
 
 interface ApplyContextType {
     allApplications: Application[],
-    mostActiveHirers: activeApplicant[]
+    mostActiveHirers: activeApplicant[],
+    mostPopularVenues: popularVenue[]
 }
 
 export type popularVenue = {
-    venueID: number,
+    venue: string,
     day: string,
-    startTime: string,
-    endTime: string
+    timeslot: string
 }
 
 export type activeApplicant = {
@@ -30,7 +30,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
     // var stores all the applications
     const [allApplications, setAllApps] = useState<Application[]>([]);
     const [mostActiveHirers, setMostActiveHirers] = useState<activeApplicant[]>([]);
-
+    const [mostPopularVenues, setMostPopularVenues] = useState<popularVenue[]>([]);
 
     useEffect(() => {
         fetchAllApps();
@@ -41,11 +41,12 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
             const data = await AppService.getAllApps();
             setAllApps(data);
             const allHirers = await UserService.getHirers();
+            const allVenues = await VenueService.getAllVenues();
             
             let arr = [];
            
             //CALCULATIONS FOR MOST ACTIVE HIRER ----------------------------------------------------------------------
-            const groupByHirer = Object.groupBy(data, (app) => app.hirerID);//group by hirerid
+            let groupByHirer = Object.groupBy(data, (app) => app.hirerID);//group by hirerid
 
             //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries
             //calculate how many in each are accepted
@@ -74,7 +75,54 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
             setMostActiveHirers(arr);
 
             //CALCULATIONS FOR ACTIVE VENUE ----------------------------------------------------------------------
+            const finalArr = [];
 
+            const groupByVenue = Object.groupBy(data, (app) => app.venueID);
+            
+            //better way to get top 3 venues - sort by num applications, get top 3
+            let top3Venues = Object.entries(groupByVenue).sort((a, b) => ((b[1]?.length ?? 0) - (a[1]?.length ?? 0))).slice(0,3);
+
+            //store days of the week
+            const days: string[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+            //get the most popular day for each top 3 venue
+            for (const [venueID, applications] of top3Venues) {
+
+               //group by day and find most popular one
+               if (applications) {
+                    let groupByDay = Object.groupBy(applications, (app) => {
+                        
+                        const date = new Date(app.date);
+                        return days[date.getDay()];
+
+                    });
+    
+                    //get the day and length of each day's applications, finding one with most
+                    const mostPopularDay = Object.entries(groupByDay).sort(([day1,a], [day2,b]) => ((b?.length ?? 0) - (a?.length ?? 0))).slice(0,1);
+                    //find most popular timeslot of the day
+                    for (const [day, applications] of mostPopularDay) {
+                        if (applications) {
+
+                            //group the day's applications by starttime to endtime (hour minutes no seconds)
+                            let groupByTime = Object.groupBy(applications, (app) => {
+                                return `${app.startTime.slice(0,5)}-${app.endTime.slice(0,5)}`
+                            });
+
+                            const mostPopularTime = Object.entries(groupByTime).sort(([time1, a], [time2, b]) => (b?.length ?? 0) - (a?.length ?? 0))[0];
+
+                            //LETS GOOOO WE ARE SO BACK WE ARE SOOO BACK
+                            //console.log("venue id ", venueID, "most popular day is ", day, " most popular time is ", mostPopularTime[0]);
+
+                            //get the name of this venue
+                            const venue: string = allVenues.find((venue: Venue) => Number(venue.id) === Number(venueID))?.name ?? "";
+                            
+                            finalArr.push({ venue, day, timeslot: mostPopularTime[0] });
+                        }  
+                    }
+               }
+            }
+
+            setMostPopularVenues(finalArr);
 
         } catch (error) {
             console.error("Error fetching all applications (Context File): ", error);
@@ -83,7 +131,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
 
     //return provider
     return (
-        <ApplyContext.Provider value={{ allApplications, mostActiveHirers }}>
+        <ApplyContext.Provider value={{ allApplications, mostActiveHirers, mostPopularVenues }}>
             {children}
         </ApplyContext.Provider>
     );

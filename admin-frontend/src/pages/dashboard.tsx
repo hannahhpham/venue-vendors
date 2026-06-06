@@ -16,7 +16,7 @@ const dashboard = () => {
   const {currUser, loading} = useAuth();
   const router = useRouter();
   const {showNotif} = useNotif();
-  const {allApplications, mostActiveHirers} = useApplications();
+  const {allApplications, mostActiveHirers, mostPopularVenues} = useApplications();
   const {allVenues, fetchVenues} = useVenues();
 
   //check if there's a user
@@ -25,6 +25,8 @@ const dashboard = () => {
       router.replace('/');
     }
   }, [loading, currUser]);
+
+  //console.log(mostPopularVenues);
 
   //get all venues
   useEffect(() => {
@@ -70,19 +72,35 @@ const dashboard = () => {
             
             <div className='w-[20%] bg-sky-50 min-h-80'>
               <Sidebar type="dashboard">
-                <h3>Report</h3>
+                <h3 className="text-2xl underline text-center">Report</h3><br/>
 
-                <p>Top 3 most popular venues:</p>
-                <ol>
-                  <li>x</li>
-                  <li>x</li>
-                  <li>x</li>
+                <p className="text-l font-bold">Top 3 most popular venues:</p>
+                <ol className="list-decimal list-inside">
+                  {
+                    mostPopularVenues.map((venue) => 
+                    <li key={venue.venue}>
+                      <span className="">{venue.venue}</span>
+
+                      {/* day and time */}
+                      <ul className="text-xs pl-10 list-disc">
+                        <li key="day">
+                          Day: {venue.day}
+                        </li>
+
+                        <li key="time">
+                          Time: {venue.timeslot}
+                        </li>
+                      </ul>
+                      
+                    </li>
+                    )
+                  }
                 </ol>
 
                 <br/>
 
                 <div className="justify-between flex items-center">
-                  <p className="font-bold inline">Top 3 active applicants:</p>
+                  <p className="font-bold text-l inline">Top 3 active applicants:</p>
                   <img className="mr-5 inline hover:drop-shadow w-[15px]" src={"/tooltip.png"} 
                     title="Percentage ratings are the ratio of accepted applications over all submitted applications.
                     "/>
@@ -97,7 +115,7 @@ const dashboard = () => {
                     </li>
                     ) 
                   }
-                </ol>
+                </ol> <br/>
 
                 <Button text="Download Report"/>
               </Sidebar>
