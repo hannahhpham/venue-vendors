@@ -149,31 +149,30 @@ describe("User Routes - Testing User API Endpoints", () => {
     });
 
     
-    // this is blocked by dtos
-    // it("should return 400 when a User updation has an invalid change", async () => {
-    //   // Create a test user
-    //   const userRepo = AppDataSource.getRepository(User);
-    //   const user = new User();
-    //   user.firstName = "Test";
-    //   user.lastName = "User";
-    //   user.email = "example@gmail.com";
-    //   user.password = "testing123!";
-    //   user.type = "hirer";
-    //   user.phoneNumber = "0444123086"
+    it("should return 500 when a User updation has an invalid change", async () => {
+      // Create a test user
+      const userRepo = AppDataSource.getRepository(User);
+      const user = new User();
+      user.firstName = "Test";
+      user.lastName = "User";
+      user.email = "example@gmail.com";
+      user.password = "testing123!";
+      user.type = "hirer";
+      user.phoneNumber = "0444123086"
 
-    //   // save the user to the repo
-    //   await userRepo.save(user);
+      // save the user to the repo
+      await userRepo.save(user);
 
-    //   // now get the specific user & update their details
-    //   let response = await request(app).get(`/api/users/${user.id}`).send(user);
-    //   expect(response.status).toBe(200);
+      // now get the specific user & update their details
+      let response = await request(app).get(`/api/users/${user.id}`).send(user);
+      expect(response.status).toBe(200);
       
-    //   let updatedUser = response.body;
-    //   updatedUser.type = "Test Errors";
+      let updatedUser = response.body;
+      updatedUser.type = 5678;
 
-    //   response = await request(app).put(`/api/users/${updatedUser.id}`);
-    //   expect(response.status).toBe(400);
-    // });
+      response = await request(app).put(`/api/users/${updatedUser.id}`);
+      expect(response.status).toBe(500);
+    });
   });
 
 

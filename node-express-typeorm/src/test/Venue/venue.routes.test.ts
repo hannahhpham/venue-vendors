@@ -231,48 +231,47 @@ describe("Venue Routes - Testing Venue API Endpoints", () => {
         });
 
 
-        // can't test bc of the dtos
-        // it("should return 404 when a Venue updation has an invalid change", async () => {
-        //     const userRepo = AppDataSource.getRepository(User);
-        //     // create a mock owner for each test
-        //     const user = new User();
-        //     user.firstName = "Test";
-        //     user.lastName = "User";
-        //     user.email = "example@gmail.com";
-        //     user.password = "testing123!";
-        //     user.type = "vendor";
-        //     user.phoneNumber = "0444123086"
-        //     // save the mock owner
-        //     await userRepo.save(user);
+        it("should return 400 when a Venue updation has an invalid change", async () => {
+            const userRepo = AppDataSource.getRepository(User);
+            // create a mock owner for each test
+            const user = new User();
+            user.firstName = "Test";
+            user.lastName = "User";
+            user.email = "example@gmail.com";
+            user.password = "testing123!";
+            user.type = "vendor";
+            user.phoneNumber = "0444123086"
+            // save the mock owner
+            await userRepo.save(user);
 
-        //     // Create a test venue
-        //     const venueRepo = AppDataSource.getRepository(Venue);
-        //     const venue = new Venue();
-        //     venue.name = "Test";
-        //     venue.address = "User";
-        //     venue.email = "example@gmail.com";
-        //     venue.description = "testing123!";
-        //     venue.capacity = 20;
-        //     venue.postcode = 3030;
-        //     venue.ownerID = user.id;
-        //     venue.phone = "0444123086";
-        //     venue.rate = 50;
-        //     venue.state = "VIC";
-        //     venue.suitability = "formal";
-        //     venue.suburb = "Melbourne";
-        //     // save the venue
-        //     await venueRepo.save(venue);
+            // Create a test venue
+            const venueRepo = AppDataSource.getRepository(Venue);
+            const venue = new Venue();
+            venue.name = "Test";
+            venue.address = "User";
+            venue.email = "example@gmail.com";
+            venue.description = "testing123!";
+            venue.capacity = 20;
+            venue.postcode = 3030;
+            venue.ownerID = user.id;
+            venue.phone = "0444123086";
+            venue.rate = 50;
+            venue.state = "VIC";
+            venue.suitability = "formal";
+            venue.suburb = "Melbourne";
+            // save the venue
+            await venueRepo.save(venue);
 
-        //     // now get the specific venue & update its details
-        //     let response = await request(app).get(`/api/venues/${venue.id}`);
-        //     expect(response.status).toBe(200);
+            // now get the specific venue & update its details
+            let response = await request(app).get(`/api/venues/${venue.id}`);
+            expect(response.status).toBe(200);
 
-        //     let updatedVenue = response.body;
-        //     updatedVenue.email = "Test Updation Errors";
+            let updatedVenue = response.body;
+            updatedVenue.email = 3456;
 
-        //     response = await request(app).put(`/api/venues/${updatedVenue.id}`).send(updatedVenue);
-        //     expect(response.status).toBe(404);
-        // });
+            response = await request(app).put(`/api/venues/${updatedVenue.id}`).send(updatedVenue);
+            expect(response.status).toBe(400);
+        });
     });
 
 

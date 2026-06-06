@@ -122,7 +122,7 @@ describe("Application Routes - Testing Application API Endpoints", () => {
             // save the mock application
             await appRepo.save(apply);
 
-            // now get that venue
+            // now get that application
             const response = await request(app).get(`/api/applications/${apply.id}`);
             expect(response.status).toBe(200);
             expect(response.body.eventName).toBe("Test Event");
@@ -222,36 +222,34 @@ describe("Application Routes - Testing Application API Endpoints", () => {
         });
 
 
-        // can't do this bc it accepts anything - there's no validation
-        // it("should return 500 when a Venue updation has an invalid change", async () => {
-        //     const appRepo = AppDataSource.getRepository(Application);
+        it("should return 500 when a Application updation has an invalid change", async () => {
+            const appRepo = AppDataSource.getRepository(Application);
 
-        //     // create a mock application for each test
-        //     const apply = new Application();
-        //     apply.eventName = "Test Event";
-        //     apply.date = new Date("2026-06-18");
-        //     apply.description = "An awesome time!";
-        //     apply.startTime = "09:00";
-        //     apply.endTime = "17:00";
-        //     apply.guests = 20;
-        //     apply.rank = -1;
-        //     apply.hirerID = 1;
-        //     apply.venueID = 1;
+            // create a mock application for each test
+            const apply = new Application();
+            apply.eventName = "Test Event";
+            apply.date = new Date("2026-06-18");
+            apply.description = "An awesome time!";
+            apply.startTime = "09:00";
+            apply.endTime = "17:00";
+            apply.guests = 20;
+            apply.rank = -1;
+            apply.hirerID = 1;
+            apply.venueID = 1;
 
-        //     // save the mock application
-        //     await appRepo.save(apply);
+            // save the mock application
+            await appRepo.save(apply);
 
-        //     // now get the specific venue & update its details
-        //     let response = await request(app).get(`/api/applications/${apply.id}`);
-        //     expect(response.status).toBe(200);
+            // now get the specific venue & update its details
+            let response = await request(app).get(`/api/applications/${apply.id}`);
+            expect(response.status).toBe(200);
 
-        //     let updatedApp = response.body;
-        //     updatedApp.guests = null;
+            let updatedApp = response.body;
+            updatedApp.date = new Date("20dtfcvgybhujnk");
 
-        //     response = await request(app).put(`/api/applications/${updatedApp.id}`).send(updatedApp);
-        //     expect(response.body.guests).toBe("jwno");
-        //     expect(response.status).toBe(500);
-        // });
+            response = await request(app).put(`/api/applications/${updatedApp.id}`).send(updatedApp);
+            expect(response.status).toBe(500);
+        });
     });
 
 
