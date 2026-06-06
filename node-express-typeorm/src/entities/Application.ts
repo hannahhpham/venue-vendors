@@ -38,7 +38,7 @@ export class Application {
     @Column({type: "text", nullable: true})
     registrationCert?: string;
 
-    @Column({type: "bit", nullable: true})
+    @Column({type: "boolean", nullable: true})
     isAccepted?: boolean;
 
     @Column({type: "text", nullable: true})

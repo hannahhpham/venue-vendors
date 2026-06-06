@@ -11,8 +11,8 @@ import shortlistedVenueRoutes from './routes/shortlistedVenue.routes'
 import applicationRoutes from "./routes/application.routes";
 import unavailableRoutes from "./routes/unavailable.routes";
 import cors from "cors";
+import app from "./app";
 
-const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());

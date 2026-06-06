@@ -12,6 +12,14 @@ After running npm install, please also use the commands below in each project:
 - admin frontend:
 - admin backend: npm install class-validator class-transformer
 
+# FOR TESTING
+pls install:
+```bash
+npm install --save-dev jest @types/jest jest-environment-jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event ts-jest
+npm install --save-dev supertest @types/supertest
+npm install sqlite3@^5.0.1
+```
+
 
 # Database Details
 We are using Hannah Pham's database details for data storage. Details can be found below:
