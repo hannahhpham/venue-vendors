@@ -6,6 +6,11 @@ import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne} from 'ty
 import { User } from './User'
 import { Venue } from './Venue'
 
+
+// adapt for SQLite Testing
+const isTesting = process.env.NODE_ENV === "test";
+
+
 //can say what table this entity is based on
 @Entity({name: "applications"})
 
@@ -38,7 +43,10 @@ export class Application {
     @Column({type: "text", nullable: true})
     registrationCert?: string;
 
-    @Column({type: "bit", nullable: true})
+    @Column({
+        type: isTesting ? "boolean" : "bit",
+        nullable: true
+    })
     isAccepted?: boolean;
 
     @Column({type: "text", nullable: true})

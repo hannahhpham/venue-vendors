@@ -11,6 +11,11 @@ import { Unavailable } from './Unavailable'
 // I think we gotta move these into the dtos
 import { IsEmail } from 'class-validator'
 
+
+// adapt for SQLite Testing
+const isTesting = process.env.NODE_ENV === "test";
+
+
 //can say what table this entity is based on
 @Entity({name: "venues"})
 
@@ -18,16 +23,14 @@ export class Venue {
     @PrimaryGeneratedColumn({type: "int"})
     id: number;
 
-    // never really considered this, but might as well have it
-    @Column({ unique: true }) //talk to ananya abt this
+    @Column({ unique: true })
     name: string;
 
     @Column({type: "varchar", length: 15})
     phone: string;
 
-    // had to make this longer to accomodate our existing venue emails :'(
     @Column({type: "varchar", length: 35, unique: true})
-    @IsEmail() //first test with class-validator. NEED TO LEARN MORE
+    @IsEmail()
     email: string;
 
     @Column({type: "varchar", length: 75})
@@ -58,7 +61,10 @@ export class Venue {
     @Column({type: "text", nullable: true})
     suitability: string | null;
 
-    @Column({type: "bit", nullable: true})
+    @Column({
+        type: isTesting ? "boolean" : "bit",
+        nullable: true
+    })
     isFeatured?: boolean;
 
     //IMPORTANT!!! check over this. 

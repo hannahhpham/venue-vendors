@@ -8,6 +8,9 @@ ER Diagram: [Here](https://lucid.app/lucidchart/1a83b8c0-cbd1-4331-a1d0-6c9d3a8d
 installation details:
 After running npm install, please also use the commands below in each project:
 - main frontend:
+```bash
+npm install chartjs chart.js react-chartjs-2 chartjs-adapter-date-fns date-fns
+```
 - main backend:
 - admin frontend:
 - admin backend: npm install class-validator class-transformer
@@ -54,5 +57,6 @@ We are using Hannah Pham's database details for data storage. Details can be fou
 - Ben Awad (2019) 'Cascade Delete TypeORM' [video], YouTube website, accessed 14 May 2026. https://www.youtube.com/watch?v=S1pxdAL2Dz8
 - npmjs, “class-validator,” npmjs, Feb. 26, 2026. https://www.npmjs.com/package/class-validator (accessed May 19, 2026).
 - https://stackoverflow.com/questions/72801198/apollo-client-refetch-queries
+- SVOBOL. TypeORM column type dependent on database. [online] Stack Overflow. Available at: https://stackoverflow.com/questions/49463691/typeorm-column-type-dependant-on-database [Accessed 6 June 2026]
 ‌
 ‌
