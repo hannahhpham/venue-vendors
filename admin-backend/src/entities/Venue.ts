@@ -11,6 +11,8 @@ import { Unavailable } from './Unavailable'
 // I think we gotta move these into the dtos
 import { IsEmail } from 'class-validator'
 
+const isTesting = process.env.NODE_ENV === "test";
+
 //can say what table this entity is based on
 @Entity({name: "venues"})
 
@@ -58,7 +60,10 @@ export class Venue {
     @Column({type: "text", nullable: true})
     suitability: string | null;
 
-    @Column({type: "bit", nullable: true})
+    @Column({
+        type: isTesting ? "boolean" : "bit",
+        nullable: true
+    })
     isFeatured?: boolean;
 
     //IMPORTANT!!! check over this. 

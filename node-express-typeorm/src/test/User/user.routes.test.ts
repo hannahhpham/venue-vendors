@@ -121,59 +121,60 @@ describe("User Routes - Testing User API Endpoints", () => {
 
 
   // updating a user
-//   describe("PUT /api/users/:id", () => {
-//     it("should update a specific User", async () => {
-//       // Create a test user
-//       const userRepo = AppDataSource.getRepository(User);
-//       const user = new User();
-//       user.firstName = "Test";
-//       user.lastName = "User";
-//       user.email = "example@gmail.com";
-//       user.password = "testing123!";
-//       user.type = "hirer";
-//       user.phoneNumber = "0444123086"
+  describe("PUT /api/users/:id", () => {
+    it("should update a specific User", async () => {
+      // Create a test user
+      const userRepo = AppDataSource.getRepository(User);
+      const user = new User();
+      user.firstName = "Test";
+      user.lastName = "User";
+      user.email = "example@gmail.com";
+      user.password = "testing123!";
+      user.type = "hirer";
+      user.phoneNumber = "0444123086"
 
-//       // save thr user in the repo
-//       await userRepo.save(user);
+      // save thr user in the repo
+      await userRepo.save(user);
 
-//       // now get the specific user & update their details
-//       let response = await request(app).get(`/api/users/${user.id}`);
-//       expect(response.status).toBe(200);
+      // now get the specific user & update their details
+      let response = await request(app).get(`/api/users/${user.id}`);
+      expect(response.status).toBe(200);
       
-//       let updatedUser = response.body;
-//       updatedUser.firstName = "Test Updating";
+      let updatedUser = response.body;
+      updatedUser.firstName = "Test Updating";
 
-//       response = await request(app).put(`/api/users/${updatedUser.id}`).send(updatedUser);
-//       expect(response.status).toBe(200);
-//       expect(response.body).toHaveLength(1);
-//       expect(response.body[0].firstName).toBe("Test Updating");
-//     });
+      response = await request(app).put(`/api/users/${updatedUser.id}`).send(updatedUser);
+      expect(response.status).toBe(200);
+      expect(response.body.firstName).toBe("Test Updating");
+    });
 
-//     it("should return 404 when a User updation has an invalid change", async () => {
-//       // Create a test user
-//       const userRepo = AppDataSource.getRepository(User);
-//       const user = new User();
-//       user.firstName = "Test";
-//       user.lastName = "User";
-//       user.email = "example@gmail.com";
-//       user.password = "testing123!";
-//       user.type = "hirer";
-//       user.phoneNumber = "0444123086"
+    
+    // this is blocked by dtos
+    // it("should return 404 when a User updation has an invalid change", async () => {
+    //   // Create a test user
+    //   const userRepo = AppDataSource.getRepository(User);
+    //   const user = new User();
+    //   user.firstName = "Test";
+    //   user.lastName = "User";
+    //   user.email = "example@gmail.com";
+    //   user.password = "testing123!";
+    //   user.type = "hirer";
+    //   user.phoneNumber = "0444123086"
 
-//       // save the user to the repo
-//       await userRepo.save(user);
+    //   // save the user to the repo
+    //   await userRepo.save(user);
 
-//       // now get the specific user & update their details
-//       let response = await request(app).get(`/api/users/${user.id}`).send(user);
-//       expect(response.status).toBe(200);
+    //   // now get the specific user & update their details
+    //   let response = await request(app).get(`/api/users/${user.id}`).send(user);
+    //   expect(response.status).toBe(200);
       
-//       let updatedUser = response.body;
-//       updatedUser.type = "Test Errors";
+    //   let updatedUser = response.body;
+    //   updatedUser.type = "Test Errors";
 
-//       response = await request(app).put(`/api/users/${updatedUser.id}`);
-//       expect(response.status).toBe(404);
-//     });
-//   });
+    //   response = await request(app).put(`/api/users/${updatedUser.id}`);
+    //   expect(response.status).toBe(404);
+    // });
+  });
 
 
   // deleting a user
