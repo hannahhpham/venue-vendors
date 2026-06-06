@@ -204,7 +204,7 @@ describe("ShortlistedVenue Routes - Testing ShortlistedVenue API Endpoints", () 
     });
 
 
-    // deleting a application
+    // deleting a shortlisted venue item
     describe("DELETE /api/shortlistedVenues/:id", () => {
         it("should delete a specific shortlisted item", async () => {
             const shortlist = AppDataSource.getRepository(ShortlistedVenue);
@@ -218,7 +218,7 @@ describe("ShortlistedVenue Routes - Testing ShortlistedVenue API Endpoints", () 
             // save the mock shortlist
             await shortlist.save(ranked);
 
-            // now delete the specific shortlist period
+            // now delete the specific shortlist
             const response = await request(app).delete(`/api/shortlistedVenues/${ranked.hirerID}`).send({venueID: ranked.venueID});
             expect(response.status).toBe(200);
             expect(response.body.message).toBe("Venue removed from shortlist successfully");
