@@ -1,14 +1,18 @@
-import React, { useState, useEffect, useContext, createContext } from 'react';
+import React, { useState, useEffect, useContext, createContext, useRef } from 'react';
 import { Application, User, Venue } from "../types/types";
 import { AppService, UserService, VenueService } from '../services/api';
 import { StringDecoder } from 'string_decoder';
+import html2canvas from 'html2canvas-pro';
+import jsPDF from 'jspdf';
 
-//the logic to calculate the report stuff lies here
+//the logic to calculate the report stuff lies here (including download)
 
 interface ApplyContextType {
     allApplications: Application[],
     mostActiveHirers: activeApplicant[],
-    mostPopularVenues: popularVenue[]
+    mostPopularVenues: popularVenue[],
+    downloadReport: () => Promise<void>,
+    pdfRef: React.RefObject<HTMLDivElement|null>,
 }
 
 export type popularVenue = {
@@ -31,6 +35,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
     const [allApplications, setAllApps] = useState<Application[]>([]);
     const [mostActiveHirers, setMostActiveHirers] = useState<activeApplicant[]>([]);
     const [mostPopularVenues, setMostPopularVenues] = useState<popularVenue[]>([]);
+    const pdfRef= useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         fetchAllApps();
@@ -129,9 +134,33 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const downloadReport = async () => {
+        const report = pdfRef.current;
+
+        if (report) {
+            html2canvas(report).then((canvas) => {
+                const img = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
+
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const imgWidth = canvas.width * 0.5 ;
+                const imgHeight = canvas.height * 0.5;
+                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+                const imgX = (pdfWidth - imgWidth * ratio) / 2;
+                const imgY = (pdfHeight - imgHeight * ratio) / 2;
+
+                pdf.addImage(img, "PNG", imgX, imgY, imgWidth*ratio, imgHeight*ratio);
+                pdf.save('report.pdf');
+
+            });
+        }
+
+    }
+
     //return provider
     return (
-        <ApplyContext.Provider value={{ allApplications, mostActiveHirers, mostPopularVenues }}>
+        <ApplyContext.Provider value={{ allApplications, mostActiveHirers, mostPopularVenues, downloadReport, pdfRef }}>
             {children}
         </ApplyContext.Provider>
     );

@@ -4,7 +4,7 @@ import VenueCard from './VenueCard'
 import {useAuth} from '../context/AuthContext'
 import { Venue } from "../types/types";
 import {useRouter} from 'next/router'
-import {VenueService} from '../services/api'
+import {VenueService, UserService} from '../services/api'
 import {useVenues} from '../context/VenueContext'
 
 interface carouselType {
@@ -16,19 +16,19 @@ const Carousel = ({ranked, carouselItems} : carouselType) => {
   //get only initial starting index - calculate others as offset
   const router = useRouter();
   const [itemIndex, setItemIndex] = useState<number>(0);
-  const {currUser} = useAuth(); //need to know which user we are getting data for
+  const {currUser, allUsers} = useAuth(); //need to know which user we are getting data for
 
 
   const items = carouselItems;
-  
+
   //----------- CALCULATE WHAT DATA IS SHOWN IN CAROUSEL ------------------------
   let visibleItems: Venue[]  = [];
 
   if (currUser) {
     //get array of all items
   
-    if (items.length > 5) {
-    for (let i = 0 ; i < 5 ; i++) {
+    if (items.length > 4) {
+    for (let i = 0 ; i < 4 ; i++) {
         visibleItems.push(carouselItems[(itemIndex + i + carouselItems.length) % carouselItems.length]);
     }
     }
@@ -53,7 +53,7 @@ const Carousel = ({ranked, carouselItems} : carouselType) => {
         
         {/* decide whether arrow is rendered depending on # items */}
         
-        {carouselItems.length > 5 ?
+        {carouselItems.length > 4 ?
           (<img src={'/backArrow.png'} data-testid="backButton" onClick={moveBack} className="hover:drop-shadow ml-5"/>) 
           :
           (null)
@@ -64,8 +64,14 @@ const Carousel = ({ranked, carouselItems} : carouselType) => {
           {items.length > 0 ? visibleItems.map((item, index) => (
             <div key={index} className="flex-1 min-w-0 overflow-hidden">
               <VenueCard linkToPage={true} onClick={() => router.push(`/venues/${item.id}`)}>
-                <p className=" font-bold">{ranked ? (index+1) + ". " + item.name : (item.name)}</p>
-                <p className="italic text-sm">{item.address}</p>
+                <p className="text-xl font-bold text-blue-900"> {item.name}</p>
+                <p className="italic text-sm"><span className="font-bold">Address:</span> {item.address}</p>
+                <p className="italic text-sm"><span className="font-bold">Owner: </span>
+                 {allUsers.find((user) => Number(user.id) === Number(item.ownerID))?.firstName} <span></span>
+                 {allUsers.find((user) => Number(user.id) === Number(item.ownerID))?.lastName}
+                 </p>
+                <p className="italic text-sm"><span className="font-bold">Phone:</span> {item.phone}</p>
+                <p className="italic text-sm"><span className="font-bold">Email:</span> {item.email}</p>
               </VenueCard>
                         
             </div> 
@@ -75,7 +81,7 @@ const Carousel = ({ranked, carouselItems} : carouselType) => {
         </div>
 
         {/* if we're showing all items, or if the # of items > 5, show the arrows */}
-        {carouselItems.length > 5 ?
+        {carouselItems.length > 3 ?
           (<img data-testid="forwardButton" src={'/forwardArrow.png'} onClick={moveForward} className="hover:drop-shadow shadow-black mr-5"/>) 
           :
           null

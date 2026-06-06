@@ -12,8 +12,16 @@ After running npm install, please also use the commands below in each project:
 npm install chartjs chart.js react-chartjs-2 chartjs-adapter-date-fns date-fns
 ```
 - main backend:
+
 - admin frontend:
-- admin backend: npm install class-validator class-transformer
+```bash
+npm install jspdf html2canvas-pro
+```
+
+- admin backend: graphql
+```bash
+npm 
+```
 
 # FOR TESTING
 pls install:
@@ -58,5 +66,4 @@ We are using Hannah Pham's database details for data storage. Details can be fou
 - npmjs, “class-validator,” npmjs, Feb. 26, 2026. https://www.npmjs.com/package/class-validator (accessed May 19, 2026).
 - https://stackoverflow.com/questions/72801198/apollo-client-refetch-queries
 - SVOBOL. TypeORM column type dependent on database. [online] Stack Overflow. Available at: https://stackoverflow.com/questions/49463691/typeorm-column-type-dependant-on-database [Accessed 6 June 2026]
-‌
-‌
+- https://medium.com/@wathsaradesilva2000/create-pdfs-in-react-using-jspdf-and-html2canvas-aa59667438fc
