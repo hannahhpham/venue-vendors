@@ -16,7 +16,7 @@ describe("Unavailable Routes - Testing Unavailable API Endpoints", () => {
         await venueRepo.clear();
 
         const userRepo = AppDataSource.getRepository(User);
-        userRepo.clear();
+        await userRepo.clear();
 
         // mock vendor
         const vendor = new User();
