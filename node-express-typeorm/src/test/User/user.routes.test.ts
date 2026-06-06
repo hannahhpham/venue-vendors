@@ -150,7 +150,7 @@ describe("User Routes - Testing User API Endpoints", () => {
 
     
     // this is blocked by dtos
-    // it("should return 404 when a User updation has an invalid change", async () => {
+    // it("should return 400 when a User updation has an invalid change", async () => {
     //   // Create a test user
     //   const userRepo = AppDataSource.getRepository(User);
     //   const user = new User();
@@ -172,7 +172,7 @@ describe("User Routes - Testing User API Endpoints", () => {
     //   updatedUser.type = "Test Errors";
 
     //   response = await request(app).put(`/api/users/${updatedUser.id}`);
-    //   expect(response.status).toBe(404);
+    //   expect(response.status).toBe(400);
     // });
   });
 

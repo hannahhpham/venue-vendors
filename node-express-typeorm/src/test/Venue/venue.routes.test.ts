@@ -7,7 +7,7 @@ import { Venue } from "../../entities/Venue";
 
 describe("Venue Routes - Testing Venue API Endpoints", () => {
     beforeEach(async () => {
-        // Clear the users table before each test
+        // Clear the venues table before each test
         const venueRepo = AppDataSource.getRepository(Venue);
         await venueRepo.clear();
 
@@ -55,7 +55,7 @@ describe("Venue Routes - Testing Venue API Endpoints", () => {
 
             await venueRepo.save(venue);
 
-            // a selcect few of the attributes have been tested
+            // a select few of the attributes have been tested
             const response = await request(app).get("/api/venues");
             expect(response.status).toBe(200);
             expect(response.body).toHaveLength(1);
