@@ -5,15 +5,16 @@ import { useAuth } from "../context/AuthContext";
 import * as utils from "../utils/utils";
 
 // reference: Week 11 Example 3 Lectures
-
+import "chartjs-adapter-date-fns";
 import {
     Chart as ChartJS, CategoryScale, LinearScale, TimeScale,
     PointElement, LineElement, BarElement,
     Title, Tooltip, Legend, Filler, ArcElement,
-    scales
+    scales,
+    ChartOptions
 } from "chart.js";
 import { Line, Bar, Pie } from "react-chartjs-2";
-import "chartjs-adapter-date-fns";
+import LineGraph from "./LineGraph";
 
 interface analyticsProps {
     // pass in currApps from [id].tsx, or the relevant data from dashboard.tsx
@@ -67,13 +68,14 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
             },
         };
 
-        const lineChartOptions = {
+        const lineChartOptions : ChartOptions<'line'> = {
             responsive: true,
             scales: {
                 x : {
                     type: "time",
                     time: {
                         unit: "day",
+                        tooltipFormat: "MMM dd yyyy",
                         displayFormats: {
                             day: "MMM d",
                         }
@@ -243,63 +245,64 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
         // date graph
         }  else if (type === "utilisation") {
 
-            // get all the dates that the venue has been used (hired)
-            const allChosenApplicants: string[] = currApps.filter((app: Application) =>
-                app.isAccepted === true && utils.compareTime(app.date)).map((app: Application) => app.date);
+            // // get all the dates that the venue has been used (hired)
+            // const allChosenApplicants: string[] = currApps.filter((app: Application) =>
+            //     app.isAccepted === true && utils.compareTime(app.date)).map((app: Application) => app.date);
 
-            // get the distinct set of dates
-            const distChosenApplicants = new Set<string>(allChosenApplicants);
+            // // get the distinct set of dates
+            // const distChosenApplicants = new Set<string>(allChosenApplicants);
 
-            // Map (hirerID, isAccepted%)
-            let numOfChosenApps = new Map();
-            for (const hirer of distChosenApplicants) {
-                let count: number = 0;
-                for (const h of allChosenApplicants) {
-                    if (h === hirer) {
-                        count++;
-                    }
-                }
-                // percentage rating
-                numOfChosenApps.set(hirer, count);
-            }
+            // // Map (hirerID, isAccepted%)
+            // let numOfChosenApps = new Map();
+            // for (const hirer of distChosenApplicants) {
+            //     let count: number = 0;
+            //     for (const h of allChosenApplicants) {
+            //         if (h === hirer) {
+            //             count++;
+            //         }
+            //     }
+            //     // percentage rating
+            //     numOfChosenApps.set(hirer, count);
+            // }
             
-            const arrayMap: [string, number][] = Array.from(numOfChosenApps);
+            // const arrayMap: [string, number][] = Array.from(numOfChosenApps);
 
 
-            console.log("Utilisation array map:", JSON.stringify(arrayMap));
+            // console.log("Utilisation array map:", JSON.stringify(arrayMap));
 
 
-            const labels = arrayMap.map((group: [string, number]) => group[0]);
+            // const labels = arrayMap.map((group: [string, number]) => group[0]);
 
-            console.log("Utilisation labels:", JSON.stringify(labels));
+            // console.log("Utilisation labels:", JSON.stringify(labels));
 
-            const data = {
-                labels: labels,
-                datasets: [
-                    {
-                        label: "Utilisation of Venue",
-                        data: arrayMap.map((group: [string, number]) => ({
-                            x: group[0],
-                            y: group[1]
-                        })),
-                        backgroundColor: "rgba(0, 48, 204, 0.75)",
-                    },
-                ],
-                // datasets: [
-                //     {
-                //         label: "Utilisation of Venue",
-                //         data: arrayMap.map((group: [string, number]) => group[1]),
-                //         backgroundColor: "rgba(0, 48, 204, 0.75)",
-                //     },
-                // ],
-            };
+            // const data = {
+            //     labels: labels,
+            //     datasets: [
+            //         {
+            //             label: "Utilisation of Venue",
+            //             data: arrayMap.map((group: [string, number]) => ({
+            //                 x: group[0],
+            //                 y: group[1]
+            //             })),
+            //             backgroundColor: "rgba(0, 48, 204, 0.75)",
+            //         },
+            //     ],
+            //     // datasets: [
+            //     //     {
+            //     //         label: "Utilisation of Venue",
+            //     //         data: arrayMap.map((group: [string, number]) => group[1]),
+            //     //         backgroundColor: "rgba(0, 48, 204, 0.75)",
+            //     //     },
+            //     // ],
+            // };
 
             return (
-                arrayMap.length === 0 ? (
-                    <p><i>No accepted applications found. Unable to generate utilisation analytics.</i></p>
-                ) : (
-                    <Line options={otherChartOptions} data={data} />
-                )
+                // arrayMap.length === 0 ? (
+                //     <p><i>No accepted applications found. Unable to generate utilisation analytics.</i></p>
+                // ) : (
+                //     <Line options={lineChartOptions} data={data} />
+                // )
+                <LineGraph currApps={currApps} />
             )
 
         }

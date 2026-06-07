@@ -74,16 +74,6 @@ export class UnavailableController {
     async block(req: Request, res: Response) {
         /** Create a new Unavailable object from the request body */
         const blocked = this.blockedRepository.create(req.body);
-        // const { startTime, endTime, date, venueID } =  req.body;
-
-        // const blocked = Object.assign(new Unavailable(), {
-        //     startTime: startTime,
-        //     endTime: endTime,
-        //     date: date,
-        //     venueID: venueID
-        // });
-        
-        // const data = this.blockedRepository.create(blocked);
 
         /** Save the new blocked period to the database */
         try {

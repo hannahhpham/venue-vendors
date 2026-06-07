@@ -18,8 +18,10 @@ import Button from '../../components/Button';
 import Sidebar from '../../components/Sidebar'
 import Main from '../../components/Main';
 import Analytics from "../../components/Analytics";
-import { applicationAPI, venueAPI, shortlistedVenueAPI, blockedAPI } from "../../services/api";
+import { applicationAPI, venueAPI, shortlistedVenueAPI } from "../../services/api";
 import * as utils from "../../utils/utils";
+import HistBookings from "../../components/HistBookings";
+import BlockedPeriods from "../../components/BlockedPeriods";
 
 
 export default function VenuePage() {
@@ -38,11 +40,6 @@ export default function VenuePage() {
   // the following code is based on [id].tsx, profile, frontend, Lecture 9 Example 1
   const [thisVenue, setThisVenue] = useState<Venue | undefined>(undefined);
 
-  // the problem with this is that there is a delay in displaying the page
-  // in this gap, it shows that "This venue does not exist"
-  // hannah: as a (very) temporary fix, i removed the "this venue does not exist" to make it less obvious. same issue still happens
-  // we probably need to use a different hook (?)
-  // hannahL is it useMemo and useCallback's time to shine....
   useEffect(() => {
     try {
       if (id) {
@@ -63,7 +60,7 @@ export default function VenuePage() {
       setThisVenue(data);
     } catch (error) {
       console.error("Error fetching venue ([id].tsx): ", error);
-      router.push('/dashboard');
+      router.push('/');
     }
   };
 
@@ -144,26 +141,29 @@ export default function VenuePage() {
   // to deal with the filtering
   const [filterRep, setFilterRep] = useState<boolean>(false);
 
+  const [today, setToday] = useState<Application[]>([]);
+
 
   const sorted = useMemo(() => {
-    const forDate = currApps.filter(a => a.date === dateStr);
-    forDate.sort((a, b) => {
+    return [...currApps].sort((a, b) => {
       const aRep = allUsers.find(u => u.id === a.hirerID)?.reputation;
       const bRep = allUsers.find(u => u.id === b.hirerID)?.reputation;
-      console.log(aRep + " " + bRep);
+      //console.log(aRep + " " + bRep);
       if (aRep && bRep) {
         if (aRep < bRep) {
-          return -1;
-        } else if (aRep > bRep) {
+          console.log("im 1");
           return 1;
+        } else if (aRep > bRep) {
+          console.log("im -1");
+          return -1;
         } else {
+          console.log("im 0");
           return 0;
         }
-      } else {
-        return 0;
       }
+      console.log("im 0 bc a and b don't exist");
+        return 0;
     });
-    return forDate;
   }, [filterRep]);
 
 
@@ -223,7 +223,7 @@ export default function VenuePage() {
         //find max - the new ranking, or number of shortlisted venues
         let min = Math.min(newRanking, shortlistedVenues.length);
         for (let i = oldRanking + 1; i <= min; i++) {
-          await shortlistedVenueAPI.updateRank(currUser.id,  shortlistedVenues[i - 1], i - 1);
+          await shortlistedVenueAPI.updateRank(currUser.id, shortlistedVenues[i - 1], i - 1);
 
         }
       }
@@ -290,27 +290,29 @@ export default function VenuePage() {
           (currUser && (currUser.type === "hirer" ||
             (currUser.type === "vendor" && thisVenue.ownerID === currUser.id))) ? (
 
-            // VENDOR VIEW --------------------------------------------------------------------------------------------------
+            // VENDOR Owner VIEW --------------------------------------------------------------------------------------------------
             currUser.type === "vendor" ? (
 
               <div className="grid grid-cols-[60%_40%] ml-3">
 
                 <main>
 
-                  <Button className="text-black px-5 py-2 my-5 rounded-md font-medium"
-                    onClick={() => setPopupDet(true)}
-                    text="View Venue Details" onLeft={true}>
-                    <img src="../eye.png" className="invert inline mr-2" />
-                  </Button>
+                  <h1 className="text-2xl font-bold mt-2">Upcoming Applications</h1>
+                  <div className="max-h-50 overflow-x-hidden overflow-y-auto">
                   {
-                    popupDet &&
-                    <Popup onClose={() => setPopupDet(false)}>
-                      <div className="h-100 w-9/10">
-                        <VenueDetails edit={true} venue={thisVenue} onUpdate={fetchVenue}></VenueDetails>
-                      </div>
-                    </Popup>
-
+                    currApps.filter((app: Application) => !utils.compareTime(app.date)).length > 0 &&
+                    currApps.filter((app: Application) =>
+                      !utils.compareTime(app.date)).map((app: Application) => (
+                        <div key={app.id}>
+                          <ApplicationsCard app={app} history={false} />
+                        </div>
+                      ))
                   }
+                  {
+                    currApps.filter((app: Application) => !utils.compareTime(app.date)).length === 0 &&
+                    <p>No new applications found.</p>
+                  }
+                </div>
 
                   <h1 className="text-2xl font-bold mt-2">Applications</h1>
 
@@ -348,51 +350,6 @@ export default function VenuePage() {
                       ) : (
                         // SORT BY THE REPUTATION
                         <div>
-                          {/* {
-                            currApps.filter((app: Application) => app.date === dateStr).length > 0 &&
-                            currApps.filter((app: Application) => 
-                              app.date === dateStr).sort(function (a : Application, b : Application) {
-                                const aUser = allUsers.find((u: User) => u.id === a.hirerID);
-                                const bUser = allUsers.find((u: User) => u.id === b.hirerID);
-                              // const aRep: number = aUser?.reputation ?? 0;
-                              // //console.log("aRep: ", aRep);
-                              // const bRep: number = bUser?.reputation ?? 0;
-                              // console.log("user a: " + aUser?.firstName);
-                              // console.log("user b: " + bUser?.firstName);
-                              // console.log(aRep + " " + bRep);
-                              // console.log(aRep < bRep);
-                              // console.log("-----------");
-
-                              if (aUser && bUser) {
-                                const aRep: number = getRepRating(aUser);
-                                const bRep: number = getRepRating(bUser);
-                                console.log("user a: " + aUser?.firstName);
-                              console.log("user b: " + bUser?.firstName);
-                              console.log(aRep + " " + bRep);
-                              console.log(aRep < bRep);
-                              console.log("-----------");
-                                if (aRep && bRep) {
-                                  if (aRep > bRep) {
-                                    return 1;
-                                  } else if (aRep < bRep) {
-                                    return -1;
-                                  } else {
-                                    return 0;
-                                  }
-                                if (aRep > bRep) { return 1; }
-                                if (aRep < bRep) { return -1; }
-                              }
-                              } else {
-                                return 0;
-                              }
-                              return 0;
-                              
-                            }).map((app: Application) => (
-                              <div key={app.id}>
-                                <ApplicationsCard app={app} history={false} />
-                              </div>
-                            ))
-                          } */}
                           {
                             currApps.filter((app: Application) => app.date === dateStr).length > 0 &&
                             sorted.map((app: Application) => (
@@ -409,27 +366,29 @@ export default function VenuePage() {
 
                   <hr className="m-5 text-gray-200"></hr>
 
-                  <h1 className="text-2xl font-bold mt-2">History</h1>
-                  <div className="max-h-150 overflow-x-hidden overflow-y-auto">
-                    {
-                      currApps.filter((app: Application) => app.isAccepted &&
-                        (utils.compareTime(app.date))).length > 0 &&
-                      currApps.filter((app: Application) => app.isAccepted &&
-                        (utils.compareTime(app.date))).map((app: Application) => (
-                          <ApplicationsCard key={app.id} app={app} history={true} />
-                        ))
-                    }
-                    {
-                      currApps.filter((app: Application) => app.isAccepted &&
-                        (app.date < Date() || app.date === Date())).length === 0 &&
-                      <p><i>No previous hiring history.</i></p>
-                    }
-                  </div>
+                  <HistBookings currApps={currApps} />
 
                 </main>
 
 
                 <Sidebar type='vendorVenue'>
+                  <Button className="text-black px-5 py-2 my-5 rounded-md font-medium"
+                    onClick={() => setPopupDet(true)}
+                    text="View Venue Details" onLeft={true}>
+                    <img src="../eye.png" className="invert inline mr-2" />
+                  </Button>
+                  {
+                    popupDet &&
+                    <Popup onClose={() => setPopupDet(false)}>
+                      <div className="h-100 w-9/10">
+                        <VenueDetails edit={true} venue={thisVenue} onUpdate={fetchVenue}></VenueDetails>
+                      </div>
+                    </Popup>
+                  }
+
+                  <hr className="my-3 text-gray-200"></hr>
+
+
                   <h2 className="text-2xl font-bold">Shortlisted Applications</h2>
                   <div className="flex items-center gap-3 mt-3">
                     <p className="inline">Showing results for </p>
@@ -441,7 +400,7 @@ export default function VenuePage() {
                       dateStr !== "" ? (
                         <div>
                           <p>
-                            <i>To reflect the changes, please press a button (e.g. filter by reputation) or refresh the browser</i>
+                            <i>To reflect the changes, please change the date and return to this date</i>
                           </p>
 
                           {
@@ -528,82 +487,7 @@ export default function VenuePage() {
 
                   <hr className="my-10 text-gray-200"></hr>
 
-                  <h2 className="text-2xl font-bold">Unavailability</h2>
-                  <div className="mt-3">
-                    <div className="max-h-50 overflow-y-scroll mb-3">
-                      {
-                        blocked.length > 0 &&
-                        blocked.sort(function (a, b) {
-                          const aDate: string | undefined = blocked.filter((u: Unavailable) =>
-                            u.id === a.id).at(0)?.date;
-                          const bDate: string | undefined = blocked.filter((u: Unavailable) =>
-                            u.id === b.id).at(0)?.date;
-                          if (aDate && bDate) {
-                            if (aDate > bDate) {
-                              return -1;
-                            } else {
-                              return 1;
-                            }
-                          }
-                          return 0;
-                        }).map((u: Unavailable) => (
-                          <div key={u.id}>
-                            <Card heading="">
-                              <div className="grid grid-cols-2">
-                                <div>
-                                  <h3 className="text-lg">{new Date(u.date).toDateString()}</h3>
-                                  <p>{u.startTime.slice(0, 5)} to {u.endTime.slice(0, 5)}</p>
-                                </div>
-                                <Button className="px-5 py-2 bg-red-500 hover:bg-red-600 rounded-lg"
-                                  onClick={() => unblockVenue(u.id)} text="Unblock"></Button>
-                              </div>
-                            </Card>
-                          </div>
-                        ))
-                      }
-                      {
-                        blocked.length === 0 &&
-                        <p><i>Completely available!</i></p>
-                      }
-                    </div>
-
-                  </div>
-                  <div className="grid grid-cols-[2fr_1.5fr_1.5fr]">
-                    <label>Date<br />
-                      <input type="date" min={utils.getCurrDate()} value={blockDate} onChange={(e) => setBlockDate(e.target.value)} />
-                    </label>
-                    <label>Start
-                      <input type="time" value={blockStart} onChange={(e) => setBlockStart(e.target.value)} />
-                    </label>
-                    <label>End
-                      <input type="time" value={blockEnd} onChange={(e) => setBlockEnd(e.target.value)} />
-                    </label>
-                  </div>
-                  <Button className="px-5 py-2 my-2 rounded-xl" onClick={() => {
-
-                    //blocking date validation
-                    if (blockDate != "" && blockStart != "" && blockEnd != "") { //ensure fields are non-empty
-                      if (blockStart < blockEnd) {
-                        try {
-                          blockVenue(Number(id), blockDate, blockStart, blockEnd);
-                          setBlockDate("");
-                          setBlockEnd("");
-                          setBlockStart("");
-                        } catch { //catch for if backend validation fails
-                          showNotif("Failed to block venue. Please check your inputs.", 'fail');
-                        }
-                      }
-                      else {
-                        showNotif("Please ensure start time is before end time.", "fail");
-                      }
-                    }
-                    else {
-                      showNotif("Please enter block date and time", 'fail');
-                    }
-
-
-                  }}
-                    text="Block Venue" />
+                  <BlockedPeriods venueID={Number(id)} view="vendor" />
 
                   <hr className="my-10 text-gray-200"></hr>
 
@@ -686,32 +570,7 @@ export default function VenuePage() {
                   </div>
 
                   <div className="mb-3">
-                    <h3>Unavailability</h3>
-                    {
-                      blocked.length > 0 &&
-                      blocked.filter((u: Unavailable) => u.date < Date()).sort(function (a: Unavailable, b: Unavailable) {
-                        const aDate: string | undefined = blocked.filter((u: Unavailable) => u.id === a.id).at(0)?.date;
-                        const bDate: string | undefined = blocked.filter((u: Unavailable) => u.id === b.id).at(0)?.date;
-                        if (aDate && bDate) {
-                          if (aDate < bDate) {
-                            return 1;
-                          } else {
-                            return -1;
-                          }
-                        }
-                        return 0;
-                      }).map((b: Unavailable) => (
-                        <div key={b.id}>
-                          <Card heading={new Date(b.date).toDateString()}>
-                            <p>{b.startTime.slice(0, 5)} to {b.endTime.slice(0, 5)}</p>
-                          </Card>
-                        </div>
-                      ))
-                    }
-                    {
-                      blocked.length === 0 &&
-                      <p><i>Good news! We're fully available to host your incredible event!</i></p>
-                    }
+                    <BlockedPeriods venueID={Number(id)} view="other" />
                   </div>
 
                 </Sidebar>
@@ -732,35 +591,8 @@ export default function VenuePage() {
                 <VenueDetails edit={false} venue={thisVenue} />
               </div>
               <Sidebar type="hirerVenue">
-                <h2 className="font-bold">Unavailability</h2>
                 <div className="mt-3">
-                  <div className="mb-3">
-                    {
-                      blocked.length > 0 &&
-                      blocked.filter((u: Unavailable) => u.date < Date()).sort(function (a: Unavailable, b: Unavailable) {
-                        const aDate: string | undefined = blocked.filter((u: Unavailable) => u.id === a.id).at(0)?.date;
-                        const bDate: string | undefined = blocked.filter((u: Unavailable) => u.id === b.id).at(0)?.date;
-                        if (aDate && bDate) {
-                          if (aDate < bDate) {
-                            return 1;
-                          } else {
-                            return -1;
-                          }
-                        }
-                        return 0;
-                      }).map((b: Unavailable) => (
-                        <div key={b.id}>
-                          <Card heading={new Date(b.date).toDateString()}>
-                            <p>{b.startTime.slice(0, 5)} to {b.endTime.slice(0, 5)}</p>
-                          </Card>
-                        </div>
-                      ))
-                    }
-                    {
-                      blocked.length === 0 &&
-                      <p><i>Good news! We're fully available to host your next incredible event!</i></p>
-                    }
-                  </div>
+                  <BlockedPeriods venueID={Number(id)} view="other" />
                 </div>
               </Sidebar>
             </div>
@@ -773,7 +605,7 @@ export default function VenuePage() {
     );
   } else {
 
-    // if this venue does not exist
+    // while this page is loading due to async functions
     return (
       <div>
         <title>Loading...</title>

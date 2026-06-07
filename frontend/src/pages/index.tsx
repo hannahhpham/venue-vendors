@@ -5,15 +5,15 @@ import Carousel from "../components/Carousel";
 import Main from '../components/Main';
 import { useRouter } from 'next/router';
 import { useAuth } from "../context/AuthContext";
-import {useVenues} from '../context/VenueContext'
-import {Venue} from '../types/venues'
+import { useVenues } from '../context/VenueContext'
+import { Venue } from '../types/venues'
 
 
 export default function Home() {
 
   const router = useRouter();
   const { currUser, shortlistedVenues, vendorVenues } = useAuth();
-  const {allVenues} = useVenues();
+  const { allVenues } = useVenues();
 
   //this is ok. authcontext doesnt get currUser immediately (cuz async? but index does)
   //console.log("currUser in index.js is ", currUser);
@@ -52,12 +52,7 @@ export default function Home() {
                 </Button>
               </div>
               {
-                // TODO: double check if there is a double error message - i think it should be ok
                 <Carousel type="all" ranked={false} carouselItems={vendorVenues} />
-              }
-              {
-                vendorVenues.length === 0 &&
-                <p><i>No venues found. Add your venues today by heading over to your dashboard.</i></p>
               }
               <hr className="mt-5 text-gray-200"></hr>
             </div>

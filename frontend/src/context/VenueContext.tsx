@@ -41,16 +41,7 @@ export function VenueProvider({ children }: { children: React.ReactNode }) {
     };
 
 
-    // update localStorage with the updated set of venues whenever a new one is added
-    // useEffect(() => {
-    //     if (allVenues.length > 0) {
-    //         localStorage.setItem("venues", JSON.stringify(allVenues));
-    //     }
- 
-    // }, [allVenues])
-
-
-    // add a new venue TO LOCALSTORAGE ONLY
+    // add a new venue
     const addVenue = async (newVenue: Partial<Venue>) => {
         if (newVenue !== null) {
             const result = await venueAPI.createVenue(newVenue);

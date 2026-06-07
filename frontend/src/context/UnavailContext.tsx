@@ -109,13 +109,14 @@ export function UnavailProvider({ children }: { children: React.ReactNode }) {
 
     // get the unavailable array for the venue at hand
     // only returns future blocked periods
-    const getBlockedVenue = async (venueID: number) => {//: Unavailable[] => {
+    const getBlockedVenue = async (venueID: number) : Promise<Unavailable[]> => {
         try {
             const result = await blockedAPI.getVenueBlocked(venueID);
-            //return result;
+            return result;
         } catch (error) {
             console.error("Error fetching blocked times for the venue (Context): ", error);
         }
+        return [];
     }
 
 

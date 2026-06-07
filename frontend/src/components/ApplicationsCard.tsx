@@ -130,6 +130,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                     <h3 className="text-sm font-normal">Applicant: {hirer?.firstName}</h3>
                                     <h4 className="text-xs">Hiring Reputation: {hirer && getRepRating(hirer)} stars</h4>
                                     <h4 className="text-xs">Hiring Credibility: {getHirerCredibility()} stars</h4>
+                                    <h3 className="text-sm font-normal">Date: {new Date(app.date).toDateString()}</h3>
                                 </div>
                                 <div className="">
                                     <h2 className="text-sm font-normal">Timings: {app.startTime.slice(0, 5)} to {app.endTime.slice(0, 5)}</h2>
@@ -141,10 +142,17 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                     <i>{app.notes !== "" && app.notes !== null ? app.notes : "Nothing found"}</i></h2>
                                 </div>
                                 <div className="row-span-2">
-                                    <button title="Shortlist Application" className="p-2 hover:bg-blue-100 hover:shadow-lg rounded-full" 
+                                    <button title={app.rank === -1 ? "Shortlist Application" : "Unshortlist Application"}
+                                        className='p-2 hover:bg-blue-100 hover:shadow-lg rounded-full'
                                         onClick={() => (app.rank === -1 ? shortlist(app.id, 1) : shortlist(app.id, -1))}>
-                                        {app.rank !== -1 ? (<img src="../shortlisted.png" />) : (<img src="../shortlist.png" />)}
-                                    </button><br/>
+                                    {
+                                        app.rank === -1 ? (
+                                            <img src="../shortlist.png" />
+                                        ) : (
+                                            <img src="../shortlisted.png" />
+                                        )
+                                    }
+                                    </button><br />
                                     <button title="Reject Application"
                                      className={"p-2 hover:bg-red-100 hover:shadow-lg rounded-full " + (app.isAccepted === false ? "bg-red-200" : "")} 
                                         onClick={() => setBooking(app.id, false)}>
