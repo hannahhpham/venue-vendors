@@ -45,15 +45,16 @@ We are using Hannah Pham's database details for data storage. Details can be fou
 - Username: s4164624
 - Password: Password_1
 
+# User login details
+- Admin: The admin's username and password is 'admin'
+- Vendors: All pre-set vendor passwords are 'Password_1'. Vendor emails are visible in the mssql database.
+- Hirers: Most pre-set hirer passwords are 'Password_1'. Hirer emails are visible in the mssql database.
 
-## Hirer Explanations
-- credibility and reputation explanations here 
-
-## AI Use
+# AI Use
 - ChatGPT was used to generate venue details (eg: venue name, phone number, description)
 - ChatGPT was also used to generate application details (eg: application description, event name)
 
-## References for TypeOrm/Database Stuff
+# Referencesf
 - lab week 7 and 8
 - lecture code and slideshows: week 9, 11, 12 
 - Veronika's FSD Miro Board: https://au.miro.com/app/board/u3jVOfyZVek=/
