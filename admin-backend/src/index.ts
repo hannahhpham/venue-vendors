@@ -22,6 +22,7 @@ async function startServer() {
   const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
+    introspection: true, //so we can edit on sandbox
     plugins: [
     // Install a landing page plugin based on NODE_ENV
     ApolloServerPluginLandingPageLocalDefault({ footer: false }),
