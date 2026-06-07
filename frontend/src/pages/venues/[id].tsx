@@ -68,13 +68,16 @@ export default function VenuePage() {
   const [currApps, setCurrApps] = useState<Application[]>([]);
 
   const fetchCurrApps = async () => {
-    try {
-      const data = await applicationAPI.getVenueApps(Number(id));
-      setCurrApps(data);
-      setShortList(currApps.filter((app: Application) => app.rank !== -1));
-    } catch (error) {
-      console.error("Error fetching applications ([id].tsx): ", error);
+    if (id) {
+      try {
+        const data = await applicationAPI.getVenueApps(Number(id));
+        setCurrApps(data);
+        setShortList(currApps.filter((app: Application) => app.rank !== -1));
+      } catch (error) {
+        console.error("Error fetching applications ([id].tsx): ", error);
+      }
     }
+
   };
 
   // this semi works

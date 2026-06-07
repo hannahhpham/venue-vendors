@@ -11,7 +11,7 @@ interface detailsType {
 
 
 const Details = ({edit} : detailsType) => {
-  const {currUser, updateUser} = useAuth();
+  const {currUser, updateUser, getRepRating} = useAuth();
   const {showNotif} = useNotif();
   const[popup, setPopup] = useState<boolean>(false);
 
@@ -27,13 +27,15 @@ const Details = ({edit} : detailsType) => {
 
     const handleEdit = (firstName: string, lastName: string, phoneNumber: string) => {
     if (currUser) {
+      //console.log("rep in userdetails", getRepRating(currUser));
 
       //new stuff: u can create an updated variable by using old variable's data
       const updatedUser = {
         ...currUser, //takes previous data stored in the old currUser object
         firstName: firstName,
         lastName: lastName,
-        phoneNumber: phoneNumber
+        phoneNumber: phoneNumber,
+        
       }
       //update local storage and states with new values using function from authcontext
       //needs to be in authcontext cuz thats where the state for currUser and allUsers is

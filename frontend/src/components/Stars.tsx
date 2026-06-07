@@ -15,6 +15,8 @@ const Stars = ({ type }: starType) => {
     let string = "";
   
     if (type === "hirerRating" && currUser) {
+
+
       //calculate average across historical hire
       const rate = Math.round(getRepRating(currUser));
       for (let i = 0; i < rate; ++i) {
@@ -39,6 +41,7 @@ const Stars = ({ type }: starType) => {
     else if (type === "hirerCredibility" && currUser) {
       //add number of documents. 3 docs total, so scale is 1, 3, 5.
       const credibility = currUser.credibility ?? 0;
+      //console.log(currUser);
 
       for (let i = 0 ; i < credibility ; i++) {
         string += "★ ";

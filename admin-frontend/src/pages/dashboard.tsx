@@ -59,7 +59,7 @@ const dashboard = () => {
           <div className="flex">
             
             {/* main div */}
-            <div className=" w-[80%] min-w-0">
+            <div className=" w-[75%] min-w-0">
               {/* carousel showing all venues */}
               <div className="ml-5 mr-5">
                 <h2 className="mt-10">All Venues</h2>
@@ -77,7 +77,7 @@ const dashboard = () => {
             </div>
             
             {/* sidebar showing report - this is printed to the pdf */}
-            <div className='w-[20%] bg-sky-50 min-h-80' >
+            <div className='w-[25%] bg-sky-50 min-h-80' >
               <Sidebar type="dashboard" >
 
                 <div ref={pdfRef}>
@@ -93,11 +93,11 @@ const dashboard = () => {
                         {/* day and time */}
                         <ul className="text-xs pl-10 list-disc">
                           <li key="day">
-                            Day: {venue.day}
+                            Most Popular Day: {venue.day}
                           </li>
 
                           <li key="time">
-                            Time: {venue.timeslot}
+                            Most Popular Timeslot: {venue.timeslot}
                           </li>
                         </ul>
                         

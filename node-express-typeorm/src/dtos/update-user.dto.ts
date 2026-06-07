@@ -1,4 +1,4 @@
-import {IsString, IsNotEmpty, Contains, Length, IsOptional} from 'class-validator'
+import {IsString, IsNotEmpty, IsNumber, Contains, Length, IsOptional} from 'class-validator'
 
 //call these in the routes. 
 //route.post(validateDto(CreateUserDTO), (req, res) => blah blah)
@@ -34,5 +34,11 @@ export class updateUserDTO {
     @IsString()
     @IsOptional()
     registrationCert: string;
+
+    @IsNumber()
+    reputation: number;
+
+    @IsNumber()
+    credibility: number;
 
 }

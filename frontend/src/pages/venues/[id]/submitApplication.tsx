@@ -96,7 +96,7 @@ export default function SubmitApplication() {
                             // not sure whether to keep this or not
                         // if (hirerType === "company") {
                             abn: abn.trim() === "" ? undefined : abn,
-                            file: fileStr.trim() === "" ? undefined : fileStr,
+                            registrationCert: fileStr.trim() === "" ? undefined : fileStr,
                         }
 
                         //console.log("filestr:\n" + fileStr);

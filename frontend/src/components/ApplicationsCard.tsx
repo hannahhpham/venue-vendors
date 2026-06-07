@@ -61,7 +61,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
     const getHirerCredibility = (): number => {
         let credibility = hirer?.credibility || 0;
 
-        if (app.abn && app.file) {//check if the hirer has submitted with a business
+        if (app.abn && app.registrationCert) {//check if the hirer has submitted with a business
             credibility += 1;
 
         }
@@ -197,10 +197,10 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                                                         <h3>Company ABN: {app.abn}</h3>
                                                                     }
                                                                     {
-                                                                        app.file &&
+                                                                        app.registrationCert &&
                                                                         <div>
                                                                             <h3>Business Name Registration Certficate:</h3>
-                                                                            <embed src={app.file}/>
+                                                                            <embed src={app.registrationCert}/>
                                                                         </div>
                                                                     }
                                                                     {
@@ -218,7 +218,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                                                         </div>
                                                                     }
                                                                     {
-                                                                        !app.abn && !app.file && !hirer?.drivLic && !hirer?.insur &&
+                                                                        !app.abn && !app.registrationCert && !hirer?.drivLic && !hirer?.insur &&
                                                                         <h3><i>No supporting documents provided.</i></h3>
                                                                     }
                                                                 </div>

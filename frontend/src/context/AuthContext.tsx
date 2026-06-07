@@ -227,6 +227,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
             //update this user in the database
             await userAPI.updateUser(updatedUser.id, updatedUser);
+            // console.log("credibility sent to update ", updatedUser.credibility, );
+            //  console.log("repirtation sent to update ", updatedUser.reputation, );
             setCurrUser(updatedUser);
         } catch {
             showNotif("User failed to update. Please check if your inputs are in correct form.", "fail");
@@ -236,7 +238,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // calculate the reputation and credibility rating of a hirer
     // source: https://www.geeksforgeeks.org/typescript/typescript-array-reduce-method/
     const getRepRating = (user: User): number => {
-        const myApps = allApplications.filter((app: Application) => (app.hirerID === user.id && app.isAccepted === true && app.vendorRating !== undefined));
+        const myApps = allApplications.filter((app: Application) => (app.hirerID === user.id && app.isAccepted === true && app.vendorRating !== null));
+
         let rating: number = myApps.reduce((total, currVal) => {
             if (currVal.vendorRating !== undefined) {
                 return total + currVal.vendorRating

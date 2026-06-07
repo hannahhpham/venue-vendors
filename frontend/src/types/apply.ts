@@ -7,7 +7,7 @@ export type Application = {
   guests: number,
   description: string,
   abn?: string,                         // when the user is applying on behalf of a company
-  file?: string,                        // file upload - Business Name Registration Certificate
+  registrationCert?: string,                        // file upload - Business Name Registration Certificate
   isAccepted?: boolean,                  // i.e. if it has been approved by the vendor
   notes: string,
   vendorRating?: number,               // 0-5 stars ==> contributes to the reputation rating IF isAccepted === true
