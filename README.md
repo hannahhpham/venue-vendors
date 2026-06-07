@@ -21,6 +21,7 @@ npm install jspdf html2canvas-pro
 - admin backend: graphql
 ```bash
 npm 
+npm install --save-dev jest ts-jest @types/jest supertest @types/supertest sqlite3@^5.0.3
 ```
 
 # FOR TESTING
@@ -28,8 +29,9 @@ pls install:
 ```bash
 npm install --save-dev jest @types/jest jest-environment-jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event ts-jest
 npm install --save-dev supertest @types/supertest
-npm install sqlite3@^5.0.1
+npm install better-sqlite3
 ```
+- if installing sqlite3 version 5.0.1 doen't work, download version 5.0.3
 
 
 # Database Details
@@ -58,6 +60,7 @@ We are using Hannah Pham's database details for data storage. Details can be fou
 ## References for TypeOrm/Database Stuff
 - lab week 7 and 8
 - lectures week 9, 11
+- Veronika's FSD Miro Board: https://au.miro.com/app/board/u3jVOfyZVek=/
 - MatsT (2010). Creation date column in SQL table. [online] Stack Overflow. Available at: https://stackoverflow.com/questions/2737763/creation-date-column-in-sql-table [Accessed 1 May 2026].
 - Typeorm.io. (2025). Entities | TypeORM. [online] Available at: https://typeorm.io/docs/entity/entities/ [Accessed 1 May 2026].
 - Typeorm.io. (2026). Decorator reference | TypeORM. [online] Available at: https://typeorm.io/docs/help/decorator-reference/ [Accessed 1 May 2026].

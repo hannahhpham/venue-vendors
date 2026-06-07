@@ -6,10 +6,11 @@ import { ApolloServer } from "@apollo/server";
 import { typeDefs } from "./graphql/schema";
 import { resolvers } from "./graphql/resolvers";
 import { expressMiddleware } from "@as-integrations/express4"; //changed this - wrong path
+import app from './app'
 
 //this file references code from lectorial 9 example 2
 
-const app = express();
+//const app = express();
 const PORT = process.env.PORT || 4001; //changed from port 3001
 
 app.use(cors());
@@ -37,3 +38,5 @@ async function startServer() {
 startServer().catch((error) =>
   console.log("Error during server initialization:", error)
 );
+
+export default app;

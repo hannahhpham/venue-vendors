@@ -6,11 +6,7 @@ module.exports = {
   transform: {
     "^.+\\.ts$": "ts-jest",
   },
-  setupFilesAfterEnv: ["./src/test/setup.ts"],
-  testEnvironmentOptions: {
-    env: {
-      NODE_ENV: "test"
-    }
-  },
-
+  setupFilesAfterEnv: ["./src/tests/setup.ts"],
 };
+
+//"./src/test/setup.ts"

@@ -6,7 +6,10 @@ import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne} from 'ty
 import { User } from './User'
 import { Venue } from './Venue'
 
+
+// adapt for SQLite Testing
 const isTesting = process.env.NODE_ENV === "test";
+
 
 //can say what table this entity is based on
 @Entity({name: "applications"})

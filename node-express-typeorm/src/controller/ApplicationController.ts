@@ -173,6 +173,8 @@ export class ApplicationController {
             return res.status(500).json({ message: "Error saving venue", error });
         }
 
+        //if the reputation was updated then also update hirer's reputation
+
         /** Return the updated application */
         res.json(app);
     }

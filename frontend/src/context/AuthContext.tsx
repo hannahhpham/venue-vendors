@@ -238,7 +238,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // calculate the reputation and credibility rating of a hirer
     // source: https://www.geeksforgeeks.org/typescript/typescript-array-reduce-method/
-    const getRepRating = (user: User): number => {
+    const getRepRating =  (user: User): number => {
         const myApps = allApplications.filter((app: Application) => (app.hirerID === user.id && app.isAccepted === true && app.vendorRating !== null));
 
         let rating: number = myApps.reduce((total, currVal) => {
