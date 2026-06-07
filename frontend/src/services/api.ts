@@ -8,7 +8,7 @@ import { Unavailable } from "../types/unavail";
 //FSD Lectorial 8 code archive
 
 export const api = axios.create({
-  baseURL: "http://localhost:3001/api",
+  baseURL: "https://a2-fsdpra01-07tue2-30pmveronikateam7.onrender.com/",
 });
 
 
