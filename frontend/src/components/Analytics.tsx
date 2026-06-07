@@ -9,17 +9,14 @@ import "chartjs-adapter-date-fns";
 import {
     Chart as ChartJS, CategoryScale, LinearScale, TimeScale,
     PointElement, LineElement, BarElement,
-    Title, Tooltip, Legend, Filler, ArcElement,
-    scales,
-    ChartOptions
+    Title, Tooltip, Legend, Filler, ArcElement
 } from "chart.js";
-import { Line, Bar, Pie } from "react-chartjs-2";
-import LineGraph from "./LineGraph";
+import { Bar, Pie } from "react-chartjs-2";
 
 interface analyticsProps {
     // pass in currApps from [id].tsx, or the relevant data from dashboard.tsx
     currApps: Application[],
-    type: "mostAccepted" | "totalAccepted" | "activeHirers" | "utilisation",
+    type: "mostAccepted" | "totalAccepted" | "activeHirers",
 }
 
 const Analytics = ({ currApps, type }: analyticsProps) => {
@@ -51,40 +48,18 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
                     position: "top" as const,
                 },
             },
-        };
-
-
-        const otherChartOptions = {
-            responsive: true,
             scales: {
-                y : {
-                    min: 0
-                }
-            },
-            plugins: {
-                legend: {
-                    position: "top" as const,
-                },
-            },
-        };
-
-        const lineChartOptions : ChartOptions<'line'> = {
-            responsive: true,
-            scales: {
-                x : {
-                    type: "time",
-                    time: {
-                        unit: "day",
-                        tooltipFormat: "MMM dd yyyy",
-                        displayFormats: {
-                            day: "MMM d",
-                        }
+                x: {
+                    ticks: {
+                        stepSize: 1
                     }
-                },
-                y : {
-                    min: 0
                 }
-            },
+            }
+        };
+
+
+        const pieChartOptions = {
+            responsive: true,
             plugins: {
                 legend: {
                     position: "top" as const,
@@ -237,73 +212,10 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
                 arrayMap.length === 0 ? (
                     <p><i>No activer hirers found. Unable to generate analytics.</i></p>
                 ) : (
-                    <Pie options={otherChartOptions} data={pieData} />
+                    <Pie options={pieChartOptions} data={pieData} />
                 )
             )
 
-
-        // date graph
-        }  else if (type === "utilisation") {
-
-            // // get all the dates that the venue has been used (hired)
-            // const allChosenApplicants: string[] = currApps.filter((app: Application) =>
-            //     app.isAccepted === true && utils.compareTime(app.date)).map((app: Application) => app.date);
-
-            // // get the distinct set of dates
-            // const distChosenApplicants = new Set<string>(allChosenApplicants);
-
-            // // Map (hirerID, isAccepted%)
-            // let numOfChosenApps = new Map();
-            // for (const hirer of distChosenApplicants) {
-            //     let count: number = 0;
-            //     for (const h of allChosenApplicants) {
-            //         if (h === hirer) {
-            //             count++;
-            //         }
-            //     }
-            //     // percentage rating
-            //     numOfChosenApps.set(hirer, count);
-            // }
-            
-            // const arrayMap: [string, number][] = Array.from(numOfChosenApps);
-
-
-            // console.log("Utilisation array map:", JSON.stringify(arrayMap));
-
-
-            // const labels = arrayMap.map((group: [string, number]) => group[0]);
-
-            // console.log("Utilisation labels:", JSON.stringify(labels));
-
-            // const data = {
-            //     labels: labels,
-            //     datasets: [
-            //         {
-            //             label: "Utilisation of Venue",
-            //             data: arrayMap.map((group: [string, number]) => ({
-            //                 x: group[0],
-            //                 y: group[1]
-            //             })),
-            //             backgroundColor: "rgba(0, 48, 204, 0.75)",
-            //         },
-            //     ],
-            //     // datasets: [
-            //     //     {
-            //     //         label: "Utilisation of Venue",
-            //     //         data: arrayMap.map((group: [string, number]) => group[1]),
-            //     //         backgroundColor: "rgba(0, 48, 204, 0.75)",
-            //     //     },
-            //     // ],
-            // };
-
-            return (
-                // arrayMap.length === 0 ? (
-                //     <p><i>No accepted applications found. Unable to generate utilisation analytics.</i></p>
-                // ) : (
-                //     <Line options={lineChartOptions} data={data} />
-                // )
-                <LineGraph currApps={currApps} />
-            )
 
         }
 

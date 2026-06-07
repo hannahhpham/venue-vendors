@@ -3,10 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { User } from "../../types/users"
 import { Venue, shortlistedVenueType } from "../../types/venues"
 import { Application } from "../../types/apply";
-import { Unavailable } from "../../types/unavail";
 import { useAuth } from "../../context/AuthContext";
 import { useApplications } from "../../context/ApplyContext";
-import { useUnavail } from "../../context/UnavailContext";
 import { useNotif } from '../../context/NotifContext'
 //import {useVenues} from ''
 import Header from "../../components/Header";
@@ -22,6 +20,7 @@ import { applicationAPI, venueAPI, shortlistedVenueAPI } from "../../services/ap
 import * as utils from "../../utils/utils";
 import HistBookings from "../../components/HistBookings";
 import BlockedPeriods from "../../components/BlockedPeriods";
+import LineGraph from "@/components/LineGraph";
 
 
 export default function VenuePage() {
@@ -29,7 +28,6 @@ export default function VenuePage() {
   //const { allVenues } = useVenues();
   const { currUser, allUsers, getRepRating, shortlistedVenues, getShortlistedVenues } = useAuth();
   const { allApplications, setBooking, shortlist } = useApplications();
-  const { allBlocked, blockVenue, unblockVenue } = useUnavail();
   const { showNotif } = useNotif();
   // this is a string - the venue id
   const { id } = router.query;
@@ -46,10 +44,9 @@ export default function VenuePage() {
         fetchVenue();
         fetchCurrApps();
       }
-    }
-    catch {
-      // to also allow for ppl who aren't logged in
-      router.push('/');
+    } catch {
+      // push people back to the search page to avoid errors
+      router.push('/search');
     }
 
   }, [id]);
@@ -108,16 +105,6 @@ export default function VenuePage() {
   const [shortListItems, setShortList] = useState<Application[]>(currApps.filter((app: Application) =>
     app.rank !== -1));
 
-  // get the unavailable times for this venue
-  // CHANGE THIS
-  const [blocked, setBlocked] = useState<Unavailable[]>(allBlocked.filter((b: Unavailable) =>
-    b.venueID === Number(id) && !utils.compareTime(b.date)));
-
-  // update blocked times when changed
-  useEffect(() => {
-    setBlocked(allBlocked.filter((b: Unavailable) =>
-      b.venueID === Number(id) && !utils.compareTime(b.date)));
-  }, [allBlocked]);
 
   // to deal with viewing the details of the venue
   const [popupDet, setPopupDet] = useState<boolean>(false);
@@ -136,11 +123,6 @@ export default function VenuePage() {
     //console.log("shortlisted apps: " + JSON.stringify(shortListItems));
   }, [allApplications]);
 
-  // to block the venue
-  const [blockDate, setBlockDate] = useState<string>("");
-  const [blockStart, setBlockStart] = useState<string>("");
-  const [blockEnd, setBlockEnd] = useState<string>("");
-
   // to deal with the filtering
   const [filterRep, setFilterRep] = useState<boolean>(false);
 
@@ -148,7 +130,7 @@ export default function VenuePage() {
 
 
   const sorted = useMemo(() => {
-    return [...currApps].sort((a, b) => {
+    return [...currApps].filter(a => a.date === dateStr).sort((a, b) => {
       const aRep = allUsers.find(u => u.id === a.hirerID)?.reputation;
       const bRep = allUsers.find(u => u.id === b.hirerID)?.reputation;
       //console.log(aRep + " " + bRep);
@@ -301,7 +283,7 @@ export default function VenuePage() {
                 <main>
 
                   <h1 className="text-2xl font-bold mt-2">Upcoming Applications</h1>
-                  <div className="max-h-50 overflow-x-hidden overflow-y-auto">
+                  <div className="max-h-100 overflow-x-hidden overflow-y-auto">
                   {
                     currApps.filter((app: Application) => !utils.compareTime(app.date)).length > 0 &&
                     currApps.filter((app: Application) =>
@@ -498,12 +480,14 @@ export default function VenuePage() {
                   {
                     currApps.length > 0 &&
                     <div>
-                      <h3>Most Chosen Applicant</h3>
+                      <h3>Chosen Applicants</h3>
                       <Analytics type="mostAccepted" currApps={currApps} />
-                      <hr />
+                      <hr className="my-3 text-gray-200"></hr>
+                      <h3>Active Hirers</h3>
                       <Analytics type="activeHirers" currApps={currApps} />
-                      <hr />
-                      <Analytics type="utilisation" currApps={currApps} />
+                      <hr className="my-3 text-gray-200"></hr>
+                      <h3>Venue Utilisation</h3>
+                      <LineGraph currApps={currApps} />
                     </div>
                   }
                   {

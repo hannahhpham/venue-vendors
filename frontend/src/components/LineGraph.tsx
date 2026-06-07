@@ -22,56 +22,111 @@ interface LineGraphProps {
 
 const LineGraph = ({ currApps }: LineGraphProps) => {
 
-    type filter = 'week' | 'thisMonth' | 'lastMonth' | 'all';
-    const [dateFilter, setDateFilter] = useState<filter>('all');
+    //type filter = 'week' | 'thisMonth' | 'lastMonth' | 'all';
+    const [dateFilter, setDateFilter] = useState<string>("all");
 
-    const consideredApps = currApps.filter((app: Application) =>
-            app.isAccepted === true && utils.compareTime(app.date));
+    let consideredApps = currApps.filter((app: Application) =>
+            app.isAccepted === true && utils.compareTime(app.date)).toSorted((a, b) => {
+            if (a.date < b.date) {
+                return 1;
+            }
+            if (a.date > b.date) {
+                return -1;
+            }
+            return 0;
+        });
 
-    // const minDateAll : string = useMemo(() => {
-    //     consideredApps.sort((a, b) => {
-    //         if (a.date < b.date) {
-    //             return 1;
-    //         }
-    //         if (a.date > b.date) {
-    //             return -1;
-    //         }
-    //         return 0;
-    //     });
-    //     if (consideredApps.length === 0) {
-    //         return new Date().toISOString()
-    //     }
-    // }, [currApps]);
+    const minDateAll : string = useMemo(() => {
+        consideredApps.sort((a, b) => {
+            if (a.date < b.date) {
+                return 1;
+            }
+            if (a.date > b.date) {
+                return -1;
+            }
+            return 0;
+        });
+        if (consideredApps.length === 0) {
+            return new Date().toISOString()
+        }
+            
+        return consideredApps.at(consideredApps.length - 1)?.date ?? new Date().toISOString();
+    }, [currApps]);
 
 
     const [minDate, setMinDate] = useState<string>('');
     const [maxDate, setMaxDate] = useState<string>(new Date().toISOString());
 
     // source: https://www.w3schools.com/js/js_date_methods_set.asp
-    const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        setDateFilter(event.target.value as filter);
+    const handleChange = () => {
+        console.log(dateFilter);
         const today = new Date();
         let final = new Date();
-        if (dateFilter === "all") {
-            setMinDate("");
-            setMaxDate(today.toISOString());
 
-        } else if (dateFilter === "lastMonth") {
-            final.setMonth(today.getMonth() - 2);
-            setMinDate(final.toISOString());
-            final.setMonth(today.getMonth() - 1);
-            setMaxDate(final.toISOString());
+        switch (dateFilter) {
+            case "all":
+                setMinDate("");
+                setMaxDate("");
+                setMinDate(minDateAll);
+                setMaxDate(today.toISOString());
+                break;
+            
+            case "lastMonth":
+                setMinDate("");
+                setMaxDate("");
+                final.setMonth(today.getMonth() - 2);
+                setMinDate(final.toISOString());
+                final.setMonth(today.getMonth() - 1);
+                setMaxDate(final.toISOString());
+                break;
 
-        } else if (dateFilter === "thisMonth") {
-            final.setMonth(today.getMonth() - 1);
-            setMinDate(final.toISOString());
-            setMaxDate(today.toISOString());
+            case "thisMonth":
+                setMinDate("");
+                setMaxDate("");
+                final.setMonth(today.getMonth() - 1);
+                setMinDate(final.toISOString());
+                setMaxDate(today.toISOString());
+                break;
 
-        } else {
-            final.setDate(today.getDate() - 7);
-            setMinDate(final.toISOString());
-            setMaxDate(today.toISOString());
+            case "week":
+                setMinDate("");
+                setMaxDate("");
+                final.setDate(today.getDate() - 7);
+                console.log("7 days ago: ", final.toDateString());
+                setMinDate(final.toISOString());
+                setMaxDate(today.toISOString());
+                break;
+            
+            default:
+                setMinDate("");
+                setMaxDate("");
+                setMinDate(minDateAll);
+                setMaxDate(today.toISOString());
+                console.log("min date: ", minDateAll);
         }
+
+        // if (dateFilter === "all") {
+        //     setMinDate(minDateAll);
+        //     setMaxDate(today.toISOString());
+
+        // }
+        // if (dateFilter === "lastMonth") {
+        //     final.setMonth(today.getMonth() - 2);
+        //     setMinDate(final.toISOString());
+        //     final.setMonth(today.getMonth() - 1);
+        //     setMaxDate(final.toISOString());
+
+        // } else if (dateFilter === "thisMonth") {
+        //     final.setMonth(today.getMonth() - 1);
+        //     setMinDate(final.toISOString());
+        //     setMaxDate(today.toISOString());
+
+        // } else if (dateFilter === "week") {
+        //     final.setDate(today.getDate() - 7);
+        //     console.log("7 days ago: ", final.toDateString());
+        //     setMinDate(final.toISOString());
+        //     setMaxDate(today.toISOString());
+        // }
     }
 
 
@@ -96,19 +151,21 @@ const LineGraph = ({ currApps }: LineGraphProps) => {
                 x: {
                     type: "time",
                     time: {
-                        unit: dateFilter === "all" ? 'quarter' : (dateFilter === "week" ? 'day' : 'week'),
+                        unit: 'day',
                         tooltipFormat: "MMM dd yyyy",
                         displayFormats: {
                             day: 'MMM dd',
-                            quarter: "MMM yyyy",
-                            week: "dd MMM"
                         }
                     },
                     min: minDate,
                     max: maxDate
                 },
                 y: {
-                    min: 0
+                    min: 0,
+                    suggestedMax: 5,
+                    ticks: {
+                        stepSize: 1
+                    }
                 }
             },
             plugins: {
@@ -120,8 +177,7 @@ const LineGraph = ({ currApps }: LineGraphProps) => {
 
 
         // get all the dates that the venue has been used (hired)
-        const allChosenApplicants: string[] = currApps.filter((app: Application) =>
-            app.isAccepted === true && utils.compareTime(app.date)).map((app: Application) => app.date);
+        const allChosenApplicants: string[] = consideredApps.map((app: Application) => app.date);
 
         // get the distinct set of dates
         const distChosenApplicants = new Set<string>(allChosenApplicants);
@@ -135,19 +191,14 @@ const LineGraph = ({ currApps }: LineGraphProps) => {
                     count++;
                 }
             }
-            // percentage rating
+            // count # bookings per day
             numOfChosenApps.set(hirer, count);
         }
 
         const arrayMap: [string, number][] = Array.from(numOfChosenApps);
 
 
-        console.log("Utilisation array map:", JSON.stringify(arrayMap));
-
-
         const labels = arrayMap.map((group: [string, number]) => group[0]);
-
-        console.log("Utilisation labels:", JSON.stringify(labels));
 
         const data = {
             labels: labels,
@@ -172,16 +223,21 @@ const LineGraph = ({ currApps }: LineGraphProps) => {
 
         return (
             arrayMap.length === 0 ? (
-                <p><i>No accepted applications found. Unable to generate utilisation analytics.</i></p>
+                <p><i>No accepted past bookings found. Unable to generate utilisation analytics.</i></p>
             ) : (
                 <div className="mt-3">
                     <div className="inline">
                         <p className="inline">Showing results for </p>
-                        <select value={dateFilter} className="outline rounded-lg" onChange={handleChange}>
-                            <option value='all'>All Time</option>
-                            <option value='week'>This Week</option>
-                            <option value='thisMonth'>This Month</option>
-                            <option value='lastMonth'>Last Month</option>
+                        <select value={dateFilter} className="outline rounded-lg" onChange={(e) => {
+                            console.log("given:", e.target.value);
+                            setDateFilter(e.target.value);
+                            console.log("stored:", dateFilter);
+                            handleChange();
+                        }}>
+                            <option value="all">All Time</option>
+                            <option value="week">This Week</option>
+                            <option value="thisMonth">This Month</option>
+                            <option value="lastMonth">Last Month</option>
                         </select>
                     </div>
                     <Line options={lineChartOptions} data={data} />
@@ -195,4 +251,4 @@ const LineGraph = ({ currApps }: LineGraphProps) => {
 
 // memo to make sure that the component only re renders upon a change in the props
 // essentially, the change in the props is like an event listener
-export default memo(LineGraph);
+export default LineGraph;

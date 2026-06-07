@@ -108,7 +108,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                             <div className="grid grid-cols-3 text-left">
                                 <div>
                                     <h3 className="text-sm font-normal">Applicant: {hirer?.firstName}</h3>
-                                    <h4 className="text-xs">Reputation Rating: {hirer && getRepRating(hirer)} stars</h4>
+                                    <h4 className="text-xs">Reputation Rating: {hirer?.reputation} stars</h4>
                                     <h4 className="text-xs">Credibility Rating: {getHirerCredibility()} stars</h4>
                                 </div>
                                 <div className="">
@@ -150,7 +150,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                             <div className="grid grid-cols-[1.5fr_1.5fr_2fr_50px] gap-2 grid-rows-2 text-left">
                                 <div>
                                     <h3 className="text-sm font-normal">Applicant: {hirer?.firstName}</h3>
-                                    <h4 className="text-xs">Hiring Reputation: {hirer && getRepRating(hirer)} stars</h4>
+                                    <h4 className="text-xs">Hiring Reputation: {hirer?.reputation} stars</h4>
                                     <h4 className="text-xs">Hiring Credibility: {getHirerCredibility()} stars</h4>
                                     <h3 className="text-sm font-normal">Date: {new Date(app.date).toDateString()}</h3>
                                 </div>
