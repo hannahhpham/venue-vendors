@@ -18,7 +18,7 @@ interface appCardProps {
 
 const ApplicationsCard = ({ app, history }: appCardProps) => {
 
-    const { allUsers, getRepRating } = useAuth();
+    const { allUsers, getRepRating, getAllUsers } = useAuth();
     const { allApplications, addNotes, setRepRating, setBooking, shortlist } = useApplications();
 
     // const hirer: User | undefined = allUsers.find((u: User) => u.id === app.hirerID);
@@ -69,6 +69,28 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
         return credibility;
     }
 
+    const updateHirerDetails = async (hirerID : number, rep : number) => {
+        const updatedUser : Partial<User> = {
+            ...hirer,
+            reputation: hirer !== undefined ? getRepRating(hirer) : rep
+        };
+
+        try {
+            const data = await userAPI.updateUser(hirerID, updatedUser);
+            setHirer(data);
+            getAllUsers();
+        } catch (error) {
+            console.error("Can't update the reputation rating: ", error);
+        }
+        
+    }
+
+    const updateReputation = (rep : number) => {
+        setRepRating(app.id, rep);
+
+        updateHirerDetails(app.hirerID, rep);
+    }
+
     // to deal with the rating popup
     const [ratingPopup, setRatePopup] = useState<boolean>(false);
 
@@ -105,7 +127,7 @@ const ApplicationsCard = ({ app, history }: appCardProps) => {
                                         <h4>How would you rate your experience with {hirer?.firstName}?</h4>
                                         <p className="mb-3"><i>0 = extremely unsatisfied, 3 = no opinion, 5 = extremely satisfied</i></p>
                                         <select className="block p-2 outline outline-black bg-neutral-50 rounded inline mr-3"
-                                         required defaultValue={app.vendorRating} onChange={(e) => setRepRating(app.id, Number(e.target.value))}>
+                                         required defaultValue={app.vendorRating} onChange={(e) => updateReputation(Number(e.target.value))}>
                                             <option value="0">0</option>
                                             <option value="1">1</option>
                                             <option value="2">2</option>
