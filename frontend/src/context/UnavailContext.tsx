@@ -60,15 +60,6 @@ export function UnavailProvider({ children }: { children: React.ReactNode }) {
     }
 
 
-    // update localStorage with the updated set of venues whenever a new one is added
-    // useEffect(() => {
-    //     if (allBlocked.length > 0) {
-    //         localStorage.setItem("unavailable", JSON.stringify(allBlocked));
-    //     }
-
-    // }, [allBlocked])
-
-
     // block a venue on a particular date, between given times
     const blockVenue = async (venueID: number, date: string, start: string, end: string) => {
         //try {

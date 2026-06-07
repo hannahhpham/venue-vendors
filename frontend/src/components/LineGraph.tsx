@@ -104,29 +104,6 @@ const LineGraph = ({ currApps }: LineGraphProps) => {
                 setMaxDate(today.toISOString());
                 console.log("min date: ", minDateAll);
         }
-
-        // if (dateFilter === "all") {
-        //     setMinDate(minDateAll);
-        //     setMaxDate(today.toISOString());
-
-        // }
-        // if (dateFilter === "lastMonth") {
-        //     final.setMonth(today.getMonth() - 2);
-        //     setMinDate(final.toISOString());
-        //     final.setMonth(today.getMonth() - 1);
-        //     setMaxDate(final.toISOString());
-
-        // } else if (dateFilter === "thisMonth") {
-        //     final.setMonth(today.getMonth() - 1);
-        //     setMinDate(final.toISOString());
-        //     setMaxDate(today.toISOString());
-
-        // } else if (dateFilter === "week") {
-        //     final.setDate(today.getDate() - 7);
-        //     console.log("7 days ago: ", final.toDateString());
-        //     setMinDate(final.toISOString());
-        //     setMaxDate(today.toISOString());
-        // }
     }
 
 

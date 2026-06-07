@@ -77,30 +77,6 @@ export default function VenuePage() {
 
   };
 
-  // this semi works
-  // it doesn't show it in the correct order, but you can see some change
-  // look at 10/4/27
-  // const sort = () : Application[] => {
-  //   const sorted = useMemo(() => {
-  //       [...currApps].sort((a, b) => {
-  //       const aRep = allUsers.find(u => u.id === a.hirerID)?.reputation;
-  //       const bRep = allUsers.find(u => u.id === b.hirerID)?.reputation;
-  //       if (aRep && bRep) {
-  //         if (aRep < bRep) {
-  //           return -1;
-  //         } else if (aRep > bRep) {
-  //           return 1;
-  //         } else {
-  //           return 0;
-  //         }
-  //       } else {
-  //         return 0;
-  //       }
-  //     })
-  //   }, []);
-  //   return sorted ?? [];
-  // }
-
   // get all the shortlisted applications for the venue
   const [shortListItems, setShortList] = useState<Application[]>(currApps.filter((app: Application) =>
     app.rank !== -1));

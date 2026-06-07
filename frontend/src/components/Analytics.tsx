@@ -69,6 +69,7 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
 
 
         // the number of accepted applications for hirers of this venue
+        // the bar chart
         if (type === "mostAccepted") {
 
             // get the ids of hirers who have been accepted for the given venue
@@ -114,6 +115,7 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
             )
 
         // the selected applicants across all a vendor's venues - dashboard
+        // the stacked bar chart
         } else if (type === "totalAccepted") {
 
             // get the ids of hirers who have been accepted for the given venue
@@ -161,6 +163,7 @@ const Analytics = ({ currApps, type }: analyticsProps) => {
             )
 
 
+        // the pie chart
         } else if (type === "activeHirers") {
 
             // get the ids of hirers who have been isAccepted
