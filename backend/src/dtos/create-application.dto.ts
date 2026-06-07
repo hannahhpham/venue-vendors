@@ -1,5 +1,5 @@
 import {IsEmail, IsString, IsNotEmpty, IsNumber, 
-    Contains, Length, Min, max
+    Contains, Length, Min, max, IsOptional
 } from 'class-validator'
 
 export class createApplicationDto {
@@ -30,7 +30,11 @@ export class createApplicationDto {
     description: string;
 
     @IsString()
+    @IsOptional()
     abn?: string; // when the user is applying on behalf of a company
+
+    @IsString()
+    @IsOptional()
     file?: string; // file upload - Business Name Registration Certificate
 
     @IsNotEmpty()
