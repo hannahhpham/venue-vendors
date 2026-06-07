@@ -6,14 +6,13 @@ Click here: [Github link](https://github.com/rmit-fsd-2026-s1/a2-fsdpra01-07tue2
 ER Diagram: [Here](https://lucid.app/lucidchart/1a83b8c0-cbd1-4331-a1d0-6c9d3a8d1767/edit?beaconFlowId=6008D67B83EE8E45&page=0_0&invitationId=inv_0daf918d-d3b0-49ab-9d0e-26c9e19aff96#)
 
 # Notes
-- Our main project's backend folder is 'node-express-typeorm'. We are too scared to change it for fear of the resulting changes we see in VSCode's source control
 - Please be patient when running the frontend projects (especially the admin-frontend - it may take 30 seconds for things to load), as it takes some time for the API to fetch data and display it in the UI :)
 - Each of the 4 projects has an .env file which contains database credentials and the API endpoints
 
 # Instructions to run the project
-- You are able to use the 4 web services below to access the main project frontend, main project backend (which is contained in the folder 'node-express-typeorm'), admin frontend, and admin backend. 
+- You are able to use the 4 web services below to access the main project frontend, main project backend (which is contained in the folder 'backend'), admin frontend, and admin backend. 
 - Alternatively, you can download the project code and run it locally on your machine. Navigate to each of the 4 respective folders, and run the command 'npm run dev'.
-- To run tests, navigate to either the 'node-express-typeorm' or 'admin-backend' folders and run 'npm test'
+- To run tests, navigate to either the 'backend' or 'admin-backend' folders and run 'npm test'
 
 
 # Web Services

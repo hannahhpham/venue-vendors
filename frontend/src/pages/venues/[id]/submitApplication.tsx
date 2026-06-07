@@ -80,45 +80,52 @@ export default function SubmitApplication() {
                         showNotif("Number of guests entered exceeds capacity.", "fail");
                     }
                     else {
-                        // valid application
-                        const newApp: Partial<Application> = {
-                            eventName: eventName,
-                            startTime: startTime,
-                            endTime: endTime,
-                            date: date,
-                            guests: Number(guests),
-                            description: desc,
-                            notes: "",
-                            rank: -1,
-                            hirerID: currUser.id,
-                            venueID: Number(id),
-                        // }
-                            // not sure whether to keep this or not
-                        // if (hirerType === "company") {
-                            abn: abn.trim() === "" ? undefined : abn,
-                            registrationCert: fileStr.trim() === "" ? undefined : fileStr,
+                        //frontend validation
+
+                        if (eventName.trim() && guests > 0 && desc.trim()) {
+                            // valid application
+                            const newApp: Partial<Application> = {
+                                eventName: eventName,
+                                startTime: startTime,
+                                endTime: endTime,
+                                date: date,
+                                guests: Number(guests),
+                                description: desc,
+                                notes: "",
+                                rank: -1,
+                                hirerID: currUser.id,
+                                venueID: Number(id),
+                    
+                                abn: abn.trim() === "" ? undefined : abn,
+                                registrationCert: fileStr.trim() === "" ? undefined : fileStr,
+                            }
+
+
+                            // add the application to localStorage
+                            addApp(newApp);
+
+                            // update the hirer's dashboard with their most up to date applications
+                            fetchHirerApplications();
+
+                            // reset all states to defaults
+                            setEventName("");
+                            setStartTime("");
+                            setEndTime("");
+                            setDate("");
+                            setGuests(0);
+                            setDesc("");
+                            setFileStr("");
+                            setABN("");
+
+                            showNotif("You have successfully submitted your application!", "success");
+                            router.push("/dashboard");
+
+                        }
+                        else {
+                            showNotif("Please do not leave fields empty, set to 0, or with only space characters.", "fail");
                         }
 
-                        //console.log("filestr:\n" + fileStr);
-
-                        // add the application to localStorage
-                        addApp(newApp);
-
-                        // update the hirer's dashboard with their most up to date applications
-                        fetchHirerApplications();
-
-                        // reset all states to defaults
-                        setEventName("");
-                        setStartTime("");
-                        setEndTime("");
-                        setDate("");
-                        setGuests(0);
-                        setDesc("");
-                        setFileStr("");
-                        setABN("");
-
-                        showNotif("You have successfully submitted your application!", "success");
-                        router.push("/dashboard");
+                    
                     }
                 } 
             }

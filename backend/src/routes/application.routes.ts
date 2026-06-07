@@ -7,6 +7,10 @@ const router = Router();
 
 const appController = new ApplicationController();
 
+import { validateDto } from "../middlewares/validate";
+import { createApplicationDto } from "../dtos/create-application.dto";
+
+
 router.get("/", async (req, res) => {
     await appController.getAllApps(req, res);
 });
@@ -27,7 +31,7 @@ router.get("/:appID", async (req, res) => {
     await appController.getOneApp(req, res);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", validateDto(createApplicationDto), async (req, res) => {
     await appController.createApp(req, res);
 });
 
