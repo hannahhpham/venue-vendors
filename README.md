@@ -1,9 +1,15 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=23728555&assignment_repo_type=AssignmentRepo)
 
-## Github Link
+## Github Repo Link
 Click here: [Github link](https://github.com/rmit-fsd-2026-s1/a2-fsdpra01-07tue2-30pmveronikateam7)
 
 ER Diagram: [Here](https://lucid.app/lucidchart/1a83b8c0-cbd1-4331-a1d0-6c9d3a8d1767/edit?beaconFlowId=6008D67B83EE8E45&page=0_0&invitationId=inv_0daf918d-d3b0-49ab-9d0e-26c9e19aff96#)
+
+# Instructions to run the project
+- You are able to use the 4 web services below to access the main project frontend, main project backend (which is contained in the folder 'node-express-typeorm'), admin frontend, and admin backend. 
+- Alternatively, you can download the project code and run it locally on your machine. Navigate to each of the 4 respective folders, and run the command 'npm run dev'.
+- To run tests, navigate to either the 'node-express-typeorm' or 'admin-backend' folders and run 'npm test'
+- Please be patient when running the frontend projects (especially the admin-frontend - it may take 30 seconds for things to load), as it takes some time for the API to fetch data and display it in the UI :)
 
 # Web Services
 Main Project Backend (refer to .env file for endpoints): 
@@ -22,39 +28,45 @@ After running npm install, please also use the commands below in each project:
 ```bash
 npm install chartjs chart.js react-chartjs-2 chartjs-adapter-date-fns date-fns
 ```
-- main backend: please install typeorm 
+
+- main backend:
 ```bash
 npm install typeorm
 npm install --save-dev jest @types/jest jest-environment-jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event ts-jest
 npm install --save-dev supertest @types/supertest
 npm install sqlite3     # if installing sqlite3 version 5.0.1 doen't work, download version 5.0.3
 ```
+
 - admin frontend:
 ```bash
-npm install jspdf html2canvas-pro
+npm install jspdf html2canvas-pro chartjs chart.js react-chartjs-2 chartjs-adapter-date-fns date-fns
 ```
 
-- admin backend: please install graphql
+- admin backend: please install graphql dependencies as well
 ```bash
 npm install --save-dev jest ts-jest @types/jest supertest @types/supertest better-sqlite3
 ```
 
 
 # Database Details
-We are using Hannah Pham's database details for data storage. Details can be found below:
+We are using Hannah Pham's database details for data storage. Details can be found below (more can be found in the .env files):
 - Username: s4164624
 - Password: Password_1
 
-# User login details
-- Admin: The admin's username and password is 'admin'
+# Main Pre-set User Login Details
+- Admin: The admin's username and password is both 'admin'
+- Vendor: email is 'ananya2@gmail.com', password is 'Password_1'
+- Hirer: email is 'hannah2@gmail.com, password is 'tttttT1!'
+
+# All Pre-set User login details
 - Vendors: All pre-set vendor passwords are 'Password_1'. Vendor emails are visible in the mssql database.
-- Hirers: Most pre-set hirer passwords are 'Password_1'. Hirer emails are visible in the mssql database.
+- Hirers: All pre-set hirer passwords (except hannah2gmail.com) are 'Password_1'. Hirer emails are visible in the mssql database.
 
 # AI Use
 - ChatGPT was used to generate venue details (eg: venue name, phone number, description)
 - ChatGPT was also used to generate application details (eg: application description, event name)
 
-# Referencesf
+# References
 - lab week 7 and 8
 - lecture code and slideshows: week 9, 11, 12 
 - Veronika's FSD Miro Board: https://au.miro.com/app/board/u3jVOfyZVek=/

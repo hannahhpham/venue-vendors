@@ -11,6 +11,8 @@ import {useApplications} from '../context/ApplyContext'
 import {VenueService} from '../services/api'
 import Button from '../components/Button'
 import {Venue} from '../types/types'
+import Analytics from '../components/Analytics'
+import AnalyticBox from '../components/AnalyticBox'
 
 //https://medium.com/@wathsaradesilva2000/create-pdfs-in-react-using-jspdf-and-html2canvas-aa59667438fc
 //https://medium.com/@saidularefin8/generating-pdfs-from-html-in-a-react-application-with-html2canvas-and-jspdf-d46c5785eff2
@@ -83,26 +85,12 @@ const dashboard = () => {
                 <div ref={pdfRef}>
                   <h3 className="text-2xl underline text-center">Report</h3><br/>
                 
-                  <p className="text-l font-bold">Top 3 most popular venues with most popular days and times:</p>
+                  <p className="text-l font-bold">Top 3 most popular venues:</p>
                   <ol className="list-decimal list-inside">
                     {
                       mostPopularVenues.map((venue) => 
-                      <li key={venue.venue}>
-                        <span className="">{venue.venue}</span>
-
-                        {/* day and time */}
-                        <ul className="text-xs pl-10 list-disc">
-                          <li key="day">
-                            Most Popular Day: {venue.day}
-                          </li>
-
-                          <li key="time">
-                            Most Popular Timeslot: {venue.timeslot}
-                          </li>
-                        </ul>
-                        
-                      </li>
-                      )
+                      <AnalyticBox venue={venue.venue} day={venue.day} timeslot={venue.timeslot}/>)
+                      
                     }
                   </ol>
 
@@ -125,6 +113,7 @@ const dashboard = () => {
                       ) 
                     }
                   </ol> <br/>
+                  <Analytics type="mostAccepted" currApps={allApplications} />
 
                 
                 </div>

@@ -9,6 +9,7 @@ import {UserService} from '../services/api'
 interface AuthContextType {
     currUser: boolean,
     allUsers: User[],
+    allHirers: User[],
     loading: boolean,
     login: (email: string, password: string) => void;
     logout: () => void,
@@ -27,7 +28,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [currUser, setCurrUser] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     //for select dropdown
-    const [allUsers, setAllUsers] = useState<User[]>([]);
+    const [allUsers, setAllUsers] = useState<User[]>([]); //this is actually all vendors
+    const [allHirers, setAllHirers] = useState<User[]>([]);
 
 
     //THIS NEEDS TO STAY SO USERS STAY LOGGED IN UPON REFRESH
@@ -35,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect( () => {
         try {
             getAllUsers();
+            getAllHirers();
         } catch {
             console.log("failed to fetch");
         }
@@ -52,6 +55,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const users = await UserService.getAllUsers();
         if (users) {
             setAllUsers(users);
+        }
+    }
+
+    const getAllHirers = async (): Promise<void> => {
+        const users = await UserService.getHirers();
+        if (users) {
+            setAllHirers(users);
         }
     }
 
@@ -83,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // NOTE; lec2example6 also returns all users array + login function
         //this authContext provides context to all its kids (aka everything)
         <AuthContext.Provider value={{
-            currUser, allUsers, loading, login, logout
+            currUser, allUsers, allHirers, loading, login, logout
         }}>
             {children}
         </AuthContext.Provider>

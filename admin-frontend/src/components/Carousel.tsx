@@ -65,13 +65,18 @@ const Carousel = ({ranked, carouselItems} : carouselType) => {
             <div key={index} className="flex-1 min-w-0 overflow-hidden">
               <VenueCard linkToPage={true} onClick={() => router.push(`/venues/${item.id}`)}>
                 <p className="text-xl font-bold text-blue-900"> {item.name}</p>
-                <p className="italic text-sm"><span className="font-bold">Address:</span> {item.address}</p>
+                <p className="italic text-m"><span className="font-bold">Address: {item.address}</span></p>
+
+                <br/>
                 <p className="italic text-sm"><span className="font-bold">Owner: </span>
                  {allUsers.find((user) => Number(user.id) === Number(item.ownerID))?.firstName} <span></span>
                  {allUsers.find((user) => Number(user.id) === Number(item.ownerID))?.lastName}
                  </p>
                 <p className="italic text-sm"><span className="font-bold">Phone:</span> {item.phone}</p>
                 <p className="italic text-sm"><span className="font-bold">Email:</span> {item.email}</p>
+                <br/>
+                <p className="italic text-sm"><span className="font-bold">Capacity:</span> {item.capacity}</p>
+                <p className="italic text-sm"><span className="font-bold">Rate:</span> ${item.rate} per hour</p>
               </VenueCard>
                         
             </div> 
