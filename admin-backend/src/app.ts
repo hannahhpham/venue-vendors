@@ -16,6 +16,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+//graphql specific - used to start server for the tests
 export async function graphql(app: any) {
     const apolloServer = new ApolloServer({
         typeDefs,

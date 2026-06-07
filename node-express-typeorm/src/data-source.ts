@@ -22,7 +22,7 @@ const sqliteConfig: DataSourceOptions = {
   database: isTesting ? ":memory:" : "database.sqlite",
   entities: [User, Venue, Application, ShortlistedVenue, Unavailable],
   synchronize: true,
-  logging: true,
+  logging: false,
 };
 
 
