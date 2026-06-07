@@ -7,6 +7,8 @@ import { typeDefs } from "./graphql/schema";
 import { resolvers } from "./graphql/resolvers";
 import { expressMiddleware } from "@as-integrations/express4"; //changed this - wrong path
 import app from './app'
+import { ApolloServerPluginLandingPageLocalDefault, ApolloServerPluginLandingPageProductionDefault  } from '@apollo/server/plugin/landingPage/default';
+
 
 //this file references code from lectorial 9 example 2
 
@@ -20,6 +22,11 @@ async function startServer() {
   const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
+    plugins: [
+    // Install a landing page plugin based on NODE_ENV
+    ApolloServerPluginLandingPageLocalDefault({ footer: false }),
+  ],
+
   });
 
   await apolloServer.start();

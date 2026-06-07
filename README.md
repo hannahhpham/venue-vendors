@@ -77,3 +77,4 @@ We are using Hannah Pham's database details for data storage. Details can be fou
 - https://www.preciouschicken.com/blog/posts/jest-testing-graphql-api/
 - “Setup and Teardown · Jest,” Jestjs.io, May 07, 2026. https://jestjs.io/docs/setup-teardown (accessed June 07, 2026).
 ‌- https://www.contentful.com/blog/how-to-use-graphql-variables/
+- https://www.apollographql.com/docs/apollo-server/api/plugin/landing-pages 
