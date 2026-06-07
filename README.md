@@ -9,7 +9,7 @@ ER Diagram: [Here](https://lucid.app/lucidchart/1a83b8c0-cbd1-4331-a1d0-6c9d3a8d
 Main Project Backend (refer to .env file for endpoints): 
 - https://a2-fsdpra01-07tue2-30pmveronikateam7.onrender.com/api
 Main Project Frontend:
-- 
+- https://a2-fsdpra01-07tue2-30pmveronikateam7-8ltq.onrender.com
 Admin Backend: Has Apollo Sandbox available for testing
 - https://a2-fsdpra01-07tue2-30pmveronikateam7-j3eq.onrender.com/graphql
 Admin Frontend: Admin username and password is 'admin'
@@ -23,7 +23,12 @@ After running npm install, please also use the commands below in each project:
 npm install chartjs chart.js react-chartjs-2 chartjs-adapter-date-fns date-fns
 ```
 - main backend: please install typeorm 
-
+```bash
+npm install typeorm
+npm install --save-dev jest @types/jest jest-environment-jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event ts-jest
+npm install --save-dev supertest @types/supertest
+npm install sqlite3     # if installing sqlite3 version 5.0.1 doen't work, download version 5.0.3
+```
 - admin frontend:
 ```bash
 npm install jspdf html2canvas-pro
@@ -34,35 +39,12 @@ npm install jspdf html2canvas-pro
 npm install --save-dev jest ts-jest @types/jest supertest @types/supertest better-sqlite3
 ```
 
-# FOR TESTING
-pls install:
-```bash
-npm install --save-dev jest @types/jest jest-environment-jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event ts-jest
-npm install --save-dev supertest @types/supertest
-npm install sqlite3
-```
-- if installing sqlite3 version 5.0.1 doen't work, download version 5.0.3
-
 
 # Database Details
 We are using Hannah Pham's database details for data storage. Details can be found below:
 - Username: s4164624
-- Password:
+- Password: Password_1
 
-# Website URLS
-- Vendor and Hirer Frontend:
-- Vendor and Hirer Backend:
-- Admin Frontend:
-- Admin Backend:
-
-## Vendor Explanations
-# TO DO:
-- fix the rounding of the stars in applications
-- fix all the repurposed carousels - (home shows 5 never ending venues  |   in the hirer's past applications, it displays error message when none have been hirer)
-- fix up the sorting by reputation
-- merge stuff into the context files to clean up [id].tsx particularly
-- do applications need to be validated bc currently they aren't ...
-- look at file size requirements when it comes to docs - i don't think anything was enforced here
 
 ## Hirer Explanations
 - credibility and reputation explanations here 
@@ -81,7 +63,7 @@ We are using Hannah Pham's database details for data storage. Details can be fou
 - ‌Typeorm.io. (2026). Many-to-many relations | TypeORM. [online] Available at: https://typeorm.io/docs/relations/many-to-many-relations [Accessed 6 May 2026].
 - Ben Awad (2019) 'Cascade Delete TypeORM' [video], YouTube website, accessed 14 May 2026. https://www.youtube.com/watch?v=S1pxdAL2Dz8
 - npmjs, “class-validator,” npmjs, Feb. 26, 2026. https://www.npmjs.com/package/class-validator (accessed May 19, 2026).
-- https://stackoverflow.com/questions/72801198/apollo-client-refetch-queries
+- Stack Overflow. (2026) Apollo Client Refetch Queries. [online]  Stack Overflow. Available at: https://stackoverflow.com/questions/72801198/apollo-client-refetch-queries [Accessed 1 June 2026]
 - SVOBOL. TypeORM column type dependent on database. [online] Stack Overflow. Available at: https://stackoverflow.com/questions/49463691/typeorm-column-type-dependant-on-database [Accessed 6 June 2026]
 - https://medium.com/@wathsaradesilva2000/create-pdfs-in-react-using-jspdf-and-html2canvas-aa59667438fc
 - https://dev.to/joaosc17/testing-a-graphql-application-with-jest-and-supertest-1353
@@ -89,3 +71,5 @@ We are using Hannah Pham's database details for data storage. Details can be fou
 - “Setup and Teardown · Jest,” Jestjs.io, May 07, 2026. https://jestjs.io/docs/setup-teardown (accessed June 07, 2026).
 ‌- https://www.contentful.com/blog/how-to-use-graphql-variables/
 - https://www.apollographql.com/docs/apollo-server/api/plugin/landing-pages 
+- https://react-chartjs-2.js.org/examples/stacked-bar-chart
+- https://www.chartjs.org/docs/latest/samples/scales/time-line.html
