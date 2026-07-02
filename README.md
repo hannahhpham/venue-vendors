@@ -51,41 +51,7 @@ npm install jspdf html2canvas-pro chartjs chart.js react-chartjs-2 chartjs-adapt
 npm install --save-dev jest ts-jest @types/jest supertest @types/supertest better-sqlite3
 ```
 
-# Database Details
-We are using Hannah Pham's database details for data storage. Details can be found below (more can be found in the .env files):
-- Username: s4164624
-- Password: Password_1
-
-# Main Pre-set User Login Details
-- Admin: The admin's username and password is both 'admin'
-- Vendor: email is 'ananya2@gmail.com', password is 'Password_1'
-- Hirer: email is 'hannah2@gmail.com, password is 'tttttT1!'
-
-# All Pre-set User login details
-- Vendors: All pre-set vendor passwords are 'Password_1'. Vendor emails are visible in the mssql database.
-- Hirers: All pre-set hirer passwords (except hannah2gmail.com) are 'Password_1'. Hirer emails are visible in the mssql database.
 
 # AI Use
 - ChatGPT was used to generate venue details (eg: venue name, phone number, description)
 - ChatGPT was also used to generate application details (eg: application description, event name)
-
-# References
-- lab week 7 and 8
-- lecture code and slideshows: week 9, 11, 12 
-- Veronika's FSD Miro Board: https://au.miro.com/app/board/u3jVOfyZVek=/
-- MatsT (2010). Creation date column in SQL table. [online] Stack Overflow. Available at: https://stackoverflow.com/questions/2737763/creation-date-column-in-sql-table [Accessed 1 May 2026].
-- Typeorm.io. (2025). Entities | TypeORM. [online] Available at: https://typeorm.io/docs/entity/entities/ [Accessed 1 May 2026].
-- Typeorm.io. (2026). Decorator reference | TypeORM. [online] Available at: https://typeorm.io/docs/help/decorator-reference/ [Accessed 1 May 2026].
-- ‌Typeorm.io. (2026). Many-to-many relations | TypeORM. [online] Available at: https://typeorm.io/docs/relations/many-to-many-relations [Accessed 6 May 2026].
-- Ben Awad (2019) 'Cascade Delete TypeORM' [video], YouTube website, accessed 14 May 2026. https://www.youtube.com/watch?v=S1pxdAL2Dz8
-- npmjs, “class-validator,” npmjs, Feb. 26, 2026. https://www.npmjs.com/package/class-validator (accessed May 19, 2026).
-- Stack Overflow. (2026) Apollo Client Refetch Queries. [online]  Stack Overflow. Available at: https://stackoverflow.com/questions/72801198/apollo-client-refetch-queries [Accessed 1 June 2026]
-- SVOBOL. TypeORM column type dependent on database. [online] Stack Overflow. Available at: https://stackoverflow.com/questions/49463691/typeorm-column-type-dependant-on-database [Accessed 6 June 2026]
-- https://medium.com/@wathsaradesilva2000/create-pdfs-in-react-using-jspdf-and-html2canvas-aa59667438fc
-- https://dev.to/joaosc17/testing-a-graphql-application-with-jest-and-supertest-1353
-- https://www.preciouschicken.com/blog/posts/jest-testing-graphql-api/
-- “Setup and Teardown · Jest,” Jestjs.io, May 07, 2026. https://jestjs.io/docs/setup-teardown (accessed June 07, 2026).
-‌- https://www.contentful.com/blog/how-to-use-graphql-variables/
-- https://www.apollographql.com/docs/apollo-server/api/plugin/landing-pages 
-- https://react-chartjs-2.js.org/examples/stacked-bar-chart
-- https://www.chartjs.org/docs/latest/samples/scales/time-line.html
