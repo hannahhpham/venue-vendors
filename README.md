@@ -6,8 +6,16 @@ Click here: [Github link](https://github.com/rmit-fsd-2026-s1/a2-fsdpra01-07tue2
 ER Diagram: [Here](https://lucid.app/lucidchart/1a83b8c0-cbd1-4331-a1d0-6c9d3a8d1767/edit?beaconFlowId=6008D67B83EE8E45&page=0_0&invitationId=inv_0daf918d-d3b0-49ab-9d0e-26c9e19aff96#)
 
 # Notes
-- Please be patient when running the frontend projects (especially the admin-frontend - it may take 30 seconds for things to load), as it takes some time for the API to fetch data and display it in the UI :)
-- Each of the 4 projects has an .env file which contains database credentials and the API endpoints
+- This project is a full stack web application that was co-developed by Ananya Venkatesh Babu (Github: ananya-priv) and Hannah Alyssa Pham (Github: hannahhpham).
+- This project is no longer connected to an active database. Therefore, although it's possible to access the web services, core operations will no longer work. However, we believe that it is still a valuable codebase for future employment opportunities.
+
+# Tech Stack
+- Frontend: React TS
+- Backend: Node and Express with TypeORM
+- Database: Cloud MSSQL Server
+- Server Deployment: Render
+
+This project uses both a REST and GraphQL API design. The REST API design can be found in the main project backend, whilst the GraphQL API design can be found in the admin project backend.
 
 # Instructions to run the project
 - You are able to use the 4 web services below to access the main project frontend, main project backend (which is contained in the folder 'backend'), admin frontend, and admin backend. 
@@ -16,18 +24,14 @@ ER Diagram: [Here](https://lucid.app/lucidchart/1a83b8c0-cbd1-4331-a1d0-6c9d3a8d
 
 
 # Web Services
-Main Project Backend (refer to .env file for endpoints): 
-- https://a2-fsdpra01-07tue2-30pmveronikateam7.onrender.com/api
-Main Project Frontend:
-- https://a2-fsdpra01-07tue2-30pmveronikateam7-8ltq.onrender.com
-Admin Backend: Has Apollo Sandbox available for testing
-- https://a2-fsdpra01-07tue2-30pmveronikateam7-j3eq.onrender.com/graphql
-Admin Frontend: Admin username and password is 'admin'
-- https://a2-fsdpra01-07tue2-30pmveronikateam7-iy7x.onrender.com
+- Main Project Backend https://a2-fsdpra01-07tue2-30pmveronikateam7.onrender.com/api
+- Main Project Frontend: https://a2-fsdpra01-07tue2-30pmveronikateam7-8ltq.onrender.com
+- Admin Backend: https://a2-fsdpra01-07tue2-30pmveronikateam7-j3eq.onrender.com/graphql
+- Admin Frontend: https://a2-fsdpra01-07tue2-30pmveronikateam7-iy7x.onrender.com
 
 
 # Installation details:
-After running npm install, please also use the commands below in each project (some may be missing):
+After running npm install, please also use the commands below in each project:
 - main frontend:
 ```bash
 npm install chartjs chart.js react-chartjs-2 chartjs-adapter-date-fns date-fns
@@ -51,7 +55,6 @@ npm install jspdf html2canvas-pro chartjs chart.js react-chartjs-2 chartjs-adapt
 npm install --save-dev jest ts-jest @types/jest supertest @types/supertest better-sqlite3
 ```
 
-
 # AI Use
-- ChatGPT was used to generate venue details (eg: venue name, phone number, description)
-- ChatGPT was also used to generate application details (eg: application description, event name)
+- ChatGPT was used to generate dummy venue details (eg: venue name, phone number, description)
+- ChatGPT was also used to generate dummy application details (eg: application description, event name)
